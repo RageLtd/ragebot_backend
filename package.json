@@ -5,8 +5,12 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "npx tsc -w",
+    "build": "npx tsc",
     "dev": "npx nodemon",
     "test": "jest"
+  },
+  "engines": {
+    "node": "16.x"
   },
   "keywords": [],
   "author": "",

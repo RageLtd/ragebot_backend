@@ -1,6 +1,5 @@
 import { Client, Delete } from "faunadb";
 import tmi, { Userstate } from "tmi.js";
-import dotenv from "dotenv";
 
 import { getAllChannelsQuery } from "./commands/channels/channelQueries";
 import { parseMessage } from "./messages/parseMessage";
@@ -8,7 +7,9 @@ import { ClientRegistry } from "./commands/channels/clientRegistry";
 import { CustomCommandRegistry } from "./commands/custom/customRegistry";
 import { clearInterval } from "timers";
 
-dotenv.config();
+if (process.env.ENVIRONMENT !== "production") {
+  require("dotenv").config();
+}
 
 export let tmiClient: tmi.Client;
 
