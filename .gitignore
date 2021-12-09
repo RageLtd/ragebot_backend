@@ -1,0 +1,4 @@
+node_modules
+.faunarc
+.env
+query_scratch.fql
