@@ -7,7 +7,7 @@ import { ClientRegistry } from "./commands/channels/clientRegistry";
 import { CustomCommandRegistry } from "./commands/custom/customRegistry";
 import { clearInterval } from "timers";
 
-if (process.env.ENVIRONMENT !== "production") {
+if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
