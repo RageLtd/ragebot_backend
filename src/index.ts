@@ -1,14 +1,19 @@
 import { Client, Delete } from "faunadb";
 import tmi, { Userstate } from "tmi.js";
+import express from "express";
 
 import { getAllChannelsQuery } from "./commands/channels/channelQueries";
 import { parseMessage } from "./messages/parseMessage";
 import { ClientRegistry } from "./commands/channels/clientRegistry";
 import { CustomCommandRegistry } from "./commands/custom/customRegistry";
 import { clearInterval } from "timers";
+import path from "path/posix";
+
+let webPort = 80;
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
+  webPort = Number(process.env.WEB_PORT);
 }
 
 export let tmiClient: tmi.Client;
@@ -83,6 +88,18 @@ async function initialize() {
       }
     }
   );
+
+  const app = express();
+
+  app.use(express.static(path.resolve(__dirname, "../public")));
+
+  app.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../public/index.html"));
+  });
+
+  app.listen(webPort, () => {
+    console.log(`Webserver listening on: ${webPort}`);
+  });
 }
 
 process.once("SIGUSR2", async () => {
