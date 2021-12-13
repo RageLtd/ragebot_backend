@@ -13,12 +13,16 @@ interface KeyCreateReponse {
   ref: any;
 }
 
+export async function childDbExists(target: string) {
+  const { code } = (await faunaClient.query(Database(target.substring(1)))) as {
+    [key: string]: string;
+  };
+
+  return code !== "invalid ref";
+}
+
 export class ClientRegistry {
   clients: ClientMap = {};
-
-  async childDbExists(target: string) {
-    return await faunaClient.query(Database(target.substring(1)));
-  }
 
   async getClient(target: string) {
     if (this.clients[target]?.client) {
@@ -26,7 +30,7 @@ export class ClientRegistry {
     }
 
     // Create a new client if one doesn't exist
-    if (await this.childDbExists(target)) {
+    if (await childDbExists(target)) {
       // If the DB exists already we need keys
       const { secret, ref } = (await faunaClient.query(
         CreateKey({
