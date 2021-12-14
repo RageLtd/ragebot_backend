@@ -1,4 +1,4 @@
-export function setupUserDb(username: string) {
+export function setupUserDb(username: string, user_id: string) {
   // TODO: Don't do this
   fetch(
     `http://${window.location.hostname}:${
@@ -6,7 +6,7 @@ export function setupUserDb(username: string) {
     }/user-setup`,
     {
       method: "post",
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({ username, user_id }),
       headers: {
         "Content-Type": "application/json",
       },

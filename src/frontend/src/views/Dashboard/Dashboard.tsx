@@ -5,7 +5,10 @@ import { setupUserDb } from "../utils/setupUserDb";
 
 export default function DashboardView() {
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
-  const [userInfo, setUserInfo] = useState({ username: undefined });
+  const [userInfo, setUserInfo] = useState({
+    username: undefined,
+    user_id: undefined,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +26,7 @@ export default function DashboardView() {
       });
 
       return await fetch(
-        `${audience}users/${user.sub}?fields=username&include_fields=true`,
+        `${audience}users/${user.sub}?fields=username,user_id&include_fields=true`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -39,7 +42,7 @@ export default function DashboardView() {
           setUserInfo(user);
           return user;
         })
-        .then((user) => setupUserDb(user.username))
+        .then((user) => setupUserDb(user.username, user.user_id))
         .catch((error: Error) => console.error(error));
     }
   }, [getAccessTokenSilently, user, isAuthenticated, navigate]);

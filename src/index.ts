@@ -1,17 +1,16 @@
 import { Client, Delete } from "faunadb";
 import tmi, { Userstate } from "tmi.js";
-import express from "express";
-import cors from "cors";
 
 import { getAllChannelsQuery } from "./commands/channels/channelQueries";
 import { parseMessage } from "./messages/parseMessage";
 import { ClientRegistry } from "./commands/channels/clientRegistry";
 import { CustomCommandRegistry } from "./commands/custom/customRegistry";
 import { clearInterval } from "timers";
-import { setupUserDb } from "./users/setupUserDb";
-import path from "path/posix";
+import { initializeRagebotServer } from "./ragebotServer";
+import { initializeTwitchWebhook } from "./twitchWebhook";
+import { subscribeChannelEvents } from "./channelEvents";
 
-let webPort = 80;
+export let webPort = 80;
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -76,7 +75,7 @@ async function initialize() {
     channels: registeredChannels,
   });
 
-  // tmiClient.connect();
+  tmiClient.connect();
 
   tmiClient.on(
     "message",
@@ -91,29 +90,10 @@ async function initialize() {
     }
   );
 
-  const app = express();
+  initializeRagebotServer();
+  initializeTwitchWebhook();
 
-  app.use(
-    express.json({
-      type: "application/json",
-    })
-  );
-  app.use(express.static(path.resolve(__dirname, "../public")));
-  app.use(cors());
-
-  app.get("/", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../public/index.html"));
-  });
-
-  app.post("/user-setup", async (req, res) => {
-    console.log(req.body);
-    await setupUserDb(req.body.username.toLowerCase());
-    res.sendStatus(200);
-  });
-
-  app.listen(webPort, () => {
-    console.log(`Webserver listening on: ${webPort}`);
-  });
+  subscribeChannelEvents(registeredChannels);
 }
 
 process.once("SIGUSR2", async () => {

@@ -7,27 +7,33 @@ import {
   createUserChildDBQuery,
 } from "./setupUserDbQueries";
 
-export async function setupUserDb(username: string) {
+export async function setupUserDb(username: string, twitchId: string) {
   // TODO: Fix potential DB creation exploit
   if (await childDbExists(`#${username}`)) {
     return;
   }
-  await faunaClient.query(createUserChildDBQuery(username));
+  await faunaClient.query(createUserChildDBQuery(username, twitchId));
   const client = await clientRegistry.getClient(`#${username}`);
 
-  ["backlog", "commands", "counters", "game", "lobby", "run"].map(
-    async (collection) => {
-      console.info(
-        `Creating collection ${collection} for new user: ${username}`
-      );
-      return await client?.query(createBaseCollectionQuery(collection));
-    }
+  await Promise.all(
+    ["backlog", "commands", "counters", "game", "lobby", "run"].map(
+      async (collection) => {
+        console.info(
+          `Creating collection ${collection} for new user: ${username}`
+        );
+        return await client?.query(createBaseCollectionQuery(collection));
+      }
+    )
   );
 
-  indexDefinitions.map(async (indexDefinition) => {
-    console.info(`Creating new index ${indexDefinition.name} for ${username}`);
-    return await client?.query(createBaseIndexQuery(indexDefinition));
-  });
+  await Promise.all(
+    indexDefinitions.map(async (indexDefinition) => {
+      console.info(
+        `Creating new index ${indexDefinition.name} for ${username}`
+      );
+      return await client?.query(createBaseIndexQuery(indexDefinition));
+    })
+  );
 }
 
 const indexDefinitions = [
