@@ -75,7 +75,7 @@ async function initialize() {
     channels: registeredChannels,
   });
 
-  tmiClient.connect();
+  // tmiClient.connect();
 
   tmiClient.on(
     "message",
