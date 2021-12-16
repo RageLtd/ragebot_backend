@@ -1,6 +1,5 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Auth from "./views/Auth/Auth";
 import { useAuth0, User, withAuthenticationRequired } from "@auth0/auth0-react";
 import DashboardView from "./views/Dashboard/Dashboard";
 import Followers from "./views/Followers/Followers";
@@ -17,6 +16,11 @@ function App() {
     logout,
     getAccessTokenSilently,
   } = useAuth0();
+  const [isUserLoading, setIsUserLoading] = useState(true);
+
+  const isApplicationLoading = () => {
+    return isLoading && isUserLoading;
+  };
 
   const [twitchUserInfo, setTwitchUserInfo] = useState({
     username: undefined,
@@ -24,6 +28,7 @@ function App() {
   });
 
   useEffect(() => {
+    setIsUserLoading(true);
     const audience = process.env.REACT_APP_AUTH0_MANAGEMENT_AUDIENCE;
     const getUserInfoByEmail = async (user: User) => {
       const token = await getAccessTokenSilently({
@@ -45,7 +50,10 @@ function App() {
       getUserInfoByEmail(user!)
         .then((res) => res.json())
         .then((user) => {
-          setTwitchUserInfo(user);
+          setTwitchUserInfo({
+            ...user,
+            user_id: user.user_id.split("|").pop(),
+          });
           return user;
         })
         .then(async (user) => {
@@ -53,12 +61,15 @@ function App() {
             setupUserDb(user.username, user.user_id);
           }
         })
+        .then(() => {
+          setIsUserLoading(false);
+        })
         .catch((error: Error) => console.error(error));
     }
   }, [getAccessTokenSilently, user, isAuthenticated]);
 
   const handleLogout = () => logout({ returnTo: window.location.origin });
-  if (isLoading) {
+  if (isApplicationLoading()) {
     return (
       <div className="App">
         <h3>Loading...</h3>
@@ -69,7 +80,6 @@ function App() {
               twitchUserInfo,
             })}
           />
-          <Route path="/login" element={<Auth />} />
           <Route
             path="/followers"
             element={withAuthenticationRequired(Followers)({ twitchUserInfo })}
@@ -91,7 +101,6 @@ function App() {
               twitchUserInfo,
             })}
           />
-          <Route path="/login" element={<Auth />} />
           <Route
             path="/followers"
             element={withAuthenticationRequired(Followers)({ twitchUserInfo })}
@@ -110,7 +119,6 @@ function App() {
             twitchUserInfo,
           })}
         />
-        <Route path="/login" element={<Auth />} />
         <Route
           path="/followers"
           element={withAuthenticationRequired(Followers)({ twitchUserInfo })}

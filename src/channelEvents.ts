@@ -2,56 +2,14 @@ import { Get, Database } from "faunadb";
 import { faunaClient } from ".";
 import { subscriptionTypes } from "./subscriptionTypes";
 import fetch from "cross-fetch";
+import { getAuthToken } from "./authToken";
 
 const SUBSCRIPTION_URL = "https://api.twitch.tv/helix/eventsub/subscriptions";
-const GET_TOKEN_URL = "https://id.twitch.tv/oauth2/token";
-const VALIDATE_TOKEN_URL = "https://id.twitch.tv/oauth2/validate";
 
 interface Database {
   data: {
     [key: string]: string;
   };
-}
-
-let authToken: string;
-
-async function validateAuthToken(authToken: string) {
-  const res = await fetch(VALIDATE_TOKEN_URL, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
-  });
-
-  return res.ok;
-}
-
-async function retrieveAuthToken() {
-  let urlWithParameters = new URL(GET_TOKEN_URL);
-  urlWithParameters.searchParams.set(
-    "client_id",
-    process.env.TWITCH_CLIENT_ID!
-  );
-  urlWithParameters.searchParams.set(
-    "client_secret",
-    process.env.TWITCH_SECRET!
-  );
-  urlWithParameters.searchParams.set("grant_type", "client_credentials");
-
-  const res = await fetch(urlWithParameters.toString(), {
-    method: "post",
-  });
-
-  const { access_token } = await res.json();
-
-  return access_token;
-}
-
-async function getAuthToken() {
-  if (authToken !== undefined && (await validateAuthToken(authToken))) {
-    return authToken;
-  }
-  authToken = await retrieveAuthToken();
-  return authToken;
 }
 
 export async function subscribeChannelEvents(registeredChannels: string[]) {

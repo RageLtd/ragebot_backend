@@ -1,6 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface DashboardViewProps {
   twitchUserInfo: {
@@ -10,15 +8,6 @@ interface DashboardViewProps {
 }
 
 export default function DashboardView({ twitchUserInfo }: DashboardViewProps) {
-  const { isAuthenticated } = useAuth0();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-  });
-
   return (
     <div>
       <p>Holy shit auth is working</p>
