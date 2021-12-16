@@ -3,3 +3,4 @@ node_modules
 .env
 query_scratch.fql
 public
+!src/frontend/public
