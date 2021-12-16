@@ -11,6 +11,7 @@ mkdir -p ./public
 # Build the frontend
 echo "Building Frontend..."
 cd ./src/frontend
+npm ci
 npm run build
 
 # Copy built files into output directory
