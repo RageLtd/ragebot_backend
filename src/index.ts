@@ -9,6 +9,8 @@ import { clearInterval } from "timers";
 import { initializeRagebotServer } from "./ragebotServer";
 import { initializeTwitchWebhook } from "./twitchWebhook";
 import { subscribeChannelEvents } from "./channelEvents";
+import { ChatFilterRegistry } from "./messages/filterRegistry";
+import { messageHandler } from "./messageHandler";
 
 export let webPort = 80;
 
@@ -54,6 +56,8 @@ export let customCommandRegistry: CustomCommandRegistry;
 
 export let clientRegistry: ClientRegistry;
 
+export let filterRegistry: ChatFilterRegistry;
+
 getAllChannels().then((rawChannels) => {
   registeredChannels = rawChannels.data.map((channel) =>
     channel.data.name.toLowerCase()
@@ -61,6 +65,7 @@ getAllChannels().then((rawChannels) => {
 
   clientRegistry = new ClientRegistry();
   customCommandRegistry = new CustomCommandRegistry();
+  filterRegistry = new ChatFilterRegistry();
 
   initialize();
 });
@@ -68,6 +73,9 @@ getAllChannels().then((rawChannels) => {
 async function initialize() {
   tmiClient = new tmi.Client({
     options: { debug: true },
+    connection: {
+      secure: true,
+    },
     identity: {
       username: "ragebotltd",
       password: `oauth:${process.env.TWITCH_SECRET}`,
@@ -75,20 +83,9 @@ async function initialize() {
     channels: registeredChannels,
   });
 
-  // tmiClient.connect();
+  tmiClient.connect();
 
-  tmiClient.on(
-    "message",
-    (channel: string, userState: Userstate, message: string, self: boolean) => {
-      if (self) {
-        return;
-      }
-
-      if (message.startsWith("!")) {
-        parseMessage(channel, userState, message);
-      }
-    }
-  );
+  tmiClient.on("message", messageHandler);
 
   initializeRagebotServer();
   initializeTwitchWebhook();

@@ -16,14 +16,21 @@ export async function setupUserDb(username: string, twitchId: string) {
   const client = await clientRegistry.getClient(`#${username}`);
 
   await Promise.all(
-    ["backlog", "commands", "counters", "game", "lobby", "run"].map(
-      async (collection) => {
-        console.info(
-          `Creating collection ${collection} for new user: ${username}`
-        );
-        return await client?.query(createBaseCollectionQuery(collection));
-      }
-    )
+    [
+      "backlog",
+      "commands",
+      "counters",
+      "game",
+      "lobby",
+      "run",
+      "filter_whitelist",
+      "filter_blacklist",
+    ].map(async (collection) => {
+      console.info(
+        `Creating collection ${collection} for new user: ${username}`
+      );
+      return await client?.query(createBaseCollectionQuery(collection));
+    })
   );
 
   await Promise.all(
@@ -131,6 +138,28 @@ const indexDefinitions = [
       },
       {
         field: ["ref"],
+      },
+    ],
+  },
+  {
+    name: "whitelist_by_value",
+    unique: false,
+    serialized: true,
+    source: Collection("filter_whitelist"),
+    terms: [
+      {
+        field: ["data", "value"],
+      },
+    ],
+  },
+  {
+    name: "blacklist_by_value",
+    unique: false,
+    serialized: true,
+    source: "filter_blacklist",
+    terms: [
+      {
+        field: ["data", "value"],
       },
     ],
   },

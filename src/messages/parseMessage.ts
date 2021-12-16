@@ -21,6 +21,12 @@ import {
 import { shoutout } from "../commands/shoutout";
 import { isModerator } from "./isModerator";
 import { isSubscriber } from "./isSubscriber";
+import {
+  addTermToBlacklist,
+  addTermToWhitelist,
+  removeTermFromBlacklist,
+  removeTermFromWhitelist,
+} from "./whitelist";
 
 export function parseMessage(
   target: string,
@@ -92,7 +98,22 @@ export function parseMessage(
       removeCustomCommand(target, userState, params);
       return;
     }
-
+    case "!whitelist": {
+      addTermToWhitelist(target, userState, params);
+      return;
+    }
+    case "!unwhitelist": {
+      removeTermFromWhitelist(target, userState, params);
+      return;
+    }
+    case "!blacklist": {
+      addTermToBlacklist(target, userState, params);
+      return;
+    }
+    case "!unblacklist": {
+      removeTermFromBlacklist(target, userState, params);
+      return;
+    }
     default: {
       handleCustomCommands(target, userState, command, params);
       return;
