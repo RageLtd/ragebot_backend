@@ -5,7 +5,7 @@ set -eo
 
 
 # Clean up any old files
-rm -r ./public
+[ -d "./public" ] && rm -r ./public
 mkdir -p ./public
 
 # Build the frontend
