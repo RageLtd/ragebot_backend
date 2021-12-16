@@ -44,7 +44,7 @@ export default function FollowersView({ twitchUserInfo }: FollowersViewProps) {
       setFollowerList(await getFollowers(twitchUserInfo.user_id!));
 
     getTheDamnFollowers();
-  });
+  }, [twitchUserInfo.user_id]);
 
   return (
     <div>
