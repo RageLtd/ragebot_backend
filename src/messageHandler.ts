@@ -1,5 +1,6 @@
 import { Userstate } from "tmi.js";
 import { filterRegistry, tmiClient } from ".";
+import { postToChat } from "./chat/chat";
 import { parseMessage } from "./messages/parseMessage";
 
 async function checkProfanity(target: string, message: string) {
@@ -19,6 +20,7 @@ export const messageHandler = async (
 
   if (message.startsWith("!")) {
     parseMessage(channel, userState, message);
+    return;
   }
 
   if (await checkProfanity(channel, message)) {
@@ -32,5 +34,8 @@ export const messageHandler = async (
         )} does not allow a potentially offensive word in your message: ${message}`
       )
       .catch((err) => console.error(err));
+    return;
   }
+
+  postToChat(channel, userState, message);
 };

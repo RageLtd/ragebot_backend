@@ -21,5 +21,7 @@ mv -f ./build/* ../../public
 echo "Building Backend..."
 cd ../../
 npx tsc
+cp ./src/chat/layout.html ./public/chat/
+cp ./src/notifications/layout.html ./public/notifications/
 
 echo "Built and ready to go!"
