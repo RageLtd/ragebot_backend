@@ -1,7 +1,9 @@
-import _ from "lodash";
+import _, { merge } from "lodash";
+import fetch from "cross-fetch";
 import { Userstate } from "tmi.js";
 import { clientRegistry } from "..";
-import { chat_sse_clients } from "../ragebotServer";
+import { getAuthToken } from "../authToken";
+import { chat_sse_clients, TWITCH_HELIX_API } from "../ragebotServer";
 import { ChatStylesResponse, getChatStylesQuery } from "./chatQueries";
 
 interface EmoteObject {
@@ -10,12 +12,84 @@ interface EmoteObject {
   endIndex: number;
 }
 
-export function postToChat(
+interface BadgeVersion {
+  id: string;
+  image_url_1x: string;
+}
+
+interface BadgeCategory {
+  set_id: string;
+  versions: BadgeVersion[];
+}
+
+interface ChatBadgeRegistry {
+  [key: string]: BadgeCategory[];
+}
+
+const chatBadges: ChatBadgeRegistry = {};
+
+async function getBadgeUrlByChannel(
+  channel: string,
+  badge: string,
+  version: string
+) {
+  if (chatBadges[channel]) {
+    return chatBadges[channel]
+      .find(({ set_id }) => set_id === badge)
+      ?.versions.find(({ id }) => id === version)?.image_url_1x;
+  }
+
+  const authToken = await getAuthToken();
+
+  const globalBadgesRes = await fetch(
+    `${TWITCH_HELIX_API}/chat/badges/global`,
+    {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Client-Id": `${process.env.TWITCH_CLIENT_ID}`,
+      },
+    }
+  );
+
+  const globalBages = await globalBadgesRes.json();
+
+  const userRes = await fetch(`${TWITCH_HELIX_API}/users?login=${channel}`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      "Client-Id": `${process.env.TWITCH_CLIENT_ID}`,
+    },
+  });
+
+  const userJson = await userRes.json();
+
+  const chatSpecificBadgesRes = await fetch(
+    `${TWITCH_HELIX_API}/chat/badges?broadcaster_id=${userJson.data[0].id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Client-Id": `${process.env.TWITCH_CLIENT_ID}`,
+      },
+    }
+  );
+
+  const chatSpecificBadges = await chatSpecificBadgesRes.json();
+
+  chatBadges[channel] = merge(globalBages.data, chatSpecificBadges.data);
+
+  return chatBadges[channel]
+    .find(({ set_id }) => set_id === badge)
+    ?.versions.find(({ id }) => id === version)?.image_url_1x;
+}
+
+export async function postToChat(
   target: string,
   userState: Userstate,
   message: string
 ) {
-  const userIdentity = `<div class="identity">${parseUser(userState)}</div>`;
+  const userIdentity = `<div class="identity">${await parseUser(
+    target.substring(1),
+    userState
+  )}</div>`;
   const messageWithEmotes = `<span class="message">${parseEmotes(
     message,
     userState.emotes
@@ -35,11 +109,13 @@ function parseEmotes(
   } = {}
 ) {
   const emoteArray = _.chain(emotes)
-    .map(function (emote: string, index: string[]) {
-      return _.map(emote, (chars) => {
+    .map(function (emoteLocations: string[], emoteId: string) {
+      return _.map(emoteLocations, (chars) => {
         const indexes = chars.split("-");
         return {
-          url: "http://static-cdn.jtvnw.net/emoticons/v1/" + index + "/1.0",
+          url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/${
+            emoteId.startsWith("emotesv2_") ? "animated" : "static"
+          }/light/1.0`,
           startIndex: parseInt(indexes[0]),
           endIndex: parseInt(indexes[1]) + 1,
         };
@@ -67,24 +143,17 @@ interface UserColor {
 
 const userColor: UserColor = {};
 
-function parseUser(userState: Userstate) {
-  // TODO: Get badge backgrounds
-  const badges = Object.keys(userState.badges || {})
-    .map((badge) => {
-      if (badge === "founder") {
-        return makeImage(
-          "https://static-cdn.jtvnw.net/badges/v1/511b78a9-ab37-472f-9569-457753bbe7d3/1",
-          `badge ${badge}`
-        );
-      }
-      return makeImage(
-        `http://cdn.frankerfacez.com/static/badges/twitch/2/${badge}/${
-          userState.badges![badge]
-        }/1.png`,
-        `badge ${badge}`
+async function parseUser(channel: string, userState: Userstate) {
+  const badges = await Promise.all(
+    Object.keys(userState.badges || {}).map(async (badge) => {
+      const url = await getBadgeUrlByChannel(
+        channel,
+        badge,
+        userState.badges![badge]!
       );
+      return makeImage(url || "", `badge ${badge}`);
     })
-    .join("");
+  );
 
   if (!userColor[userState["user-id"]!]) {
     userColor[userState["user-id"]!] =
@@ -95,7 +164,7 @@ function parseUser(userState: Userstate) {
   }
 
   return (
-    badges +
+    badges.join("") +
     `<span class="username" style="color: ${
       userColor[userState["user-id"]!]
     }">${userState["display-name"]}</span>`

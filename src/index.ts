@@ -78,12 +78,12 @@ async function initialize() {
     },
     identity: {
       username: "ragebotltd",
-      password: `oauth:${process.env.TWITCH_SECRET}`,
+      password: process.env.TMI_SECRET,
     },
     channels: registeredChannels,
   });
 
-  tmiClient.connect();
+  tmiClient.connect().catch(console.error);
 
   tmiClient.on("message", messageHandler);
 

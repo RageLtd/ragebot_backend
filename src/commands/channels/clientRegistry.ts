@@ -1,4 +1,4 @@
-import { Client, CreateKey, Database } from "faunadb";
+import { Client, CreateKey, Database, Get } from "faunadb";
 import { faunaClient } from "../..";
 
 type ClientMap = {
@@ -14,7 +14,9 @@ interface KeyCreateReponse {
 }
 
 export async function childDbExists(target: string) {
-  const { code } = (await faunaClient.query(Database(target.substring(1)))) as {
+  const { code } = (await faunaClient.query(
+    Get(Database(target.substring(1)))
+  )) as {
     [key: string]: string;
   };
 
