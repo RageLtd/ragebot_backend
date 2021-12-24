@@ -4,3 +4,5 @@ node_modules
 query_scratch.fql
 public
 !src/frontend/public
+
+.vercel

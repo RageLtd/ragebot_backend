@@ -12,12 +12,11 @@ import { subscribeChannelEvents } from "./channelEvents";
 import { ChatFilterRegistry } from "./messages/filterRegistry";
 import { messageHandler } from "./messageHandler";
 
-export let webPort = 80;
-
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
-  webPort = Number(process.env.WEB_PORT);
 }
+
+export let webPort = Number(process.env.WEB_PORT);
 
 export let tmiClient: tmi.Client;
 
