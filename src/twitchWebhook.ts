@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== "production") {
   console.log("Env variables loaded");
 }
 
-const webhookPort = process.env.WEBHOOK_PORT;
+const webhookPort = process.env.PORT;
 
 const secret = process.env.WEBHOOK_SECRET;
 
