@@ -224,6 +224,8 @@ export function initializeRagebotServer() {
     const message = getHMACMessage(req);
     const hmac = HMAC_PREFIX + getHMAC(secret!, message);
 
+    console.log(req.body);
+
     if (verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE])) {
       const notification = JSON.parse(req.body);
 

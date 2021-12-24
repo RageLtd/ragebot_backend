@@ -23,7 +23,7 @@ export async function subscribeChannelEvents(registeredChannels: string[]) {
     const broadcaster_user_id = database.data.user_id.split("|").pop();
     const authToken = await getAuthToken();
 
-    await Promise.all(
+    const responses = await Promise.all(
       subscriptionTypes.map(
         async (subscriptionType) =>
           await fetch(SUBSCRIPTION_URL, {
@@ -49,5 +49,6 @@ export async function subscribeChannelEvents(registeredChannels: string[]) {
           })
       )
     );
+    console.log(responses);
   });
 }
