@@ -120,6 +120,7 @@ export function sendNotification(notification: TwitchNotification) {
 
   const notificationHTML = generateNotificationHTML(parsedNotification);
 
+  console.log("broadcaster username", broadcasterUsername);
   notification_sse_clients[broadcasterUsername].forEach((sse_client) => {
     sse_client.res.write(
       `data: ${JSON.stringify({

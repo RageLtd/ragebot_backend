@@ -235,8 +235,7 @@ export function initializeRagebotServer() {
           res.sendStatus(204);
           break;
         }
-        case "webhook_callback_verification": {
-          console.log(notification);
+        case MESSAGE_TYPE_VERIFICATION: {
           res
             .header("Content-Type", "text/plain")
             .status(200)
