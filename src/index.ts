@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-export let webPort = Number(process.env.WEB_PORT);
+export let webPort = Number(process.env.PORT);
 
 export let tmiClient: tmi.Client;
 
