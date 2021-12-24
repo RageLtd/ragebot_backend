@@ -4,7 +4,7 @@ import FollowerList from "../../components/FollowerList/FollowerList";
 
 async function getFollowers(user_id: string, cursor?: string) {
   let followerList = await fetch(
-    `http://${window.location.hostname}:${8081}/follows?user_id=${user_id}${
+    `https://${window.location.hostname}/follows?user_id=${user_id}${
       cursor ? `&after=${cursor}` : ""
     }`
   ).then((res) => res.json());

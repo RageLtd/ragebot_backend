@@ -1,7 +1,7 @@
 export async function userDbExists(username: string) {
   const res = await fetch(
-    `http://${window.location.hostname}:${
-      Number(window.location.port) + 1
+    `https://${
+      window.location.hostname
     }/user-setup?username=${username.toLowerCase()}`
   );
 
