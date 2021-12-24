@@ -153,9 +153,9 @@ export function initializeRagebotServer() {
       res,
     });
 
-    const interval = setInterval(() => {
-      res.write("\n\n");
-    }, 55 * 1000);
+    res.write("Heartbeat \n\n");
+
+    const interval = setInterval(() => res.write("Heartbeat \n\n"), 50 * 1000);
 
     req.on("close", () => {
       clearInterval(interval);
@@ -217,7 +217,9 @@ export function initializeRagebotServer() {
       res,
     });
 
-    const interval = setInterval(() => res.write("\n\n"), 55 * 1000);
+    res.write("Heartbeat \n\n");
+
+    const interval = setInterval(() => res.write("Heartbeat \n\n"), 50 * 1000);
 
     req.on("close", () => {
       clearInterval(interval);
