@@ -65,6 +65,9 @@ export function initializeRagebotServer() {
           imgSrc: ["self", "static-cdn.jtvnw.net"],
         },
       },
+      crossOriginResourcePolicy: {
+        policy: "cross-origin",
+      },
     })
   );
 
