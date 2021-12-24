@@ -93,7 +93,7 @@ function getUserName(notification: TwitchNotification) {
 }
 
 export function sendNotification(notification: TwitchNotification) {
-  const broadcasterUsername = getUserName(notification);
+  const broadcasterUsername = getUserName(notification).toLowerCase();
 
   let eventWithParsedMessage = {};
 
