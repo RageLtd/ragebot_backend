@@ -227,8 +227,6 @@ export function initializeRagebotServer() {
     const message = getHMACMessage(req);
     const hmac = HMAC_PREFIX + getHMAC(secret!, message);
 
-    console.log(req.headers[MESSAGE_TYPE]);
-
     if (verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE])) {
       const notification = JSON.parse(req.body);
 
@@ -239,6 +237,7 @@ export function initializeRagebotServer() {
           break;
         }
         case MESSAGE_TYPE_VERIFICATION: {
+          console.log(notification);
           res
             .header("Content-Type", "text/plain")
             .status(200)
