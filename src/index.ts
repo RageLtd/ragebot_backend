@@ -1,13 +1,11 @@
 import { Client, Delete } from "faunadb";
-import tmi, { Userstate } from "tmi.js";
+import tmi from "tmi.js";
 
 import { getAllChannelsQuery } from "./commands/channels/channelQueries";
-import { parseMessage } from "./messages/parseMessage";
 import { ClientRegistry } from "./commands/channels/clientRegistry";
 import { CustomCommandRegistry } from "./commands/custom/customRegistry";
 import { clearInterval } from "timers";
 import { initializeRagebotServer } from "./ragebotServer";
-import { initializeTwitchWebhook } from "./twitchWebhook";
 import { subscribeChannelEvents } from "./channelEvents";
 import { ChatFilterRegistry } from "./messages/filterRegistry";
 import { messageHandler } from "./messageHandler";
@@ -87,7 +85,6 @@ async function initialize() {
   tmiClient.on("message", messageHandler);
 
   initializeRagebotServer();
-  initializeTwitchWebhook();
 
   subscribeChannelEvents(registeredChannels);
 }
