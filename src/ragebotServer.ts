@@ -227,11 +227,6 @@ export function initializeRagebotServer() {
     const message = getHMACMessage(req);
     const hmac = HMAC_PREFIX + getHMAC(secret!, message);
 
-    console.log("hmac: ", hmac);
-    console.log("Twitch signature: ", req.headers[TWITCH_MESSAGE_SIGNATURE]);
-    console.log(req.headers[MESSAGE_TYPE]);
-
-    if (verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE])) {
       const notification = JSON.parse(req.body);
 
       switch (req.headers[MESSAGE_TYPE]) {
@@ -271,9 +266,6 @@ export function initializeRagebotServer() {
           );
         }
       }
-    } else {
-      res.sendStatus(403);
-    }
   });
 
   ragebot.listen(webPort, () => {
