@@ -227,7 +227,7 @@ export function initializeRagebotServer() {
     const message = getHMACMessage(req);
     const hmac = HMAC_PREFIX + getHMAC(secret!, message);
 
-      const notification = JSON.parse(req.body);
+      const notification = req.body;
 
       switch (req.headers[MESSAGE_TYPE]) {
         case MESSAGE_TYPE_NOTIFICATION: {
