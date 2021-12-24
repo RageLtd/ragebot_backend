@@ -27,6 +27,7 @@ export async function setupUserDb(username: string, twitchId: string) {
       "filter_blacklist",
       "chat_styles",
       "notification_styles",
+      "notification_variables",
     ].map(async (collection) => {
       console.info(
         `Creating collection ${collection} for new user: ${username}`

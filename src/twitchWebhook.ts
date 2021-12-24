@@ -1,12 +1,14 @@
 import express, { Request } from "express";
 import crypto from "crypto";
+import helmet from "helmet";
+import { sendNotification } from "./notifications/notifications";
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
   console.log("Env variables loaded");
 }
 
-const webhookPort = 8080;
+const webhookPort = process.env.WEBHOOK_PORT;
 
 const secret = process.env.WEBHOOK_SECRET;
 
@@ -35,16 +37,18 @@ export function initializeTwitchWebhook() {
     })
   );
 
+  twitchWebhook.use(helmet());
+
   twitchWebhook.post("/eventsub", (req, res) => {
     const message = getHMACMessage(req);
     const hmac = HMAC_PREFIX + getHMAC(secret!, message);
 
-    if (verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE] as string)) {
+    if (verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE])) {
       const notification = JSON.parse(req.body);
 
       switch (req.headers[MESSAGE_TYPE]) {
         case MESSAGE_TYPE_NOTIFICATION: {
-          console.log(notification);
+          sendNotification(notification);
           res.sendStatus(204);
           break;
         }
@@ -100,7 +104,11 @@ function getHMAC(secret: string, message: string) {
   return crypto.createHmac("sha256", secret).update(message).digest("hex");
 }
 
-function verifyMessage(hmac: string, verifySignature: string) {
+function verifyMessage(hmac: string, verifySignature: any) {
+  if (!verifySignature) {
+    console.error("No signature to verify");
+    return false;
+  }
   return crypto.timingSafeEqual(
     Buffer.from(hmac),
     Buffer.from(verifySignature)

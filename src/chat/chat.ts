@@ -102,7 +102,7 @@ export async function postToChat(
   );
 }
 
-function parseEmotes(
+export function parseEmotes(
   message: string,
   emotes: {
     [emoteid: string]: string[];

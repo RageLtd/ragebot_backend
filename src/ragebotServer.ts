@@ -2,15 +2,22 @@ import cors from "cors";
 import express, { Response } from "express";
 import path from "path";
 import fetch from "cross-fetch";
+import helmet from "helmet";
 import { webPort } from ".";
 import { getAuthToken } from "./authToken";
 import { childDbExists } from "./commands/channels/clientRegistry";
 import { setupUserDb } from "./users/setupUserDb";
 import { readFileSync } from "fs";
 import { getChatStyles } from "./chat/chat";
-import { getNotificationStyles } from "./notifications/notifications";
+import {
+  applyNotificationVariables,
+  getNotificationStyles,
+  getNotificationVariables,
+  NotificationVariables,
+} from "./notifications/notifications";
+import { NotificationVariablesResponse } from "./notifications/notificationQueries";
 
-const TWITCH_HELIX_API = "https://api.twitch.tv/helix";
+export const TWITCH_HELIX_API = "https://api.twitch.tv/helix";
 
 interface SSEClient {
   id: number;
@@ -30,6 +37,16 @@ export function initializeRagebotServer() {
   );
   ragebot.use(express.static(path.resolve(__dirname, "../public")));
   ragebot.use(cors());
+  ragebot.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          imgSrc: ["self", "static-cdn.jtvnw.net"],
+        },
+      },
+    })
+  );
 
   ragebot.get("/", (req, res) => {
     res.sendFile(path.resolve(__dirname, "../public/index.html"));
@@ -146,34 +163,39 @@ export function initializeRagebotServer() {
       );
   });
 
-  ragebot.get("/notifications/:userName/feed", (req, res) => {
+  ragebot.get("/notifications/:userName/feed", async (req, res) => {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
       "Cache-Control": "no-cache",
     });
 
-    res.write(
-      `data: { "data": "Connected to ${req.params.userName}'s notifications" }\n\n`
+    const { userName } = req.params;
+    const { data: notificationVariables } = (await getNotificationVariables(
+      userName
+    ).catch(() => ({}))) as NotificationVariablesResponse;
+
+    applyNotificationVariables(
+      notificationVariables as unknown as NotificationVariables
     );
 
     const clientId = Date.now();
 
     if (
-      !notification_sse_clients[req.params.userName] ||
-      notification_sse_clients[req.params.userName].length === 0
+      !notification_sse_clients[userName] ||
+      notification_sse_clients[userName].length === 0
     ) {
-      notification_sse_clients[req.params.userName] = [];
+      notification_sse_clients[userName] = [];
     }
 
-    notification_sse_clients[req.params.userName].push({
+    notification_sse_clients[userName].push({
       id: clientId,
       res,
     });
 
     req.on("close", () => {
-      notification_sse_clients[req.params.userName] = notification_sse_clients[
-        req.params.userName
+      notification_sse_clients[userName] = notification_sse_clients[
+        userName
       ].filter((client) => client.id !== clientId);
     });
   });

@@ -14,7 +14,7 @@ interface Database {
 
 export async function subscribeChannelEvents(registeredChannels: string[]) {
   registeredChannels.forEach(async (channel) => {
-    if (channel === "#ragebotld") return;
+    if (channel === "#ragebotltd") return;
 
     const database = (await faunaClient.query(
       Get(Database(channel.substring(1)))
