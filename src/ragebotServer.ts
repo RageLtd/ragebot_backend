@@ -227,6 +227,10 @@ export function initializeRagebotServer() {
     const message = getHMACMessage(req);
     const hmac = HMAC_PREFIX + getHMAC(secret!, message);
 
+    console.log("hmac: ", hmac);
+    console.log("Twitch signature: ", req.headers[TWITCH_MESSAGE_SIGNATURE]);
+    console.log(req.headers[MESSAGE_TYPE]);
+
     if (verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE])) {
       const notification = JSON.parse(req.body);
 
@@ -236,7 +240,7 @@ export function initializeRagebotServer() {
           res.sendStatus(204);
           break;
         }
-        case MESSAGE_TYPE_VERIFICATION: {
+        case "webhook_callback_verification": {
           console.log(notification);
           res
             .header("Content-Type", "text/plain")
