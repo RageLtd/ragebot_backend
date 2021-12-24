@@ -139,10 +139,6 @@ export function initializeRagebotServer() {
       "Cache-Control": "no-cache",
     });
 
-    res.write(
-      `data: <span class="message">Connected to ${req.params.userName}'s chatroom</span>\n\n`
-    );
-
     const clientId = Date.now();
 
     if (
