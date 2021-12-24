@@ -42,7 +42,6 @@ const HMAC_PREFIX = "sha256=";
 interface SSEClient {
   id: number;
   res: Response;
-  interval: NodeJS.Timer;
 }
 
 export let chat_sse_clients: { [key: string]: SSEClient[] } = {};
@@ -152,13 +151,14 @@ export function initializeRagebotServer() {
     chat_sse_clients[req.params.userName].push({
       id: clientId,
       res,
-      interval: setInterval(() => res.write("\n\n"), 55 * 1000),
     });
 
+    const interval = setInterval(() => {
+      res.write("\n\n");
+    }, 55 * 1000);
+
     req.on("close", () => {
-      chat_sse_clients[req.params.userName].forEach((client) =>
-        clearInterval(client.interval)
-      );
+      clearInterval(interval);
       chat_sse_clients[req.params.userName] = chat_sse_clients[
         req.params.userName
       ].filter((client) => client.id !== clientId);
@@ -215,13 +215,12 @@ export function initializeRagebotServer() {
     notification_sse_clients[userName].push({
       id: clientId,
       res,
-      interval: setInterval(() => res.write("\n\n"), 55 * 1000),
     });
 
+    const interval = setInterval(() => res.write("\n\n"), 55 * 1000);
+
     req.on("close", () => {
-      notification_sse_clients[userName].forEach((client) =>
-        clearInterval(client.interval)
-      );
+      clearInterval(interval);
       notification_sse_clients[userName] = notification_sse_clients[
         userName
       ].filter((client) => client.id !== clientId);
