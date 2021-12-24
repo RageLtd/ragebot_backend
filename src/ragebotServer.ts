@@ -42,6 +42,7 @@ const HMAC_PREFIX = "sha256=";
 interface SSEClient {
   id: number;
   res: Response;
+  interval: NodeJS.Timer;
 }
 
 export let chat_sse_clients: { [key: string]: SSEClient[] } = {};
@@ -151,9 +152,13 @@ export function initializeRagebotServer() {
     chat_sse_clients[req.params.userName].push({
       id: clientId,
       res,
+      interval: setInterval(() => res.write("\n\n"), 55 * 1000),
     });
 
     req.on("close", () => {
+      chat_sse_clients[req.params.userName].forEach((client) =>
+        clearInterval(client.interval)
+      );
       chat_sse_clients[req.params.userName] = chat_sse_clients[
         req.params.userName
       ].filter((client) => client.id !== clientId);
@@ -210,9 +215,13 @@ export function initializeRagebotServer() {
     notification_sse_clients[userName].push({
       id: clientId,
       res,
+      interval: setInterval(() => res.write("\n\n"), 55 * 1000),
     });
 
     req.on("close", () => {
+      notification_sse_clients[userName].forEach((client) =>
+        clearInterval(client.interval)
+      );
       notification_sse_clients[userName] = notification_sse_clients[
         userName
       ].filter((client) => client.id !== clientId);
@@ -223,44 +232,44 @@ export function initializeRagebotServer() {
     const message = getHMACMessage(req);
     const hmac = HMAC_PREFIX + getHMAC(secret!, message);
 
-      const notification = req.body;
+    const notification = req.body;
 
-      switch (req.headers[MESSAGE_TYPE]) {
-        case MESSAGE_TYPE_NOTIFICATION: {
-          sendNotification(notification);
-          res.sendStatus(204);
-          break;
-        }
-        case MESSAGE_TYPE_VERIFICATION: {
-          res
-            .header("Content-Type", "text/plain")
-            .status(200)
-            .send(notification.challenge);
-          break;
-        }
-        case MESSAGE_TYPE_REVOCATION: {
-          res.sendStatus(204);
-
-          console.info(
-            `${notification.subscription.type} notifications revoked!`
-          );
-          console.info(`reason: ${notification.subscription.status}`);
-          console.info(
-            `condition: ${JSON.stringify(
-              notification.subscription.condition,
-              null,
-              4
-            )}`
-          );
-          break;
-        }
-        default: {
-          res.sendStatus(204);
-          console.info(
-            `Unknown message type received: ${req.headers[MESSAGE_TYPE]}`
-          );
-        }
+    switch (req.headers[MESSAGE_TYPE]) {
+      case MESSAGE_TYPE_NOTIFICATION: {
+        sendNotification(notification);
+        res.sendStatus(204);
+        break;
       }
+      case MESSAGE_TYPE_VERIFICATION: {
+        res
+          .header("Content-Type", "text/plain")
+          .status(200)
+          .send(notification.challenge);
+        break;
+      }
+      case MESSAGE_TYPE_REVOCATION: {
+        res.sendStatus(204);
+
+        console.info(
+          `${notification.subscription.type} notifications revoked!`
+        );
+        console.info(`reason: ${notification.subscription.status}`);
+        console.info(
+          `condition: ${JSON.stringify(
+            notification.subscription.condition,
+            null,
+            4
+          )}`
+        );
+        break;
+      }
+      default: {
+        res.sendStatus(204);
+        console.info(
+          `Unknown message type received: ${req.headers[MESSAGE_TYPE]}`
+        );
+      }
+    }
   });
 
   ragebot.listen(webPort, () => {
