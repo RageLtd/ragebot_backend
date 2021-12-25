@@ -54,7 +54,7 @@ function App() {
             ...user,
             user_id: user.user_id.split("|").pop(),
           });
-          return user;
+          return { ...user, user_id: user.user_id.split("|").pop };
         })
         .then(async (user) => {
           if (!userDbExists(user.username)) {
