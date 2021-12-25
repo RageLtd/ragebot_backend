@@ -71,6 +71,10 @@ export function initializeRagebotServer() {
     })
   );
 
+  ragebot.use((req, res) => {
+    res.redirect("/");
+  });
+
   ragebot.get("/", (req, res) => {
     res.sendFile(path.resolve(__dirname, "../public/index.html"));
   });
