@@ -54,7 +54,7 @@ const redemptionTokens = [
 export let timeoutInMillis = 5 * 1000;
 
 export interface NotificationVariables {
-  userFollowMessage: string;
+  followMessage: string;
   followPrefixString: string;
   followPostfixString: string;
   newSubMessage: string;
@@ -63,11 +63,24 @@ export interface NotificationVariables {
   resubMessage: string;
   resubPrefixString: string;
   resubPostfixString: string;
+  channelGiftMessage: string;
+  channelGiftPrefixString: string;
+  channelGiftPostfixString: string;
+  cheerMessage: string;
+  cheerPrefixString: string;
+  cheerPostfixString: string;
+  raidMessage: string;
+  raidPrefixString: string;
+  raidPostfixString: string;
+  redemptionMessage: string;
+  redemptionPrefixString: string;
+  redemptionPostfixString: string;
+
   timeoutInMillis: number;
 }
 
 export function applyNotificationVariables(variables: NotificationVariables) {
-  followMessage = variables.userFollowMessage || followMessage;
+  followMessage = variables.followMessage || followMessage;
   followPrefixString = variables.followPrefixString || followPrefixString;
   followPostfixString = variables.followPostfixString || followPostfixString;
   newSubMessage = variables.newSubMessage || newSubMessage;
@@ -76,6 +89,23 @@ export function applyNotificationVariables(variables: NotificationVariables) {
   resubMessage = variables.resubMessage || resubMessage;
   resubPrefixString = variables.resubPrefixString || resubPrefixString;
   resubPostfixString = variables.resubPostfixString || resubPostfixString;
+  channelGiftMessage = variables.channelGiftMessage || channelGiftMessage;
+  channelGiftPrefixString =
+    variables.channelGiftPrefixString || channelGiftPrefixString;
+  channelGiftPostfixString =
+    variables.channelGiftPostfixString || channelGiftPostfixString;
+  cheerMessage = variables.cheerMessage || cheerMessage;
+  cheerPrefixString = variables.cheerPrefixString || cheerPrefixString;
+  cheerPostfixString = variables.cheerPostfixString || cheerPostfixString;
+  raidMessage = variables.raidMessage || raidMessage;
+  raidPrefixString = variables.raidPrefixString || raidPrefixString;
+  raidPostfixString = variables.raidPostfixString || raidPostfixString;
+  redemptionMessage = variables.redemptionMessage || redemptionMessage;
+  redemptionPrefixString =
+    variables.redemptionPrefixString || redemptionPrefixString;
+  redemptionPostfixString =
+    variables.redemptionPostfixString || redemptionPostfixString;
+
   timeoutInMillis = variables.timeoutInMillis || timeoutInMillis;
 }
 
@@ -97,11 +127,11 @@ export async function getNotificationStyles(username: string) {
 export function getUserName(notification: TwitchNotification) {
   if (notification.event.broadcaster_user_name) {
     return notification.event.broadcaster_user_name === "testBroadcaster"
-      ? "rageltd"
+      ? "RageLtd"
       : notification.event.broadcaster_user_name!;
   }
   return notification.event.to_broadcaster_user_name === "testBroadcaster"
-    ? "rageltd"
+    ? "RageLtd"
     : notification.event.to_broadcaster_user_name!;
 }
 

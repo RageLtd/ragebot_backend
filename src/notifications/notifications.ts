@@ -1,6 +1,7 @@
 import { merge } from "lodash";
-// import { webhookRegistry } from "..";
+import { webhookRegistry } from "..";
 import { parseEmotes } from "../chat/chat";
+import discord from "../discord/discord";
 import { notification_sse_clients } from "../ragebotServer";
 import {
   getUserName,
@@ -84,21 +85,26 @@ export function sendNotification(notification: TwitchNotification) {
   });
 }
 
-// async function postStatusUpdate(
-//   broadcasterUsername: string,
-//   eventData: TwitchNotificationEvent
-// ) {
-//   const webhookUrls = await webhookRegistry.getWebhookUrls(
-//     `#${broadcasterUsername}`
-//   );
+async function postStatusUpdate(
+  broadcasterUsername: string,
+  eventData: TwitchNotificationEvent
+) {
+  const webhookUrls = await webhookRegistry.getWebhookUrls(
+    `#${broadcasterUsername.toLowerCase()}`
+  );
 
-//   console.log(webhookUrls);
-
-//   sendMessage(webhookUrls, eventData.message || "")
-// }
+  Object.keys(webhookUrls).map((service) => {
+    switch (service) {
+      case "discord": {
+        discord.sendMessage((webhookUrls[service] = []), eventData);
+        break;
+      }
+    }
+  });
+}
 
 function generateNotificationHTML(parsedNotification: TwitchNotification) {
-  const broadcasterUsername = getUserName(parsedNotification).toLowerCase();
+  const broadcasterUsername = getUserName(parsedNotification);
   const eventData =
     parsedNotification.event as unknown as TwitchNotificationEvent;
 
@@ -124,8 +130,8 @@ function generateNotificationHTML(parsedNotification: TwitchNotification) {
     case "channel.channel_points_custom_reward_redemption.add": {
       return parseChannelPointRedemptionMessage(eventData);
     }
-    // case "channel.update": {
-    //   return postStatusUpdate(broadcasterUsername, eventData);
-    // }
+    case "channel.update": {
+      return postStatusUpdate(broadcasterUsername, eventData);
+    }
   }
 }

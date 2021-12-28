@@ -6,4 +6,5 @@ export const subscriptionTypes = [
   "channel.cheer",
   "channel.raid",
   "channel.channel_points_custom_reward_redemption.add",
+  "channel.update",
 ];

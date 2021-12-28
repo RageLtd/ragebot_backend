@@ -9,7 +9,7 @@ import { initializeRagebotServer } from "./ragebotServer";
 import { subscribeChannelEvents } from "./channelEvents";
 import { ChatFilterRegistry } from "./messages/filterRegistry";
 import { messageHandler } from "./messageHandler";
-// import { WebhookRegistry } from "./webhooks/webhookRegistry";
+import { WebhookRegistry } from "./webhooks/webhookRegistry";
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -56,7 +56,7 @@ export let clientRegistry: ClientRegistry;
 
 export let filterRegistry: ChatFilterRegistry;
 
-// export let webhookRegistry: WebhookRegistry;
+export let webhookRegistry: WebhookRegistry;
 
 getAllChannels().then((rawChannels) => {
   registeredChannels = rawChannels.data.map((channel) =>
@@ -66,7 +66,7 @@ getAllChannels().then((rawChannels) => {
   clientRegistry = new ClientRegistry();
   customCommandRegistry = new CustomCommandRegistry();
   filterRegistry = new ChatFilterRegistry();
-  // webhookRegistry = new WebhookRegistry();
+  webhookRegistry = new WebhookRegistry();
 
   initialize();
 });
