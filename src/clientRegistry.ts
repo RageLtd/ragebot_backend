@@ -1,5 +1,5 @@
 import { Client, CreateKey, Database, Get } from "faunadb";
-import { faunaClient } from "../..";
+import { faunaClient } from ".";
 
 type ClientMap = {
   [key: string]: {

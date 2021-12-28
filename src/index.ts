@@ -2,13 +2,14 @@ import { Client, Delete } from "faunadb";
 import tmi from "tmi.js";
 
 import { getAllChannelsQuery } from "./commands/channels/channelQueries";
-import { ClientRegistry } from "./commands/channels/clientRegistry";
+import { ClientRegistry } from "./clientRegistry";
 import { CustomCommandRegistry } from "./commands/custom/customRegistry";
 import { clearInterval } from "timers";
 import { initializeRagebotServer } from "./ragebotServer";
 import { subscribeChannelEvents } from "./channelEvents";
 import { ChatFilterRegistry } from "./messages/filterRegistry";
 import { messageHandler } from "./messageHandler";
+import { WebhookRegistry } from "./webhooks/webhookRegistry";
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -55,6 +56,8 @@ export let clientRegistry: ClientRegistry;
 
 export let filterRegistry: ChatFilterRegistry;
 
+export let webhookRegistry: WebhookRegistry;
+
 getAllChannels().then((rawChannels) => {
   registeredChannels = rawChannels.data.map((channel) =>
     channel.data.name.toLowerCase()
@@ -63,6 +66,7 @@ getAllChannels().then((rawChannels) => {
   clientRegistry = new ClientRegistry();
   customCommandRegistry = new CustomCommandRegistry();
   filterRegistry = new ChatFilterRegistry();
+  webhookRegistry = new WebhookRegistry();
 
   initialize();
 });
@@ -89,18 +93,23 @@ async function initialize() {
   subscribeChannelEvents(registeredChannels);
 }
 
-process.once("SIGUSR2", async () => {
+const doCleanup = () => {
   // Clean up all dangling client keys on exit
-  await Promise.all(
+  Promise.all(
     Object.values(clientRegistry.clients).map(async (client) => {
       await faunaClient.query(Delete(client.ref));
     })
-  );
+  )
+    .then(() => {
+      Object.values(customCommandRegistry.timerRegistry).map((channel) =>
+        Object.values(channel).map((timer) => clearInterval(timer))
+      );
+    })
+    .finally(() => {
+      process.exit(0);
+    });
+};
 
-  // Clean up dangling timers
-  Object.values(customCommandRegistry.timerRegistry).map((channel) =>
-    Object.values(channel).map((timer) => clearInterval(timer))
-  );
-
-  process.kill(process.pid, "SIGUSR2");
-});
+["SIGUSR2", "SIGTERM", "SIGINT"].forEach((signal) =>
+  process.on(signal, doCleanup)
+);

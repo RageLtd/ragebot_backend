@@ -1,6 +1,6 @@
 import { Collection } from "faunadb";
 import { clientRegistry, faunaClient } from "..";
-import { childDbExists } from "../commands/channels/clientRegistry";
+import { childDbExists } from "../clientRegistry";
 import {
   createBaseCollectionQuery,
   createBaseIndexQuery,
