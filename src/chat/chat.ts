@@ -113,9 +113,10 @@ export function parseEmotes(
       return _.map(emoteLocations, (chars) => {
         const indexes = chars.split("-");
         return {
-          url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/${
-            emoteId.startsWith("emotesv2_") ? "animated" : "static"
-          }/light/1.0`,
+          // url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/${
+          //   emoteId.startsWith("emotesv2_") ? "animated" : "static"
+          // }/light/1.0`,
+          url: `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/light/1.0`,
           startIndex: parseInt(indexes[0]),
           endIndex: parseInt(indexes[1]) + 1,
         };
