@@ -96,7 +96,7 @@ async function postStatusUpdate(
   Object.keys(webhookUrls).map((service) => {
     switch (service) {
       case "discord": {
-        discord.sendMessage((webhookUrls[service] = []), eventData);
+        discord.sendMessage(webhookUrls[service] || [], eventData);
         break;
       }
     }
