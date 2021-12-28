@@ -1,5 +1,5 @@
 import { merge } from "lodash";
-import { webhookRegistry } from "..";
+// import { webhookRegistry } from "..";
 import { parseEmotes } from "../chat/chat";
 import { notification_sse_clients } from "../ragebotServer";
 import {
@@ -84,18 +84,18 @@ export function sendNotification(notification: TwitchNotification) {
   });
 }
 
-async function postStatusUpdate(
-  broadcasterUsername: string,
-  eventData: TwitchNotificationEvent
-) {
-  const webhookUrls = await webhookRegistry.getWebhookUrls(
-    `#${broadcasterUsername}`
-  );
+// async function postStatusUpdate(
+//   broadcasterUsername: string,
+//   eventData: TwitchNotificationEvent
+// ) {
+//   const webhookUrls = await webhookRegistry.getWebhookUrls(
+//     `#${broadcasterUsername}`
+//   );
 
-  console.log(webhookUrls);
+//   console.log(webhookUrls);
 
-  // sendMessage(webhookUrls, eventData.message || "")
-}
+//   sendMessage(webhookUrls, eventData.message || "")
+// }
 
 function generateNotificationHTML(parsedNotification: TwitchNotification) {
   const broadcasterUsername = getUserName(parsedNotification).toLowerCase();
