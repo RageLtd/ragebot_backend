@@ -89,7 +89,6 @@ export function initializeRagebotServer() {
   });
 
   ragebot.post("/api/user-setup", async (req, res) => {
-    console.log(req.body);
     await setupUserDb(req.body.username.toLowerCase(), req.body.user_id);
     res.sendStatus(200);
   });
@@ -218,11 +217,7 @@ export function initializeRagebotServer() {
 
   ragebot.patch("/api/integrations/:userName", async (req, res) => {
     const { userName } = req.params;
-
-    console.log(req.body);
     const faunaRes = await webhookRegistry.updateWebhook(userName, req.body);
-
-    console.log(faunaRes);
 
     /// @ts-expect-error
     res.send(faunaRes?.data);
@@ -244,9 +239,8 @@ export function initializeRagebotServer() {
       req.body
     );
 
-    console.log(commandRes);
-
-    res.send(commandRes);
+    /// @ts-expect-error
+    res.send(commandRes.data);
   });
 
   ragebot.post("/eventsub", handleEventSubPost);

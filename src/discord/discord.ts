@@ -27,7 +27,6 @@ function sendMessage(
   eventData: TwitchNotificationEvent
 ) {
   webhookUrls.forEach((url) => {
-    console.log(url);
     fetch(url, {
       method: "post",
       headers: {

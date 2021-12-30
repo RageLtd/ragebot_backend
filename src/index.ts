@@ -73,7 +73,7 @@ getAllChannels().then((rawChannels) => {
 
 async function initialize() {
   tmiClient = new tmi.Client({
-    options: { debug: true },
+    options: { debug: process.env.NODE_ENV !== "production" },
     connection: {
       secure: true,
     },
