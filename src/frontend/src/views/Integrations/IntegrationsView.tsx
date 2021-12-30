@@ -89,6 +89,7 @@ export default function IntegrationsView({
   };
 
   const removeIntegration = (integration: Integration) => {
+    // eslint-disable-next-line
     if (confirm(`Are you sure you want to remove ${integration.name}?`)) {
       fetch(`/integrations/${twitchUserInfo.username}`, {
         method: "DELETE",

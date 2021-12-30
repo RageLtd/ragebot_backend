@@ -24,4 +24,7 @@ npx tsc
 cp ./src/chat/layout.html ./public/chat/
 cp ./src/notifications/layout.html ./public/notifications/
 
+echo "Cleaning up..."
+rm -rf ./src/frontend/node_modules
+
 echo "Built and ready to go!"
