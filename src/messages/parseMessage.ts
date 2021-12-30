@@ -130,7 +130,7 @@ export async function handleCustomCommands(
   const customCommands = await customCommandRegistry.getCommands(target);
   const command = bangCommand.substring(1);
 
-  if (customCommands.filter((c) => c.name === command).length) {
+  if (customCommands.filter((c) => c.name === command).length === 0) {
     return;
   }
 
