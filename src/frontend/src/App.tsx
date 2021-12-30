@@ -6,6 +6,7 @@ import Followers from "./views/Followers/Followers";
 import { useEffect, useState } from "react";
 import { setupUserDb } from "./views/utils/setupUserDb";
 import { userDbExists } from "./views/utils/user";
+import IntegrationsView from "./views/Integrations/IntegrationsView";
 
 function App() {
   const {
@@ -69,22 +70,33 @@ function App() {
   }, [getAccessTokenSilently, user, isAuthenticated]);
 
   const handleLogout = () => logout({ returnTo: window.location.origin });
+
+  const routes = (
+    <Routes>
+      <Route
+        path="/"
+        element={withAuthenticationRequired(DashboardView)({
+          twitchUserInfo,
+        })}
+      />
+      <Route
+        path="/followers"
+        element={withAuthenticationRequired(Followers)({ twitchUserInfo })}
+      />
+      <Route
+        path="/integrations"
+        element={withAuthenticationRequired(IntegrationsView)({
+          twitchUserInfo,
+        })}
+      />
+    </Routes>
+  );
+
   if (isApplicationLoading()) {
     return (
       <div className="App">
         <h3>Loading...</h3>
-        <Routes>
-          <Route
-            path="/"
-            element={withAuthenticationRequired(DashboardView)({
-              twitchUserInfo,
-            })}
-          />
-          <Route
-            path="/followers"
-            element={withAuthenticationRequired(Followers)({ twitchUserInfo })}
-          />
-        </Routes>
+        {routes}
       </div>
     );
   }
@@ -94,36 +106,14 @@ function App() {
     return (
       <div className="App">
         <p>Something broke! {error.message}</p>
-        <Routes>
-          <Route
-            path="/"
-            element={withAuthenticationRequired(DashboardView)({
-              twitchUserInfo,
-            })}
-          />
-          <Route
-            path="/followers"
-            element={withAuthenticationRequired(Followers)({ twitchUserInfo })}
-          />
-        </Routes>
+        {routes}
       </div>
     );
   }
   return (
     <div className="App">
       {isAuthenticated && <button onClick={handleLogout}>Log out</button>}
-      <Routes>
-        <Route
-          path="/"
-          element={withAuthenticationRequired(DashboardView)({
-            twitchUserInfo,
-          })}
-        />
-        <Route
-          path="/followers"
-          element={withAuthenticationRequired(Followers)({ twitchUserInfo })}
-        />
-      </Routes>
+      {routes}
     </div>
   );
 }

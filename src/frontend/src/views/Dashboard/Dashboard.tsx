@@ -12,7 +12,12 @@ export default function DashboardView({ twitchUserInfo }: DashboardViewProps) {
     <div>
       <p>Holy shit auth is working</p>
       <p>Username: {twitchUserInfo?.username}</p>
-      <Link to="/followers">Followers</Link>
+      <p>
+        <Link to="/followers">Followers</Link>
+      </p>
+      <p>
+        <Link to="/integrations">Integrations</Link>
+      </p>
     </div>
   );
 }

@@ -93,10 +93,10 @@ async function postStatusUpdate(
     `#${broadcasterUsername.toLowerCase()}`
   );
 
-  Object.keys(webhookUrls).map((service) => {
-    switch (service) {
+  webhookUrls.map((service) => {
+    switch (service.name) {
       case "discord": {
-        discord.sendMessage(webhookUrls[service] || [], eventData);
+        discord.sendMessage(service.webhookUrls || [], eventData);
         break;
       }
     }

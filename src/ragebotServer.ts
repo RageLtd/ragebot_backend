@@ -3,7 +3,7 @@ import express, { Response } from "express";
 import path from "path";
 import fetch from "cross-fetch";
 import helmet from "helmet";
-import { webPort } from ".";
+import { webhookRegistry, webPort } from ".";
 import { getAuthToken } from "./authToken";
 import { childDbExists } from "./clientRegistry";
 import { setupUserDb } from "./users/setupUserDb";
@@ -208,6 +208,24 @@ export function initializeRagebotServer() {
         userName
       ].filter((client) => client.id !== clientId);
     });
+  });
+
+  ragebot.get("/integrations/:userName", async (req, res) => {
+    const { userName } = req.params;
+
+    res.status(200).send(await webhookRegistry.getWebhookUrls(`#${userName}`));
+  });
+
+  ragebot.patch("/integrations/:userName", async (req, res) => {
+    const { userName } = req.params;
+
+    console.log(req.body);
+    const faunaRes = await webhookRegistry.updateWebhook(userName, req.body);
+
+    console.log(faunaRes);
+
+    /// @ts-expect-error
+    res.send(faunaRes?.data);
   });
 
   ragebot.post("/eventsub", handleEventSubPost);

@@ -167,4 +167,15 @@ const indexDefinitions = [
       },
     ],
   },
+  {
+    name: "webhook_by_name",
+    unique: false,
+    serialized: true,
+    source: "webhooks",
+    terms: [
+      {
+        field: ["data", "name"],
+      },
+    ],
+  },
 ];

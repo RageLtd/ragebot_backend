@@ -1,39 +1,31 @@
 import { clientRegistry } from "../index";
-import { getWebhookUrlsQuery, WebhooksResponse } from "./webhookQueries";
-
-type WebhookMap = {
-  [key: string]: {
-    [key: string]: string[];
-  };
-};
+import {
+  getWebhookUrlsQuery,
+  updateWebhookQuery,
+  WebhooksResponse,
+} from "./webhookQueries";
 
 export class WebhookRegistry {
-  webhooks: WebhookMap = {};
-
   async getWebhookUrls(target: string) {
-    if (this.webhooks[target]) {
-      return this.webhooks[target];
-    }
-
     const client = await clientRegistry.getClient(target);
 
-    const { data: webHooks } = (await client?.query(
+    const { data: webhooks } = (await client?.query(
       getWebhookUrlsQuery()
     )) as WebhooksResponse;
 
-    const oldWebhooks = this.webhooks[target] || {};
+    return webhooks;
+  }
 
-    this.webhooks[target] = {
-      ...oldWebhooks,
-      ...webHooks?.reduce(
-        (acc: { [key: string]: string[] }, { name, webhookUrl }) => ({
-          ...acc,
-          [name]: acc[name] ? [...acc[name], webhookUrl] : [webhookUrl],
-        }),
-        {}
-      ),
-    };
+  async addWebhook() {
+    throw new Error("Implement adding a webhook, dumbass");
+  }
 
-    return this.webhooks[target];
+  async updateWebhook(
+    username: string,
+    webhook: { name: string; webhookUrls: string[] }
+  ) {
+    const client = await clientRegistry.getClient(`#${username}`);
+
+    return client?.query(updateWebhookQuery(webhook));
   }
 }

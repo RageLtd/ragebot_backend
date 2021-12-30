@@ -27,6 +27,7 @@ function sendMessage(
   eventData: TwitchNotificationEvent
 ) {
   webhookUrls.forEach((url) => {
+    console.log(url);
     fetch(url, {
       method: "post",
       headers: {
@@ -39,9 +40,7 @@ function sendMessage(
           eventData
         ),
       }),
-    })
-      .then((json) => console.log(json))
-      .catch((err) => console.error(err));
+    }).catch((err) => console.error(err));
   });
 }
 
