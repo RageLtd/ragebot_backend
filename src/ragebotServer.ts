@@ -3,7 +3,7 @@ import express, { Response } from "express";
 import path from "path";
 import fetch from "cross-fetch";
 import helmet from "helmet";
-import { webhookRegistry, webPort } from ".";
+import { customCommandRegistry, webhookRegistry, webPort } from ".";
 import { getAuthToken } from "./authToken";
 import { childDbExists } from "./clientRegistry";
 import { setupUserDb } from "./users/setupUserDb";
@@ -56,7 +56,7 @@ export function initializeRagebotServer() {
     res.sendFile(path.resolve(__dirname, "../public/index.html"));
   });
 
-  ragebot.get("/user-setup", async (req, res) => {
+  ragebot.get("/api/user-setup", async (req, res) => {
     const { username } = req.query;
 
     const exists = await childDbExists(`#${username}`);
@@ -68,7 +68,7 @@ export function initializeRagebotServer() {
     res.sendStatus(404);
   });
 
-  ragebot.get("/follows", async (req, res) => {
+  ragebot.get("/api/follows", async (req, res) => {
     const { user_id, after } = req.query;
 
     const authToken = await getAuthToken();
@@ -88,7 +88,7 @@ export function initializeRagebotServer() {
     res.status(twitchRes.status).send(await twitchRes.json());
   });
 
-  ragebot.post("/user-setup", async (req, res) => {
+  ragebot.post("/api/user-setup", async (req, res) => {
     console.log(req.body);
     await setupUserDb(req.body.username.toLowerCase(), req.body.user_id);
     res.sendStatus(200);
@@ -113,7 +113,7 @@ export function initializeRagebotServer() {
       );
   });
 
-  ragebot.get("/chat/:userName/feed", (req, res) => {
+  ragebot.get("/api/chat/:userName/feed", (req, res) => {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
@@ -146,7 +146,7 @@ export function initializeRagebotServer() {
     });
   });
 
-  ragebot.get("/notifications/:userName", async (req, res) => {
+  ragebot.get("/api/notifications/:userName", async (req, res) => {
     const notificationPagePath = path.resolve(
       __dirname,
       "../public/notifications/layout.html"
@@ -168,7 +168,7 @@ export function initializeRagebotServer() {
       );
   });
 
-  ragebot.get("/notifications/:userName/feed", async (req, res) => {
+  ragebot.get("/api/notifications/:userName/feed", async (req, res) => {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
@@ -210,13 +210,13 @@ export function initializeRagebotServer() {
     });
   });
 
-  ragebot.get("/integrations/:userName", async (req, res) => {
+  ragebot.get("/api/integrations/:userName", async (req, res) => {
     const { userName } = req.params;
 
     res.status(200).send(await webhookRegistry.getWebhookUrls(`#${userName}`));
   });
 
-  ragebot.patch("/integrations/:userName", async (req, res) => {
+  ragebot.patch("/api/integrations/:userName", async (req, res) => {
     const { userName } = req.params;
 
     console.log(req.body);
@@ -228,7 +228,32 @@ export function initializeRagebotServer() {
     res.send(faunaRes?.data);
   });
 
+  ragebot.get("/api/commands/:userName", async (req, res) => {
+    const { userName } = req.params;
+
+    const commandRes = await customCommandRegistry.getCommands(`#${userName}`);
+
+    res.status(200).send(commandRes);
+  });
+
+  ragebot.patch("/api/commands/:userName", async (req, res) => {
+    const { userName } = req.params;
+
+    const commandRes = await customCommandRegistry.updateCommand(
+      `#${userName.toLowerCase()}`,
+      req.body
+    );
+
+    console.log(commandRes);
+
+    res.send(commandRes);
+  });
+
   ragebot.post("/eventsub", handleEventSubPost);
+
+  // ragebot.get("/*", (req, res) =>
+  //   res.sendFile(path.resolve(__dirname, "../public/index.html"))
+  // );
 
   ragebot.listen(webPort, () => {
     console.log(`Webserver listening on: ${webPort}`);

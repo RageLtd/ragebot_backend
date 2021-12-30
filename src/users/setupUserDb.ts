@@ -178,4 +178,15 @@ const indexDefinitions = [
       },
     ],
   },
+  {
+    name: "command_by_id",
+    unique: false,
+    serialized: true,
+    source: "commands",
+    terms: [
+      {
+        field: ["data", "id"],
+      },
+    ],
+  },
 ];

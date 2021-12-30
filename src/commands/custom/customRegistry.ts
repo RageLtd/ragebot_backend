@@ -8,6 +8,7 @@ import {
   getCountQuery,
   getCustomCommandsQuery,
   incrementCounterQuery,
+  updateCustomCommandByIdQuery,
 } from "./customQueries";
 
 interface CommandRegistry {
@@ -34,6 +35,26 @@ export class CustomCommandRegistry {
     });
   }
 
+  async getCommands(target: string) {
+    const client = await clientRegistry.getClient(target);
+    const { data } = (await client?.query(
+      getCustomCommandsQuery()
+    )) as CommandResponse;
+
+    return data;
+  }
+
+  async updateCommand(target: string, command: Command) {
+    const client = await clientRegistry.getClient(target).catch(console.error);
+    const res = await client
+      ?.query(updateCustomCommandByIdQuery(command))
+      .catch(console.error);
+
+    await this.refreshCommands(target);
+
+    return res;
+  }
+
   async refreshCommands(target: string) {
     const client = await clientRegistry.getClient(target);
 
@@ -43,8 +64,8 @@ export class CustomCommandRegistry {
 
     this.commandRegistry[target] = data.reduce(
       (
-        acc: { [key: string]: { [key: string]: string } },
-        { data: { name, ...commandAttributes } }: Command
+        acc: { [key: string]: { [key: string]: any } },
+        { name, ...commandAttributes }: Command
       ) => {
         acc[name] = { ...commandAttributes };
         return acc;

@@ -29,7 +29,7 @@ export default function IntegrationsView({
     draftUrl: "",
   });
   useEffect(() => {
-    fetch(`/integrations/${twitchUserInfo.username?.toLowerCase()}`)
+    fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`)
       .then((res) => res.json())
       .then((json) => setIntegrations(json));
   }, [twitchUserInfo]);
@@ -68,7 +68,7 @@ export default function IntegrationsView({
   };
 
   const saveEditedIntegration = (integration: Integration) => {
-    fetch(`/integrations/${twitchUserInfo.username?.toLowerCase()}`, {
+    fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`, {
       method: "PATCH",
       body: JSON.stringify(integration),
       headers: {
@@ -91,7 +91,7 @@ export default function IntegrationsView({
   const removeIntegration = (integration: Integration) => {
     // eslint-disable-next-line
     if (confirm(`Are you sure you want to remove ${integration.name}?`)) {
-      fetch(`/integrations/${twitchUserInfo.username}`, {
+      fetch(`/api/integrations/${twitchUserInfo.username}`, {
         method: "DELETE",
         body: JSON.stringify(integration),
         headers: {

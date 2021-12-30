@@ -84,13 +84,14 @@ async function initialize() {
     channels: registeredChannels,
   });
 
-  tmiClient.connect().catch(console.error);
-
   tmiClient.on("message", messageHandler);
 
   initializeRagebotServer();
 
-  subscribeChannelEvents(registeredChannels);
+  if (process.env.NODE_ENV === "production") {
+    tmiClient.connect().catch(console.error);
+    subscribeChannelEvents(registeredChannels);
+  }
 }
 
 const doCleanup = () => {

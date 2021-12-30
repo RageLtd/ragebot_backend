@@ -25,6 +25,7 @@
     "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.11",
     "@types/tmi.js": "^1.8.1",
+    "@types/uuid": "^8.3.3",
     "dotenv": "^10.0.0",
     "jest": "^27.4.3",
     "nodemon": "^2.0.15",
@@ -38,7 +39,8 @@
     "faunadb": "^4.4.1",
     "helmet": "^4.6.0",
     "lodash": "^4.17.21",
-    "tmi.js": "^1.8.5"
+    "tmi.js": "^1.8.5",
+    "uuid": "^8.3.2"
   },
   "jest": {
     "modulePathIgnorePatterns": [

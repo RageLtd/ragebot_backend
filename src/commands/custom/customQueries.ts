@@ -28,11 +28,13 @@ export interface TimersResponse {
 }
 
 export interface Command {
-  data: {
-    name: string;
-    behavior: string;
-    response: string;
-  };
+  id: string;
+  name: string;
+  behavior: string;
+  response: string;
+  modOnly: boolean;
+  subOnly: boolean;
+  timeoutInMillis: number;
 }
 
 export interface CommandResponse {
@@ -49,6 +51,7 @@ export interface CountResponse {
 }
 
 export const addCustomCommandQuery = (
+  id: string,
   name: string,
   behavior: string,
   modOnly: boolean,
@@ -58,6 +61,7 @@ export const addCustomCommandQuery = (
 ) =>
   Create(Collection("commands"), {
     data: {
+      id,
       name,
       behavior,
       response,
@@ -67,7 +71,7 @@ export const addCustomCommandQuery = (
     },
   });
 
-export const updateCustomCommandQuery = (
+export const updateCustomCommandByNameQuery = (
   name: string,
   behavior: string,
   modOnly: boolean,
@@ -85,6 +89,21 @@ export const updateCustomCommandQuery = (
     },
   });
 
+export const updateCustomCommandByIdQuery = (command: {
+  id: string;
+  name: string;
+  behavior: string;
+  modOnly: boolean;
+  subOnly: boolean;
+  timeoutInMillis: number;
+  response: string;
+}) => {
+  const { id, ...rest } = command;
+  return Update(Select("ref", Get(Match(Index("command_by_id"), id))), {
+    data: rest,
+  });
+};
+
 export const removeCustomCommandQuery = (command: string) =>
   Map(
     Paginate(Match(Index("command_by_name"), command)),
@@ -94,7 +113,7 @@ export const removeCustomCommandQuery = (command: string) =>
 export const getCustomCommandsQuery = () =>
   Map(
     Paginate(Documents(Collection("commands"))),
-    Lambda(["ref"], Get(Var("ref")))
+    Lambda(["ref"], Select("data", Get(Var("ref"))))
   );
 
 export const getCountQuery = (command: string) =>

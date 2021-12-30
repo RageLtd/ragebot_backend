@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { setupUserDb } from "./views/utils/setupUserDb";
 import { userDbExists } from "./views/utils/user";
 import IntegrationsView from "./views/Integrations/IntegrationsView";
+import CommandsView from "./views/Commands/CommandsView";
 
 function App() {
   const {
@@ -88,6 +89,10 @@ function App() {
         element={withAuthenticationRequired(IntegrationsView)({
           twitchUserInfo,
         })}
+      />
+      <Route
+        path="commands"
+        element={withAuthenticationRequired(CommandsView)({ twitchUserInfo })}
       />
     </Routes>
   );

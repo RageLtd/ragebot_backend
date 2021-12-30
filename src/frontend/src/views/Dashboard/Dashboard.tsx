@@ -18,6 +18,9 @@ export default function DashboardView({ twitchUserInfo }: DashboardViewProps) {
       <p>
         <Link to="/integrations">Integrations</Link>
       </p>
+      <p>
+        <Link to="/commands">Commands</Link>
+      </p>
     </div>
   );
 }

@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  MouseEventHandler,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import EditableUrl from "./EditableUrl/EditableUrl";
 
 interface IntegrationProps {

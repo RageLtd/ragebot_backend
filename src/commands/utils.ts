@@ -1,3 +1,4 @@
+import uuid from "uuid";
 import { clientRegistry } from "..";
 import {
   addBacklogQuery,
@@ -7,7 +8,7 @@ import {
 import {
   addCustomCommandQuery,
   setCustomCounterQuery,
-  updateCustomCommandQuery,
+  updateCustomCommandByNameQuery,
 } from "./custom/customQueries";
 import {
   getCurrentGameQuery,
@@ -63,6 +64,7 @@ export async function setCommand(
 
   return client?.query(
     addCustomCommandQuery(
+      uuid.v4(),
       name,
       behavior,
       modOnly,
@@ -85,7 +87,7 @@ export async function updateCommand(
   const client = await clientRegistry.getClient(target);
 
   return client?.query(
-    updateCustomCommandQuery(
+    updateCustomCommandByNameQuery(
       name,
       behavior,
       modOnly,

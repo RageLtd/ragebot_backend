@@ -121,20 +121,22 @@ export function parseMessage(
   }
 }
 
-export function handleCustomCommands(
+export async function handleCustomCommands(
   target: string,
   userState: Userstate,
   bangCommand: string,
   params: string[]
 ) {
-  const customCommands = customCommandRegistry.commandRegistry[target];
+  const customCommands = await customCommandRegistry.getCommands(target);
   const command = bangCommand.substring(1);
 
-  if (!Object.keys(customCommands).includes(command)) {
+  if (customCommands.filter((c) => c.name === command).length) {
     return;
   }
 
-  const { behavior, response, modOnly, subOnly } = customCommands[command];
+  const { behavior, response, modOnly, subOnly } = customCommands.filter(
+    (c) => c.name === command
+  )[0];
 
   if (modOnly && !isModerator(userState)) {
     return;
