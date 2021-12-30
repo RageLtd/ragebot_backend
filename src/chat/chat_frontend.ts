@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeChat(document.querySelector("body")!);
 
   const messageSource = new EventSource(
-    `//${window.location.host}${window.location.pathname}/feed`
+    `//${window.location.host}/api${window.location.pathname}/feed`
   );
 
   messageSource.onmessage = (message) => {
