@@ -243,6 +243,26 @@ export function initializeRagebotServer() {
     res.send(commandRes.data);
   });
 
+  ragebot.post("/api/commands/:userName", async (req, res) => {
+    const { userName } = req.params;
+
+    const commandRes = await customCommandRegistry
+      .addCommand(`#${userName.toLowerCase()}`, req.body)
+      .catch((err) => res.send(err));
+
+    res.send(commandRes);
+  });
+
+  ragebot.delete("/api/commands/:userName", async (req, res) => {
+    const { userName } = req.params;
+
+    const commandRes = await customCommandRegistry
+      .removeCommand(`#${userName.toLowerCase()}`, req.body)
+      .catch(console.error);
+
+    res.send(commandRes);
+  });
+
   ragebot.post("/eventsub", handleEventSubPost);
 
   // ragebot.get("/*", (req, res) =>

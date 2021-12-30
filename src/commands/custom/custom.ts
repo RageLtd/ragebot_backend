@@ -2,7 +2,7 @@ import { Userstate } from "tmi.js";
 import { clientRegistry, customCommandRegistry, tmiClient } from "../..";
 import { isModerator } from "../../messages/isModerator";
 import { setCommand, setCustomCounter, updateCommand } from "../utils";
-import { removeCustomCommandQuery } from "./customQueries";
+import { removeCustomCommandByNameQuery } from "./customQueries";
 
 const allowedCommandBehaviors = ["count", "respond", "timer"];
 
@@ -117,7 +117,7 @@ export async function removeCustomCommand(
     const client = await clientRegistry.getClient(target);
 
     const removed = (await client?.query(
-      removeCustomCommandQuery(command)
+      removeCustomCommandByNameQuery(command)
     )) as any;
 
     await customCommandRegistry.refreshCommands(target);

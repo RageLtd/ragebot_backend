@@ -104,7 +104,13 @@ export const updateCustomCommandByIdQuery = (command: {
   });
 };
 
-export const removeCustomCommandQuery = (command: string) =>
+export const removeCustomCommandByIdQuery = (command: Command) =>
+  Map(
+    Paginate(Match(Index("command_by_id"), command.id)),
+    Lambda(["ref"], Delete(Var("ref")))
+  );
+
+export const removeCustomCommandByNameQuery = (command: string) =>
   Map(
     Paginate(Match(Index("command_by_name"), command)),
     Lambda(["ref"], Delete(Var("ref")))

@@ -1,6 +1,9 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { clientRegistry, registeredChannels } from "../..";
 import { handleCustomCommands } from "../../messages/parseMessage";
 import {
+  addCustomCommandQuery,
   Command,
   CommandResponse,
   CountResponse,
@@ -8,6 +11,7 @@ import {
   getCountQuery,
   getCustomCommandsQuery,
   incrementCounterQuery,
+  removeCustomCommandByIdQuery,
   updateCustomCommandByIdQuery,
 } from "./customQueries";
 
@@ -42,6 +46,40 @@ export class CustomCommandRegistry {
     )) as CommandResponse;
 
     return data;
+  }
+
+  async addCommand(
+    target: string,
+    { name, behavior, modOnly, subOnly, timeoutInMillis, response }: Command
+  ) {
+    const client = await clientRegistry.getClient(target);
+
+    const id = uuidv4();
+
+    const res = await client
+      ?.query(
+        addCustomCommandQuery(
+          id,
+          name,
+          behavior,
+          modOnly,
+          subOnly,
+          timeoutInMillis,
+          response
+        )
+      )
+      .catch(console.error);
+    return res;
+  }
+
+  async removeCommand(target: string, command: Command) {
+    const client = await clientRegistry.getClient(target);
+
+    const res = await client
+      ?.query(removeCustomCommandByIdQuery(command))
+      .catch(console.error);
+
+    return res;
   }
 
   async updateCommand(target: string, command: Command) {

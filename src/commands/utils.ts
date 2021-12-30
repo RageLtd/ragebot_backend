@@ -1,4 +1,4 @@
-import uuid from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { clientRegistry } from "..";
 import {
   addBacklogQuery,
@@ -64,7 +64,7 @@ export async function setCommand(
 
   return client?.query(
     addCustomCommandQuery(
-      uuid.v4(),
+      uuidv4(),
       name,
       behavior,
       modOnly,

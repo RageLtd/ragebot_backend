@@ -1,12 +1,15 @@
+import { MouseEvent } from "react";
 import { Command } from "../../views/Commands/CommandsView";
 import EditableProperty from "../EditableProperty/EditableProperty";
 
 interface CommandListItemProps extends Command {
   username: string;
+  removeCommand: Function;
 }
 
 export default function CommandListItem({
   username,
+  removeCommand,
   ...command
 }: CommandListItemProps) {
   const saveProperty = (property: { name: string; value: any }) => {
@@ -28,25 +31,33 @@ export default function CommandListItem({
     });
   };
 
-  const removeProperty = (property: { name: string; value: any }) => {
-    console.log(property);
+  const handleRemoveClick = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // eslint-disable-next-line
+    if (confirm(`Are you sure you want to delete "${command.name}?"`)) {
+      removeCommand(command);
+    }
   };
 
   return (
     <li>
-      {Object.keys(command).map((property) => {
-        if (property !== "id") {
-          return (
-            <EditableProperty
-              name={property}
-              value={command[property]}
-              save={saveProperty}
-              remove={removeProperty}
-            />
-          );
-        }
-        return <></>;
-      })}
+      <div>
+        {Object.keys(command).map((property) => {
+          if (property !== "id") {
+            return (
+              <EditableProperty
+                name={property}
+                value={command[property]}
+                save={saveProperty}
+              />
+            );
+          }
+          return <></>;
+        })}
+      </div>
+      <button onClick={handleRemoveClick}>Delete Command</button>
     </li>
   );
 }

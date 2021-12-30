@@ -4,14 +4,12 @@ interface EditableValueProps {
   value: any;
   name: string;
   save: Function;
-  remove: Function;
 }
 
 export default function EditableValue({
   value,
   name,
   save,
-  remove,
 }: EditableValueProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
@@ -33,12 +31,6 @@ export default function EditableValue({
     toggleEdit();
   };
 
-  const handleRemove = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    remove({ value, name });
-  };
-
   return (
     <form onSubmit={saveEdit}>
       <label>
@@ -50,7 +42,6 @@ export default function EditableValue({
         />
       </label>
       {!isEditing && <button onClick={toggleEdit}>Edit</button>}
-      {!isEditing && <button onClick={handleRemove}>-</button>}
       {isEditing && <button type="submit">Save</button>}
       {isEditing && <button onClick={discardEdit}>Cancel</button>}
     </form>

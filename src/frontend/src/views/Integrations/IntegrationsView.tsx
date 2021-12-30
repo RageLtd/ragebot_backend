@@ -14,7 +14,7 @@ interface NewIntegration {
   draftUrl: string;
 }
 
-interface Integration {
+interface IntegrationShape {
   name: string;
   webhookUrls: string[];
 }
@@ -22,7 +22,7 @@ interface Integration {
 export default function IntegrationsView({
   twitchUserInfo,
 }: IntegrationsViewProps) {
-  const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [integrations, setIntegrations] = useState<IntegrationShape[]>([]);
   const [newIntegration, setNewIntegration] = useState<NewIntegration>({
     name: "discord",
     webhookUrls: [],
@@ -67,7 +67,7 @@ export default function IntegrationsView({
     });
   };
 
-  const saveEditedIntegration = (integration: Integration) => {
+  const saveEditedIntegration = (integration: IntegrationShape) => {
     fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`, {
       method: "PATCH",
       body: JSON.stringify(integration),
@@ -88,7 +88,7 @@ export default function IntegrationsView({
       });
   };
 
-  const removeIntegration = (integration: Integration) => {
+  const removeIntegration = (integration: IntegrationShape) => {
     // eslint-disable-next-line
     if (confirm(`Are you sure you want to remove ${integration.name}?`)) {
       fetch(`/api/integrations/${twitchUserInfo.username}`, {
