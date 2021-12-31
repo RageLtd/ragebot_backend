@@ -25,14 +25,17 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
   const [isAddingCommand, setIsAddingCommand] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const loadCommands = () => {
+    if (twitchUserInfo.username) {
+      fetch(`/api/commands/${twitchUserInfo.username?.toLowerCase()}`)
+        .then((res) => res.json())
+        .then((json) => setCustomCommands(json));
+    }
+  };
+
   useEffect(() => {
     loadCommands();
   }, [twitchUserInfo]);
-
-  const loadCommands = () =>
-    fetch(`/api/commands/${twitchUserInfo.username?.toLowerCase()}`)
-      .then((res) => res.json())
-      .then((json) => setCustomCommands(json));
 
   const toggleAdding = () => setIsAddingCommand(!isAddingCommand);
 
@@ -84,6 +87,7 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
         )}
         {customCommands.map((command) => (
           <CommandListItem
+            key={command.id}
             username={twitchUserInfo.username!}
             {...command}
             removeCommand={handleRemoveCommand}

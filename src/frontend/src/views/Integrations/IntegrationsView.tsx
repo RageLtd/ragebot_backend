@@ -29,9 +29,11 @@ export default function IntegrationsView({
     draftUrl: "",
   });
   useEffect(() => {
-    fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`)
-      .then((res) => res.json())
-      .then((json) => setIntegrations(json));
+    if (twitchUserInfo.username) {
+      fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`)
+        .then((res) => res.json())
+        .then((json) => setIntegrations(json));
+    }
   }, [twitchUserInfo]);
 
   const updateNewIntegration = (e: ChangeEvent) => {
@@ -132,16 +134,14 @@ export default function IntegrationsView({
             </label>
           </div>
           <div>
-            <p>
-              urls:{" "}
-              <ul>
-                {newIntegration.webhookUrls.map((url) => (
-                  <li key={url}>
-                    {url} <button onClick={generateRemoveUrl(url)}>-</button>
-                  </li>
-                ))}
-              </ul>
-            </p>
+            urls:{" "}
+            <ul>
+              {newIntegration.webhookUrls.map((url) => (
+                <li key={url}>
+                  {url} <button onClick={generateRemoveUrl(url)}>-</button>
+                </li>
+              ))}
+            </ul>
           </div>
           <div>
             <form onSubmit={addDraftUrl}>

@@ -40,10 +40,13 @@ export default function FollowersView({ twitchUserInfo }: FollowersViewProps) {
   const [followerList, setFollowerList] = useState<FollowerListInterface>();
 
   useEffect(() => {
-    const getTheDamnFollowers = async () =>
-      setFollowerList(await getFollowers(twitchUserInfo.user_id!));
+    if (twitchUserInfo.user_id) {
+      const getTheDamnFollowers = async () =>
+        setFollowerList(await getFollowers(twitchUserInfo.user_id!));
 
-    getTheDamnFollowers();
+      getTheDamnFollowers();
+    }
+
   }, [twitchUserInfo.user_id]);
 
   return (

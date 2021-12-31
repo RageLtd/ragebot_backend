@@ -8,6 +8,7 @@ import { setupUserDb } from "./views/utils/setupUserDb";
 import { userDbExists } from "./views/utils/user";
 import IntegrationsView from "./views/Integrations/IntegrationsView";
 import CommandsView from "./views/Commands/CommandsView";
+import Navigation from "./components/Navigation/Navigation";
 
 function App() {
   const {
@@ -82,7 +83,9 @@ function App() {
       />
       <Route
         path="/followers"
-        element={withAuthenticationRequired(Followers)({ twitchUserInfo })}
+        element={withAuthenticationRequired(Followers, {
+          returnTo: "/followers",
+        })({ twitchUserInfo })}
       />
       <Route
         path="/integrations"
@@ -97,28 +100,40 @@ function App() {
     </Routes>
   );
 
+  if (error && process.env.NODE_ENV !== "production") {
+    console.error(error);
+  }
+
+  let content;
+
   if (isApplicationLoading()) {
-    return (
-      <div className="App">
+    content = (
+      <>
         <h3>Loading...</h3>
         {routes}
-      </div>
+      </>
+    );
+  } else if (error) {
+    content = (
+      <>
+        <p>Something broke! {error.message}</p>
+        <p>{JSON.stringify(error)}</p>
+        {routes}
+      </>
+    );
+  } else if (isAuthenticated) {
+    content = (
+      <>
+        <button onClick={handleLogout}>Log out</button>
+        {routes}
+      </>
     );
   }
 
-  if (error) {
-    console.error(error);
-    return (
-      <div className="App">
-        <p>Something broke! {error.message}</p>
-        {routes}
-      </div>
-    );
-  }
   return (
-    <div className="App">
-      {isAuthenticated && <button onClick={handleLogout}>Log out</button>}
-      {routes}
+    <div>
+      <Navigation />
+      {content}
     </div>
   );
 }

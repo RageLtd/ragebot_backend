@@ -80,16 +80,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js",
-    "watch": "npm-watch"
-  },
-  "watch": {
-    "build": {
-      "patterns": [
-        "src"
-      ],
-      "extensions": "js,jsx"
-    }
+    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": [
@@ -167,7 +158,7 @@
     ]
   },
   "devDependencies": {
-    "@types/uuid": "^8.3.3",
-    "npm-watch": "^0.11.0"
-  }
+    "@types/uuid": "^8.3.3"
+  },
+  "proxy": "http://localhost:3001"
 }
