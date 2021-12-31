@@ -38,7 +38,13 @@ export function initializeRagebotServer() {
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          imgSrc: ["self", "static-cdn.jtvnw.net"],
+          imgSrc: ["https:", "http:", "self", "static-cdn.jtvnw.net", "data:"],
+          scriptSrc: [
+            "self",
+            "http:",
+            "https:",
+            process.env.NODE_ENV !== "production" ? "unsafe-inline" : "",
+          ],
         },
       },
       crossOriginResourcePolicy: {
