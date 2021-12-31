@@ -30,6 +30,8 @@ commandsApiRouter.post("/:userName", async (req, res) => {
     .addCommand(`#${userName.toLowerCase()}`, req.body)
     .catch((err) => res.send(err));
 
+  await customCommandRegistry.refreshCommands(`#${userName.toLowerCase()}`);
+
   res.send(commandRes);
 });
 
