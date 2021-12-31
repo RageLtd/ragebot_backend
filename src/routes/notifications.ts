@@ -8,7 +8,7 @@ const notificationsRouter = Router();
 notificationsRouter.get("/:userName", async (req, res) => {
   const notificationPagePath = path.resolve(
     __dirname,
-    "../public/notifications/layout.html"
+    "../../public/notifications/layout.html"
   );
   const notificationPage = readFileSync(notificationPagePath).toString();
   const endOfBodyIndex = notificationPage.indexOf("</body>");
