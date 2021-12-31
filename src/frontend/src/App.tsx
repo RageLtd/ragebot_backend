@@ -131,7 +131,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="App">
       <Navigation />
       {content}
     </div>

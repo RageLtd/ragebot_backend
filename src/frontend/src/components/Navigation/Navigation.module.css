@@ -1,4 +1,18 @@
+.nav {
+  background-color: #333;
+}
+
 .nav ul{
   list-style: none;
   padding-left: 0;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.navItem {
+  margin-right: 1em;
+}
+
+.navItem a {
+  color: white;
 }

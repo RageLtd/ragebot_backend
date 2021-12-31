@@ -44,18 +44,18 @@ export default function CommandListItem({
   return (
     <li>
       <div>
-        {Object.keys(command).map((property) => {
-          if (property !== "id") {
+        {Object.keys(command)
+          .filter((key) => key !== "id")
+          .map((property) => {
             return (
               <EditableProperty
+                key={command.id + property}
                 name={property}
                 value={command[property]}
                 save={saveProperty}
               />
             );
-          }
-          return <></>;
-        })}
+          })}
       </div>
       <button onClick={handleRemoveClick}>Delete Command</button>
     </li>

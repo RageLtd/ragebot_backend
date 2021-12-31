@@ -6,19 +6,18 @@ export default function Navigation() {
   return (
     <nav className={styles.nav}>
       <ul>
-        <li>
+        <li className={styles.navItem}>
           <Link to="/">Dashboard</Link>
         </li>
-        <li>
+        <li className={styles.navItem}>
           <Link to="/commands">Commands</Link>
         </li>
-        <li>
+        <li className={styles.navItem}>
           <Link to="/integrations">Integrations</Link>
         </li>
-        <li>
-          <Link to="/commands">Commands</Link>
+        <li className={styles.navItem}>
+          <Link to="/followers">Followers</Link>
         </li>
-        <li>watcha</li>
       </ul>
     </nav>
   );
