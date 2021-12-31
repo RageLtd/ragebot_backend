@@ -145,7 +145,7 @@ export function initializeRagebotServer() {
     });
   });
 
-  ragebot.get("/api/notifications/:userName", async (req, res) => {
+  ragebot.get("/notifications/:userName", async (req, res) => {
     const notificationPagePath = path.resolve(
       __dirname,
       "../public/notifications/layout.html"
