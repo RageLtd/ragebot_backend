@@ -14,7 +14,7 @@ export async function getBacklog(target: string) {
     tmiClient.say(
       target,
       `Backlog: ${backlog
-        .map(({ data: { name, notes } }) => `${name} ${notes}`)
+        .map(({ name, notes }) => `${name} ${notes}`)
         .join(", ")}`
     );
     return;

@@ -9,6 +9,7 @@ import IntegrationsView from "./views/Integrations/IntegrationsView";
 import CommandsView from "./views/Commands/CommandsView";
 import Navigation from "./components/Navigation/Navigation";
 import "./App.css";
+import BacklogView from "./views/BacklogView/BacklogView";
 
 function App() {
   const { isAuthenticated, user, isLoading, error, getAccessTokenSilently } =
@@ -80,8 +81,12 @@ function App() {
         element={<IntegrationsView twitchUserInfo={twitchUserInfo} />}
       />
       <Route
-        path="commands"
+        path="/commands"
         element={<CommandsView twitchUserInfo={twitchUserInfo} />}
+      />
+      <Route
+        path="/backlog"
+        element={<BacklogView twitchUserInfo={twitchUserInfo} />}
       />
     </Routes>
   );

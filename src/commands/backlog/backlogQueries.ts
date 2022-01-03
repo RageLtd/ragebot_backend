@@ -10,14 +10,14 @@ import {
   Now,
   Collection,
   Delete,
+  Select,
+  Update,
 } from "faunadb";
 
 export interface BacklogEntry {
-  data: {
-    name: string;
-    created: any;
-    notes: string;
-  };
+  name: string;
+  created: any;
+  notes: string;
 }
 
 export interface BacklogResponse {
@@ -27,7 +27,7 @@ export interface BacklogResponse {
 export const getBacklogQuery = () =>
   Map(
     Paginate(Match(Index("backlog_by_creation_asc"))),
-    Lambda(["time", "ref"], Get(Var("ref")))
+    Lambda(["time", "ref"], Select(["data"], Get(Var("ref"))))
   );
 
 export const addBacklogQuery = (name: string, notes: string) =>
@@ -36,6 +36,14 @@ export const addBacklogQuery = (name: string, notes: string) =>
       name,
       notes,
       created: Now(),
+    },
+  });
+
+export const updateBacklogEntryQuery = (name: string, notes: string) =>
+  Update(Select("ref", Get(Match(Index("backlog_by_name"), name))), {
+    data: {
+      name,
+      notes,
     },
   });
 

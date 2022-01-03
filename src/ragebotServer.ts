@@ -12,6 +12,7 @@ import chatApiRouter from "./routes/chatApi";
 import integrationsApiRouter from "./routes/integrationsApi";
 import commandsApiRouter from "./routes/commandsApi";
 import userSetupApiRouter from "./routes/userSetupApi";
+import backlogApiRouter from "./routes/backlogApi";
 
 export const TWITCH_HELIX_API = "https://api.twitch.tv/helix";
 
@@ -57,12 +58,13 @@ export function initializeRagebotServer() {
   ragebot.use("/chat", chatRouter);
   ragebot.use("/notifications", notificationsRouter);
 
-  ragebot.use("/api/user-setup", userSetupApiRouter);
+  ragebot.use("/api/backlog", backlogApiRouter);
   ragebot.use("/api/chat", chatApiRouter);
   ragebot.use("/api/commands", commandsApiRouter);
   ragebot.use("/api/follows", followRouter);
   ragebot.use("/api/integrations", integrationsApiRouter);
   ragebot.use("/api/notifications", notificationsApiRouter);
+  ragebot.use("/api/user-setup", userSetupApiRouter);
 
   ragebot.post("/eventsub", handleEventSubPost);
 
