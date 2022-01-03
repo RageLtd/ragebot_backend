@@ -1,0 +1,16 @@
+.helper {
+  font-size: .75em;
+  font-style: italic;
+}
+
+.notificationItem {
+  margin-bottom: 1em;
+}
+
+.token {
+  border: 1px solid #333;
+  background-color: #666;
+  border-radius: 2px;
+  padding: 0 .25em;
+  color: white;
+}

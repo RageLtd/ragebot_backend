@@ -1,0 +1,101 @@
+import { useEffect, useState } from "react";
+import EditableValue from "../../components/EditableProperty/EditableProperty";
+
+import styles from "./NotificationsView.module.css";
+
+interface NotificationsViewProps {
+  twitchUserInfo: {
+    username?: string;
+    user_id?: string;
+  };
+}
+
+interface NotificationStrings {
+  [key: string]: any;
+}
+
+interface TokenMap {
+  [key: string]: string[];
+}
+
+const tokens: TokenMap = {
+  alwaysTokens: ["%user_name%", "%broadcaster_user_name%"],
+  followTokens: [],
+  newsubTokens: ["%tier%"],
+  resubTokens: [
+    "%cumulative_months%",
+    "%streak_months%",
+    "%tier%",
+    "%message%",
+    "%duration_months%",
+  ],
+  channelGiftTokens: ["%total%", "%tier%", "%cumulative_total%"],
+  cheerTokens: ["%bits%", "%message%"],
+  raidTokens: ["%from_broadcaster_user_name%", "%viewers%"],
+  redemptionTokens: [
+    "%user_input%",
+    "%reward.title%",
+    "%reward.prompt%",
+    "%reward.cost%",
+  ],
+};
+
+function getOtherTokens(type: string) {
+  const matches = type.match(/[A-Z]/gm)!;
+
+  const prefix = type.substring(0, type.indexOf(matches.shift()!));
+
+  const [key] = Object.keys(tokens).filter((key) => key.startsWith(prefix));
+
+  return tokens[key];
+}
+
+export default function NotificationsView({
+  twitchUserInfo,
+}: NotificationsViewProps) {
+  const [notificationStrings, setNotificationStrings] =
+    useState<NotificationStrings>({});
+  const getNotifications = () =>
+    fetch(`/api/notifications/${twitchUserInfo.username?.toLowerCase()}`)
+      .then((res) => res.json())
+      .then((json) => setNotificationStrings(json.data));
+
+  const saveString = ({ name, value }: { name: string; value: string }) => {
+    console.log(name, value);
+  };
+
+  useEffect(() => {
+    if (twitchUserInfo.username) {
+      getNotifications();
+    }
+  }, [twitchUserInfo.username]);
+  return (
+    <>
+      <h1>Notifications</h1>
+      <ul>
+        {Object.keys(notificationStrings).map((type) => (
+          <li className={styles.notificationItem} key={type}>
+            <EditableValue
+              key={type}
+              name={type}
+              value={notificationStrings[type]}
+              save={saveString}
+            />
+            {type !== "timeoutInMillis" && (
+              <div className={styles.helper} key={type + "Tokens"}>
+                <p>You have access to the following tokens:</p>
+                {[...tokens.alwaysTokens, ...getOtherTokens(type)].map(
+                  (token) => (
+                    <>
+                      <pre className={styles.token}>{token}</pre>,{" "}
+                    </>
+                  )
+                )}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}

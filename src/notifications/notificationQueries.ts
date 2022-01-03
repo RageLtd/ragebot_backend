@@ -1,4 +1,4 @@
-import { Get, Documents, Collection } from "faunadb";
+import { Get, Documents, Collection, Map, Paginate } from "faunadb";
 
 export interface NotificationStylesResponse {
   data: {

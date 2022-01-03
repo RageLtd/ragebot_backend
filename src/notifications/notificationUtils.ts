@@ -7,29 +7,27 @@ import {
 } from "./notificationQueries";
 import { TwitchNotification, TwitchNotificationEvent } from "./notifications";
 
-let followMessage = "Thanks for the follow, %user_name%!";
-let followPrefixString = "";
-let followPostfixString = "";
-let newSubMessage = "%user_name% just subscribed!";
-let newSubPrefixString = "";
-let newSubPostfixString = "";
-let resubMessage = "%user_name% just resubscribed!";
-let resubPrefixString = "";
-let resubPostfixString = "%message%";
-let channelGiftMessage =
-  "%user_name% is gifting %total% subs to the community!";
-let channelGiftPrefixString = "";
-let channelGiftPostfixString = "";
-let cheerMessage = "%user_name% sent %bits% bits!";
-let cheerPrefixString = "";
-let cheerPostfixString = "%message%";
-let raidMessage =
-  "%from_broadcaster_user_name% is raiding with %viewers% viewers!";
-let raidPrefixString = "";
-let raidPostfixString = "";
-let redemptionMessage = "%user_name% redeemed %reward.title%";
-let redemptionPrefixString = "";
-let redemptionPostfixString = "%user_input%";
+let followMessage: string;
+let followPrefixString: string;
+let followPostfixString: string;
+let newSubMessage: string;
+let newSubPrefixString: string;
+let newSubPostfixString: string;
+let resubMessage: string;
+let resubPrefixString: string;
+let resubPostfixString: string;
+let channelGiftMessage: string;
+let channelGiftPrefixString: string;
+let channelGiftPostfixString: string;
+let cheerMessage: string;
+let cheerPrefixString: string;
+let cheerPostfixString: string;
+let raidMessage: string;
+let raidPrefixString: string;
+let raidPostfixString: string;
+let redemptionMessage: string;
+let redemptionPrefixString: string;
+let redemptionPostfixString: string;
 
 const alwaysTokens = ["%user_name%", "%broadcaster_user_name%"];
 const followTokens: string[] = [];
@@ -80,33 +78,27 @@ export interface NotificationVariables {
 }
 
 export function applyNotificationVariables(variables: NotificationVariables) {
-  followMessage = variables.followMessage || followMessage;
-  followPrefixString = variables.followPrefixString || followPrefixString;
-  followPostfixString = variables.followPostfixString || followPostfixString;
-  newSubMessage = variables.newSubMessage || newSubMessage;
-  newSubPrefixString = variables.newSubPrefixString || newSubPrefixString;
-  newSubPostfixString = variables.newSubPostfixString || newSubPostfixString;
-  resubMessage = variables.resubMessage || resubMessage;
-  resubPrefixString = variables.resubPrefixString || resubPrefixString;
-  resubPostfixString = variables.resubPostfixString || resubPostfixString;
-  channelGiftMessage = variables.channelGiftMessage || channelGiftMessage;
-  channelGiftPrefixString =
-    variables.channelGiftPrefixString || channelGiftPrefixString;
-  channelGiftPostfixString =
-    variables.channelGiftPostfixString || channelGiftPostfixString;
-  cheerMessage = variables.cheerMessage || cheerMessage;
-  cheerPrefixString = variables.cheerPrefixString || cheerPrefixString;
-  cheerPostfixString = variables.cheerPostfixString || cheerPostfixString;
-  raidMessage = variables.raidMessage || raidMessage;
-  raidPrefixString = variables.raidPrefixString || raidPrefixString;
-  raidPostfixString = variables.raidPostfixString || raidPostfixString;
-  redemptionMessage = variables.redemptionMessage || redemptionMessage;
-  redemptionPrefixString =
-    variables.redemptionPrefixString || redemptionPrefixString;
-  redemptionPostfixString =
-    variables.redemptionPostfixString || redemptionPostfixString;
-
-  timeoutInMillis = variables.timeoutInMillis || timeoutInMillis;
+  ({
+    followMessage,
+    followPrefixString,
+    followPostfixString,
+    newSubMessage,
+    newSubPrefixString,
+    newSubPostfixString,
+    resubMessage,
+    resubPrefixString,
+    resubPostfixString,
+    channelGiftMessage,
+    channelGiftPrefixString,
+    channelGiftPostfixString,
+    raidMessage,
+    raidPrefixString,
+    raidPostfixString,
+    redemptionMessage,
+    redemptionPrefixString,
+    redemptionPostfixString,
+    timeoutInMillis,
+  } = variables);
 }
 
 export async function getNotificationStyles(username: string) {

@@ -24,6 +24,9 @@ export default function Navigation() {
         <li className={styles.navItem}>
           <Link to="/backlog">Backlog</Link>
         </li>
+        <li className={styles.navItem}>
+          <Link to="/notifications">Notifications</Link>
+        </li>
       </ul>
       <div>
         <button onClick={handleLogout}>Log out</button>

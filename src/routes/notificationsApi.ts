@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { NotificationVariablesResponse } from "../notifications/notificationQueries";
+import { clientRegistry } from "..";
+import {
+  getNotificationVariablesQuery,
+  NotificationVariablesResponse,
+} from "../notifications/notificationQueries";
 import {
   getNotificationVariables,
   applyNotificationVariables,
@@ -49,6 +53,18 @@ notificationsApiRouter.get("/:userName/feed", async (req, res) => {
       userName
     ].filter((client) => client.id !== clientId);
   });
+});
+
+notificationsApiRouter.get("/:userName", async (req, res) => {
+  const { userName } = req.params;
+  const target = `#${userName.toLowerCase()}`;
+  const client = await clientRegistry.getClient(target);
+
+  const notificationsResponse = await client?.query(
+    getNotificationVariablesQuery()
+  );
+
+  res.send(notificationsResponse);
 });
 
 export default notificationsApiRouter;

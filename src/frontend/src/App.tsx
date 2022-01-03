@@ -10,6 +10,7 @@ import CommandsView from "./views/Commands/CommandsView";
 import Navigation from "./components/Navigation/Navigation";
 import "./App.css";
 import BacklogView from "./views/BacklogView/BacklogView";
+import NotificationsView from "./views/NotificationsView/NotificationsView";
 
 function App() {
   const { isAuthenticated, user, isLoading, error, getAccessTokenSilently } =
@@ -87,6 +88,10 @@ function App() {
       <Route
         path="/backlog"
         element={<BacklogView twitchUserInfo={twitchUserInfo} />}
+      />
+      <Route
+        path="/notifications"
+        element={<NotificationsView twitchUserInfo={twitchUserInfo} />}
       />
     </Routes>
   );

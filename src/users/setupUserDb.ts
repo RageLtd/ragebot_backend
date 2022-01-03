@@ -4,6 +4,7 @@ import { childDbExists } from "../clientRegistry";
 import {
   createBaseCollectionQuery,
   createBaseIndexQuery,
+  createDefaultNotificationVarsQuery,
   createUserChildDBQuery,
 } from "./setupUserDbQueries";
 
@@ -45,6 +46,8 @@ export async function setupUserDb(username: string, twitchId: string) {
       return await client?.query(createBaseIndexQuery(indexDefinition));
     })
   );
+
+  await client?.query(createDefaultNotificationVarsQuery());
 }
 
 const indexDefinitions = [
