@@ -3,6 +3,7 @@ import { clientRegistry } from "..";
 import {
   getNotificationVariablesQuery,
   NotificationVariablesResponse,
+  updateNotificationStringQuery,
 } from "../notifications/notificationQueries";
 import {
   getNotificationVariables,
@@ -65,6 +66,20 @@ notificationsApiRouter.get("/:userName", async (req, res) => {
   );
 
   res.send(notificationsResponse);
+});
+
+notificationsApiRouter.patch("/:userName", async (req, res) => {
+  const { userName } = req.params;
+  const target = `#${userName.toLowerCase()}`;
+  const client = await clientRegistry.getClient(target);
+
+  const { name, value } = req.body;
+
+  const notificationSaveResponse = await client?.query(
+    updateNotificationStringQuery(name, value)
+  );
+
+  res.send(notificationSaveResponse);
 });
 
 export default notificationsApiRouter;

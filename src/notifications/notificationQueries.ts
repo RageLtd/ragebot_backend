@@ -1,4 +1,12 @@
-import { Get, Documents, Collection, Map, Paginate } from "faunadb";
+import {
+  Get,
+  Documents,
+  Collection,
+  Map,
+  Paginate,
+  Update,
+  Select,
+} from "faunadb";
 
 export interface NotificationStylesResponse {
   data: {
@@ -19,3 +27,8 @@ export const getNotificationStylesQuery = () =>
 
 export const getNotificationVariablesQuery = () =>
   Get(Documents(Collection("notification_variables")));
+
+export const updateNotificationStringQuery = (name: string, value: any) =>
+  Update(Select("ref", Get(Documents(Collection("notification_variables")))), {
+    data: { [name]: value },
+  });

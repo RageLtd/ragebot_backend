@@ -60,8 +60,16 @@ export default function NotificationsView({
       .then((res) => res.json())
       .then((json) => setNotificationStrings(json.data));
 
-  const saveString = ({ name, value }: { name: string; value: string }) => {
-    console.log(name, value);
+  const saveString = (string: { name: string; value: string }) => {
+    fetch(`/api/notifications/${twitchUserInfo.username?.toLowerCase()}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(string),
+    }).then(() => {
+      getNotifications();
+    });
   };
 
   useEffect(() => {
