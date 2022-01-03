@@ -1,4 +1,3 @@
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { useAuth0, User, withAuthenticationRequired } from "@auth0/auth0-react";
 import DashboardView from "./views/Dashboard/Dashboard";
@@ -9,16 +8,11 @@ import { userDbExists } from "./views/utils/user";
 import IntegrationsView from "./views/Integrations/IntegrationsView";
 import CommandsView from "./views/Commands/CommandsView";
 import Navigation from "./components/Navigation/Navigation";
+import "./App.css";
 
 function App() {
-  const {
-    isAuthenticated,
-    user,
-    isLoading,
-    error,
-    logout,
-    getAccessTokenSilently,
-  } = useAuth0();
+  const { isAuthenticated, user, isLoading, error, getAccessTokenSilently } =
+    useAuth0();
   const [isUserLoading, setIsUserLoading] = useState(true);
 
   const isApplicationLoading = () => {
@@ -71,8 +65,6 @@ function App() {
     }
   }, [getAccessTokenSilently, user, isAuthenticated]);
 
-  const handleLogout = () => logout({ returnTo: window.location.origin });
-
   const routes = (
     <Routes>
       <Route
@@ -122,12 +114,7 @@ function App() {
       </>
     );
   } else if (isAuthenticated) {
-    content = (
-      <>
-        <button onClick={handleLogout}>Log out</button>
-        {routes}
-      </>
-    );
+    content = <>{routes}</>;
   }
 
   return (

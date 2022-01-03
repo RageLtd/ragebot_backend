@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import ReactDOM from "react-dom";
+import "./normalize.css";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Auth0Provider from "./auth/Auth0ProviderWithHistory";

@@ -1,8 +1,11 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
 
 import styles from "./Navigation.module.css";
 
 export default function Navigation() {
+  const { logout } = useAuth0();
+  const handleLogout = () => logout({ returnTo: window.location.origin });
   return (
     <nav className={styles.nav}>
       <ul>
@@ -19,6 +22,9 @@ export default function Navigation() {
           <Link to="/followers">Followers</Link>
         </li>
       </ul>
+      <div>
+        <button onClick={handleLogout}>Log out</button>
+      </div>
     </nav>
   );
 }

@@ -7,7 +7,7 @@ interface FollowerListProps {
 
 export default function FollowerList({ followerList = [] }: FollowerListProps) {
   return (
-    <ol className={styles.list}>
+    <ol className={styles.list} reversed>
       {followerList.map((follower) => (
         <Follower key={follower.from_id} {...follower} />
       ))}
