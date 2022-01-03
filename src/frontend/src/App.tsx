@@ -69,25 +69,19 @@ function App() {
     <Routes>
       <Route
         path="/"
-        element={withAuthenticationRequired(DashboardView)({
-          twitchUserInfo,
-        })}
+        element={<DashboardView twitchUserInfo={twitchUserInfo} />}
       />
       <Route
         path="/followers"
-        element={withAuthenticationRequired(Followers, {
-          returnTo: "/followers",
-        })({ twitchUserInfo })}
+        element={<Followers twitchUserInfo={twitchUserInfo} />}
       />
       <Route
         path="/integrations"
-        element={withAuthenticationRequired(IntegrationsView)({
-          twitchUserInfo,
-        })}
+        element={<IntegrationsView twitchUserInfo={twitchUserInfo} />}
       />
       <Route
         path="commands"
-        element={withAuthenticationRequired(CommandsView)({ twitchUserInfo })}
+        element={<CommandsView twitchUserInfo={twitchUserInfo} />}
       />
     </Routes>
   );
@@ -125,4 +119,4 @@ function App() {
   );
 }
 
-export default App;
+export default withAuthenticationRequired(App);
