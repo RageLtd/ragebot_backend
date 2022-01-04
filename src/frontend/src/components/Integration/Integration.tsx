@@ -1,4 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Button from "../Button/Button";
+import Input from "../Input/Input";
 import EditableUrl from "./EditableUrl/EditableUrl";
 
 interface IntegrationProps {
@@ -33,8 +35,10 @@ export default function Integration({
       <li>
         <p>Name: {editedName[0].toUpperCase() + editedName.slice(1)}</p>
         <div>{editedUrls.join(", ")}</div>
-        <button onClick={toggleEdit}>Edit</button>
-        <button onClick={handleRemove}>Remove</button>
+        <Button onClick={toggleEdit}>Edit</Button>
+        <Button weight="danger" onClick={handleRemove}>
+          Remove
+        </Button>
       </li>
     );
   }
@@ -112,18 +116,24 @@ export default function Integration({
         <form onSubmit={addDraftUrl}>
           <label>
             add new url:
-            <input
-              type="text"
-              name="url"
-              onChange={updateDraftUrl}
-              value={draftUrl}
+            <Input
+              input={
+                <input
+                  type="text"
+                  name="url"
+                  onChange={updateDraftUrl}
+                  value={draftUrl}
+                />
+              }
+              postfix={<Button type="submit">+</Button>}
             />
-            <button type="submit">+</button>
           </label>
         </form>
       </div>
-      <button onClick={handleSave}>Save</button>
-      <button onClick={handleCancel}>Cancel</button>
+      <Button weight="secondary" onClick={handleSave}>
+        Save
+      </Button>
+      <Button onClick={handleCancel}>Cancel</Button>
     </li>
   );
 }

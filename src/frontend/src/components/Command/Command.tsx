@@ -1,5 +1,6 @@
 import { MouseEvent } from "react";
 import { Command } from "../../views/Commands/CommandsView";
+import Button from "../Button/Button";
 import EditableProperty from "../EditableProperty/EditableProperty";
 
 interface CommandListItemProps extends Command {
@@ -57,7 +58,9 @@ export default function CommandListItem({
             );
           })}
       </div>
-      <button onClick={handleRemoveClick}>Delete Command</button>
+      <Button weight="danger" onClick={handleRemoveClick}>
+        Delete Command
+      </Button>
     </li>
   );
 }

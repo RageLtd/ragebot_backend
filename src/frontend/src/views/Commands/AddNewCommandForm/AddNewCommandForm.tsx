@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
+import Button from "../../../components/Button/Button";
 
 interface AddNewCommandFormProps {
   onSubmit: Function;
@@ -130,8 +131,10 @@ export default function AddNewCommandForm({
           />
         </label>
       </div>
-      <button type="submit">Save</button>
-      <button onClick={handleCancel}>Cancel</button>
+      <Button weight="secondary" type="submit">
+        Save
+      </Button>
+      <Button onClick={handleCancel}>Cancel</Button>
     </form>
   );
 }

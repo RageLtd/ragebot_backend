@@ -1,4 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Button from "../../components/Button/Button";
+import Input from "../../components/Input/Input";
 import Integration from "../../components/Integration/Integration";
 
 interface IntegrationsViewProps {
@@ -138,7 +140,7 @@ export default function IntegrationsView({
             <ul>
               {newIntegration.webhookUrls.map((url) => (
                 <li key={url}>
-                  {url} <button onClick={generateRemoveUrl(url)}>-</button>
+                  {url} <Button onClick={generateRemoveUrl(url)}>-</Button>
                 </li>
               ))}
             </ul>
@@ -147,19 +149,23 @@ export default function IntegrationsView({
             <form onSubmit={addDraftUrl}>
               <label>
                 add new url:{" "}
-                <input
-                  type="text"
-                  name="url"
-                  onChange={updateNewIntegration}
-                  value={newIntegration.draftUrl}
+                <Input
+                  input={
+                    <input
+                      type="text"
+                      name="url"
+                      onChange={updateNewIntegration}
+                      value={newIntegration.draftUrl}
+                    />
+                  }
+                  postfix={<Button type="submit">+</Button>}
                 />
-                <button type="submit">+</button>
               </label>
             </form>
           </div>
-          <button disabled={selectedIntegrationExists}>
+          <Button disabled={selectedIntegrationExists}>
             Add New Integration
-          </button>
+          </Button>
         </li>
       </ul>
     </>

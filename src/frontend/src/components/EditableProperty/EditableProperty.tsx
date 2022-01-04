@@ -1,4 +1,6 @@
 import { FormEvent, useState, ChangeEvent } from "react";
+import Button from "../Button/Button";
+import Input from "../Input/Input";
 
 import styles from "./EditableProperty.module.css";
 
@@ -12,7 +14,7 @@ function camelToHuman(string: string) {
   const uppercaseCharacters = string.match(/[A-Z]/gm);
   const words: string[] = [];
 
-  uppercaseCharacters!.reduce((acc, char, idx, arr) => {
+  uppercaseCharacters?.reduce((acc, char, idx, arr) => {
     words.push(acc.slice(0, acc.indexOf(char)));
     if (!arr[idx + 1]) {
       words.push(acc.slice(acc.indexOf(char)));
@@ -53,17 +55,30 @@ export default function EditableValue({
   return (
     <form onSubmit={saveEdit}>
       <label>
-        {camelToHuman(name)}:
-        <input
+        {(name.match(/[A-Z]/gm) ?? []).length > 0 ? camelToHuman(name) : name}:
+        <Input
           className={styles.input}
           disabled={!isEditing}
-          onChange={updateProperty}
-          value={editedValue}
+          input={
+            <input
+              disabled={!isEditing}
+              onChange={updateProperty}
+              value={editedValue}
+            />
+          }
+          postfix={
+            <div>
+              {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
+              {isEditing && (
+                <Button weight="secondary" type="submit">
+                  Save
+                </Button>
+              )}
+              {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
+            </div>
+          }
         />
       </label>
-      {!isEditing && <button onClick={toggleEdit}>Edit</button>}
-      {isEditing && <button type="submit">Save</button>}
-      {isEditing && <button onClick={discardEdit}>Cancel</button>}
     </form>
   );
 }

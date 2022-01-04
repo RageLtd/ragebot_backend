@@ -1,4 +1,6 @@
 import { ChangeEvent, FormEvent, MouseEventHandler, useState } from "react";
+import Button from "../../Button/Button";
+import Input from "../../Input/Input";
 
 interface EditableUrlProps {
   url: string;
@@ -30,11 +32,23 @@ export default function EditableUrl({ url, save, remove }: EditableUrlProps) {
   return (
     <li>
       <form onSubmit={saveEdit}>
-        <input disabled={!isEditing} onChange={updateUrl} value={editedUrl} />
-        {!isEditing && <button onClick={toggleEdit}>Edit</button>}
-        {!isEditing && <button onClick={remove}>-</button>}
-        {isEditing && <button type="submit">Save</button>}
-        {isEditing && <button onClick={discardEdit}>Cancel</button>}
+        <Input
+          input={
+            <input
+              disabled={!isEditing}
+              onChange={updateUrl}
+              value={editedUrl}
+            />
+          }
+          postfix={
+            <div>
+              {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
+              {!isEditing && <Button onClick={remove}>-</Button>}
+              {isEditing && <Button type="submit">Save</Button>}
+              {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
+            </div>
+          }
+        />
       </form>
     </li>
   );

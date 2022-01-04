@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
+import Button from "../Button/Button";
 
 import styles from "./Navigation.module.css";
 
@@ -29,7 +30,7 @@ export default function Navigation() {
         </li>
       </ul>
       <div>
-        <button onClick={handleLogout}>Log out</button>
+        <Button onClick={handleLogout}>Log out</Button>
       </div>
     </nav>
   );

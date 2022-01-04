@@ -1,10 +1,19 @@
 .helper {
   font-size: .75em;
   font-style: italic;
+  max-width: 100%;
 }
 
 .helper pre {
   display: inline;
+  margin-right: .5em;
+  margin-bottom: .25em;
+}
+
+.tokenContainer {
+  display: flex;
+  flex-flow: row wrap;
+  padding: .5em;
 }
 
 .notificationItem {

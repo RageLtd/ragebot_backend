@@ -1,3 +1,4 @@
+import Button from "../Button/Button";
 import EditableValue from "../EditableProperty/EditableProperty";
 
 interface BacklogEntryProps {
@@ -43,7 +44,9 @@ export default function BacklogEntry({
           </dd>
         </details>
 
-        <button onClick={handleRemove}>Remove</button>
+        <Button weight="danger" onClick={handleRemove}>
+          Remove
+        </Button>
       </dl>
     </li>
   );

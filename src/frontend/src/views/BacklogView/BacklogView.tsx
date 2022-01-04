@@ -1,6 +1,7 @@
 import { merge } from "lodash";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import BacklogEntry from "../../components/BacklogEntry/BacklogEntry";
+import Button from "../../components/Button/Button";
 
 interface BacklogViewProps {
   twitchUserInfo: {
@@ -94,7 +95,7 @@ export default function BacklogView({ twitchUserInfo }: BacklogViewProps) {
   return (
     <>
       <h1>Backlog</h1>
-      <button onClick={handleAddBacklogClick}>Add Game to Backlog</button>
+      <Button onClick={handleAddBacklogClick}>Add Game to Backlog</Button>
       <ol>
         {isAddingBacklog && (
           <li>
@@ -114,8 +115,10 @@ export default function BacklogView({ twitchUserInfo }: BacklogViewProps) {
                   onChange={handleNewItemNotesChange}
                 ></textarea>
               </label>
-              <button type="submit">Add to Backlog</button>
-              <button onClick={cancelAddItem}>Cancel</button>
+              <Button weight="secondary" type="submit">
+                Add to Backlog
+              </Button>
+              <Button onClick={cancelAddItem}>Cancel</Button>
             </form>
           </li>
         )}

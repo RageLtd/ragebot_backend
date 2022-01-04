@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Button from "../../components/Button/Button";
 import CommandListItem from "../../components/Command/Command";
 import AddNewCommandForm from "./AddNewCommandForm/AddNewCommandForm";
 
@@ -74,7 +75,7 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
     <>
       <h1>This is the commands view</h1>
       {!isAddingCommand && (
-        <button onClick={toggleAdding}>Add new Command</button>
+        <Button onClick={toggleAdding}>Add new Command</Button>
       )}
       <ul>
         {isAddingCommand && (

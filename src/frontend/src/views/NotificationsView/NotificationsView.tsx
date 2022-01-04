@@ -92,13 +92,15 @@ export default function NotificationsView({
             {type !== "timeoutInMillis" && (
               <div className={styles.helper} key={type + "Tokens"}>
                 <p>You have access to the following tokens:</p>
-                {[...tokens.alwaysTokens, ...getOtherTokens(type)].map(
-                  (token) => (
-                    <>
-                      <pre className={styles.token}>{token}</pre>,{" "}
-                    </>
-                  )
-                )}
+                <div className={styles.tokenContainer}>
+                  {[...tokens.alwaysTokens, ...getOtherTokens(type)].map(
+                    (token) => (
+                      <pre key={type + token} className={styles.token}>
+                        {token}
+                      </pre>
+                    )
+                  )}
+                </div>
               </div>
             )}
           </li>
