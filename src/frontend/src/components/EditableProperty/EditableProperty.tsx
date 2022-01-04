@@ -8,6 +8,7 @@ interface EditableValueProps {
   value: any;
   name: string;
   save: Function;
+  type?: "input" | "textarea";
 }
 
 function camelToHuman(string: string) {
@@ -31,6 +32,7 @@ export default function EditableValue({
   value,
   name,
   save,
+  type = "input",
 }: EditableValueProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
@@ -60,11 +62,20 @@ export default function EditableValue({
           className={styles.input}
           disabled={!isEditing}
           input={
-            <textarea
-              disabled={!isEditing}
-              onChange={updateProperty}
-              value={editedValue}
-            ></textarea>
+            type === "textarea" ? (
+              <textarea
+                disabled={!isEditing}
+                onChange={updateProperty}
+                value={editedValue}
+              ></textarea>
+            ) : (
+              <input
+                type="text"
+                disabled={!isEditing}
+                onChange={updateProperty}
+                value={editedValue}
+              />
+            )
           }
           postfix={
             <>

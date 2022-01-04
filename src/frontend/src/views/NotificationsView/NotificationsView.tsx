@@ -110,6 +110,7 @@ export default function NotificationsView({
                   name={type}
                   value={notificationStrings[type]}
                   save={saveString}
+                  type="textarea"
                 />
                 {type !== "timeoutInMillis" && (
                   <div className={styles.helper} key={type + "Tokens"}>
