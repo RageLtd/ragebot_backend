@@ -60,14 +60,14 @@ export default function EditableValue({
           className={styles.input}
           disabled={!isEditing}
           input={
-            <input
+            <textarea
               disabled={!isEditing}
               onChange={updateProperty}
               value={editedValue}
-            />
+            ></textarea>
           }
           postfix={
-            <div>
+            <>
               {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
               {isEditing && (
                 <Button weight="secondary" type="submit">
@@ -75,7 +75,7 @@ export default function EditableValue({
                 </Button>
               )}
               {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
-            </div>
+            </>
           }
         />
       </label>

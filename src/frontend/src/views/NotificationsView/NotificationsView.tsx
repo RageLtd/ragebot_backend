@@ -77,33 +77,57 @@ export default function NotificationsView({
       getNotifications();
     }
   }, [twitchUserInfo.username]);
+
+
+  const prefixGrouped = Object.keys(notificationStrings).reduce(
+    (acc: { [key: string]: string[] }, string) => {
+      const matches = string.match(/[A-Z]/gm)!;
+      const prefix = string.substring(0, string.indexOf(matches.shift()!));
+
+      const prefixArray: string[] = [];
+
+      Object.keys(notificationStrings).forEach((notificationString: string) => {
+        if (notificationString.startsWith(prefix)) {
+          prefixArray.push(notificationString);
+        }
+      });
+      acc[prefix] = prefixArray;
+      return acc;
+    },
+    {}
+  );
+
   return (
     <>
       <h1>Notifications</h1>
-      <ul>
-        {Object.keys(notificationStrings).map((type) => (
-          <li className={styles.notificationItem} key={type}>
-            <EditableValue
-              key={type}
-              name={type}
-              value={notificationStrings[type]}
-              save={saveString}
-            />
-            {type !== "timeoutInMillis" && (
-              <div className={styles.helper} key={type + "Tokens"}>
-                <p>You have access to the following tokens:</p>
-                <div className={styles.tokenContainer}>
-                  {[...tokens.alwaysTokens, ...getOtherTokens(type)].map(
-                    (token) => (
-                      <pre key={type + token} className={styles.token}>
-                        {token}
-                      </pre>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-          </li>
+      <ul className={styles.notificationList}>
+        {Object.values(prefixGrouped).map((group) => (
+          <div key={group.toString()} className={styles.prefixGroup}>
+            {group.map((type) => (
+              <li className={styles.notificationItem} key={type}>
+                <EditableValue
+                  key={type}
+                  name={type}
+                  value={notificationStrings[type]}
+                  save={saveString}
+                />
+                {type !== "timeoutInMillis" && (
+                  <div className={styles.helper} key={type + "Tokens"}>
+                    <p>You have access to the following tokens:</p>
+                    <div className={styles.tokenContainer}>
+                      {[...tokens.alwaysTokens, ...getOtherTokens(type)].map(
+                        (token) => (
+                          <pre key={type + token} className={styles.token}>
+                            {token}
+                          </pre>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+              </li>
+            ))}
+          </div>
         ))}
       </ul>
     </>

@@ -8,7 +8,7 @@ import { userDbExists } from "./views/utils/user";
 import IntegrationsView from "./views/Integrations/IntegrationsView";
 import CommandsView from "./views/Commands/CommandsView";
 import Navigation from "./components/Navigation/Navigation";
-import "./App.css";
+import styles from "./App.module.css";
 import BacklogView from "./views/BacklogView/BacklogView";
 import NotificationsView from "./views/NotificationsView/NotificationsView";
 
@@ -68,32 +68,34 @@ function App() {
   }, [getAccessTokenSilently, user, isAuthenticated]);
 
   const routes = (
-    <Routes>
-      <Route
-        path="/"
-        element={<DashboardView twitchUserInfo={twitchUserInfo} />}
-      />
-      <Route
-        path="/followers"
-        element={<Followers twitchUserInfo={twitchUserInfo} />}
-      />
-      <Route
-        path="/integrations"
-        element={<IntegrationsView twitchUserInfo={twitchUserInfo} />}
-      />
-      <Route
-        path="/commands"
-        element={<CommandsView twitchUserInfo={twitchUserInfo} />}
-      />
-      <Route
-        path="/backlog"
-        element={<BacklogView twitchUserInfo={twitchUserInfo} />}
-      />
-      <Route
-        path="/notifications"
-        element={<NotificationsView twitchUserInfo={twitchUserInfo} />}
-      />
-    </Routes>
+    <div className={styles.wrapper}>
+      <Routes>
+        <Route
+          path="/"
+          element={<DashboardView twitchUserInfo={twitchUserInfo} />}
+        />
+        <Route
+          path="/followers"
+          element={<Followers twitchUserInfo={twitchUserInfo} />}
+        />
+        <Route
+          path="/integrations"
+          element={<IntegrationsView twitchUserInfo={twitchUserInfo} />}
+        />
+        <Route
+          path="/commands"
+          element={<CommandsView twitchUserInfo={twitchUserInfo} />}
+        />
+        <Route
+          path="/backlog"
+          element={<BacklogView twitchUserInfo={twitchUserInfo} />}
+        />
+        <Route
+          path="/notifications"
+          element={<NotificationsView twitchUserInfo={twitchUserInfo} />}
+        />
+      </Routes>
+    </div>
   );
 
   if (error && process.env.NODE_ENV !== "production") {
@@ -122,7 +124,7 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className={styles.App}>
       <Navigation />
       {content}
     </div>

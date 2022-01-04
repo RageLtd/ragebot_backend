@@ -16,14 +16,48 @@
   padding: .5em;
 }
 
-.notificationItem {
+.notificationList {
+  list-style: none;
+}
+
+.notificationItem:not(:last-child) {
   margin-bottom: 1em;
 }
 
+.prefixGroup {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #666;
+}
+
+.prefixGroup:last-of-type {
+  border-bottom: none;
+}
+
+.prefixGroup > * {
+  flex: 0 1 auto;
+  max-width: 50%;
+  width: 100%;
+  box-sizing:border-box;
+  padding-right: 1em;
+}
+
+@media (max-width: 800px) {
+  .prefixGroup > * {
+    flex: 1 1 auto;
+    max-width: 100%;
+  }
+}
+
 .token {
-  border: 1px solid #333;
-  background-color: #666;
+  border: 1px solid purple;
+  background-color: #880088;
   border-radius: 2px;
-  padding: 0 .25em;
+  padding: .1em .25em;
   color: white;
+  font-style: normal;
+  font-family: 'hack', 'Courier New', Courier, monospace;
 }
