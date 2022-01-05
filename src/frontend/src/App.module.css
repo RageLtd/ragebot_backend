@@ -8,7 +8,9 @@
   --primary-action-color: #03b403;
   --secondary-action-color: #1e90ff;
   --danger-action-color: #ff3333;
+  --action-background-color: #fff;
   --disabled-action-color: #ccc;
+  --disabled-action-background-color: #ddd;
 
   --primary-border-color: #666;
 }
@@ -22,7 +24,9 @@
     --primary-action-color: #01b401;
     --secondary-action-color: #0940ff;
     --danger-action-color: #dd3333;
+    --action-background-color: #fff;
     --disabled-action-color: #777;
+    --disabled-action-background-color: #ddd;
   }
 }
 

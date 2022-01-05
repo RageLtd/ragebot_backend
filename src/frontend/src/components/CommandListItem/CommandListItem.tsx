@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Command } from "../../views/Commands/CommandsView";
 import Button from "../Button/Button";
 import EditableProperty from "../EditableProperty/EditableProperty";
+import RadioInput from "../RadioInput/RadioInput";
 
 import styles from "./CommandListItem.module.css";
 
@@ -147,39 +148,33 @@ export default function CommandListItem({
             onSubmit={handlePermissionsSave}
             className={styles.radioContainer}
           >
-            <label>
-              <input
-                type="radio"
-                name="permissions"
-                value="modonly"
-                onChange={handlePermissionsChange}
-                checked={modOnly}
-                disabled={!isEditingPermissions}
-              />
-              Mod only
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="permissions"
-                value="subonly"
-                onChange={handlePermissionsChange}
-                checked={subOnly}
-                disabled={!isEditingPermissions}
-              />
-              Sub only
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="permissions"
-                value="everyone"
-                onChange={handlePermissionsChange}
-                checked={!subOnly && !modOnly}
-                disabled={!isEditingPermissions}
-              />
+            <RadioInput
+              name="permissions"
+              value="modonly"
+              onChange={handlePermissionsChange}
+              checked={modOnly}
+              disabled={!isEditingPermissions}
+            >
+              Mod Only
+            </RadioInput>
+            <RadioInput
+              name="permissions"
+              value="subonly"
+              onChange={handlePermissionsChange}
+              checked={subOnly}
+              disabled={!isEditingPermissions}
+            >
+              Sub Only
+            </RadioInput>
+            <RadioInput
+              name="permissions"
+              value="everyone"
+              onChange={handlePermissionsChange}
+              checked={!subOnly && !modOnly}
+              disabled={!isEditingPermissions}
+            >
               Anyone
-            </label>
+            </RadioInput>
           </form>
           <div className={styles.helper}>
             Who should be able to trigger the command?
