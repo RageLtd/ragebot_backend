@@ -149,17 +149,14 @@ export default function IntegrationsView({
             <form onSubmit={addDraftUrl}>
               <label>
                 add new url:{" "}
-                <Input
-                  input={
-                    <input
-                      type="text"
-                      name="url"
-                      onChange={updateNewIntegration}
-                      value={newIntegration.draftUrl}
-                    />
-                  }
-                  postfix={<Button type="submit">+</Button>}
-                />
+                <Input postfix={<Button type="submit">+</Button>}>
+                  <input
+                    type="text"
+                    name="url"
+                    onChange={updateNewIntegration}
+                    value={newIntegration.draftUrl}
+                  />
+                </Input>
               </label>
             </form>
           </div>

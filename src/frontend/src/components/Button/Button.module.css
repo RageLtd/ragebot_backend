@@ -18,17 +18,17 @@
 .primary {
   color: white;
   border-color: #038303;
-  background-color: #03b403;
+  background-color: var(--primary-action-color);
 }
 
 .secondary {
   color: white;
-  background-color: dodgerblue;
+  background-color: var(--secondary-action-color);
   border-color: #447cff;
 }
 
 .danger {
-  color:white;
+  color: white;
   border-color: #cc3333;
-  background-color: #ff3333;
+  background-color: var(--danger-action-color);
 }

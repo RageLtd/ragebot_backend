@@ -1,1 +1,3 @@
  - Ragebot take WebRTC, do layouts etc, forward to twitch
+ - Quote command thinger
+ - dark theme

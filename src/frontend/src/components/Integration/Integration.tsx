@@ -116,17 +116,14 @@ export default function Integration({
         <form onSubmit={addDraftUrl}>
           <label>
             add new url:
-            <Input
-              input={
-                <input
-                  type="text"
-                  name="url"
-                  onChange={updateDraftUrl}
-                  value={draftUrl}
-                />
-              }
-              postfix={<Button type="submit">+</Button>}
-            />
+            <Input postfix={<Button type="submit">+</Button>}>
+              <input
+                type="text"
+                name="url"
+                onChange={updateDraftUrl}
+                value={draftUrl}
+              />
+            </Input>
           </label>
         </form>
       </div>

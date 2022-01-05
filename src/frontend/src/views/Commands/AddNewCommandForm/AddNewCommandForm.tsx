@@ -1,5 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import Button from "../../../components/Button/Button";
+import Input from "../../../components/Input/Input";
+
+import styles from "./AddNewCommandForm.module.css";
 
 interface AddNewCommandFormProps {
   onSubmit: Function;
@@ -68,68 +71,87 @@ export default function AddNewCommandForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          Name:
-          <input type="text" value={name} onChange={handleNameChange} />
-        </label>
-      </div>
-      <div>
-        <label>
-          Behavior:
-          <select value={behavior} onChange={handleBehaviorChange}>
-            <option value="respond">Respond</option>
-            <option value="count">Count</option>
-            <option value="timer">Timer</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Response:
-          <input type="text" value={response} onChange={handleResponseChange} />
-        </label>
-      </div>
-      <div>
-        Permissions:
-        <label>
-          Mod only
-          <input
-            type="radio"
-            name="permissions"
-            value="modonly"
-            onChange={handlePermissionsChange}
-          />
-        </label>
-        <label>
-          Sub only
-          <input
-            type="radio"
-            name="permissions"
-            value="subonly"
-            onChange={handlePermissionsChange}
-          />
-        </label>
-        <label>
-          Anyone
-          <input
-            type="radio"
-            name="permissions"
-            defaultChecked
-            value="everyone"
-            onChange={handlePermissionsChange}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          Timeout
-          <input
-            type="number"
-            value={timeoutInMillis}
-            onChange={handleTimeoutChange}
-          />
-        </label>
+      <div className={styles.fieldContainer}>
+        <div>
+          <label>
+            Name:
+            <Input helper="The name of your command">
+              <input type="text" value={name} onChange={handleNameChange} />
+            </Input>
+          </label>
+        </div>
+        <div>
+          <label>
+            Behavior:
+            <Input helper="Commands can trigger a response, a count or be auto-run on a timer">
+              <select value={behavior} onChange={handleBehaviorChange}>
+                <option value="respond">Respond</option>
+                <option value="count">Count</option>
+                <option value="timer">Timer</option>
+              </select>
+            </Input>
+          </label>
+        </div>
+        <div>
+          <label>
+            Response:
+            <Input helper="What reponse would you like to see in chat?">
+              <input
+                type="text"
+                value={response}
+                onChange={handleResponseChange}
+              />
+            </Input>
+          </label>
+        </div>
+        <div>
+          Permissions:
+          <div className={styles.radioContainer}>
+            <label>
+              <input
+                type="radio"
+                name="permissions"
+                value="modonly"
+                onChange={handlePermissionsChange}
+              />
+              Mod only
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="permissions"
+                value="subonly"
+                onChange={handlePermissionsChange}
+              />
+              Sub only
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="permissions"
+                defaultChecked
+                value="everyone"
+                onChange={handlePermissionsChange}
+              />
+              Anyone
+            </label>
+          </div>
+          <div className={styles.helper}>
+            Who should be able to trigger the command?
+          </div>
+        </div>
+        <div>
+          <label>
+            Timeout
+            <Input>
+              <input
+                type="number"
+                value={timeoutInMillis}
+                onChange={handleTimeoutChange}
+              />
+            </Input>
+          </label>
+        </div>
       </div>
       <Button weight="secondary" type="submit">
         Save

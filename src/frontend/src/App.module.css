@@ -1,6 +1,42 @@
+:root {
+  --primary-text-color: #333;
+  --secondary-text-color: #666;
+  --disabled-text-color: #999;
+
+  --primary-background-color: #999;
+
+  --primary-action-color: #03b403;
+  --secondary-action-color: #1e90ff;
+  --danger-action-color: #ff3333;
+  --disabled-action-color: #ccc;
+
+  --primary-border-color: #666;
+}
+
+@media (prefers-color-scheme:dark) {
+  :root {
+    --primary-text-color: white;
+    --secondary-text-color: #ddd;
+    --disabled-text-color: #bbb;
+
+    --primary-action-color: #01b401;
+    --secondary-action-color: #0940ff;
+    --danger-action-color: #dd3333;
+    --disabled-action-color: #777;
+  }
+}
+
 .App {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 24px;
+  color: var(--primary-text-color);
+  min-height: calc(100vh);
+}
+
+@media (prefers-color-scheme: dark) {
+  .App {
+    background-color: #333;
+  }
 }
 
 .wrapper {

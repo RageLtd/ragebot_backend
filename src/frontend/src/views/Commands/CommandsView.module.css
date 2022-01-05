@@ -1,0 +1,8 @@
+.commandList {
+  list-style: none;
+}
+
+.commandList > li {
+  border-bottom: 1px solid var(--primary-border-color);
+  padding: 1.5em 0;
+}

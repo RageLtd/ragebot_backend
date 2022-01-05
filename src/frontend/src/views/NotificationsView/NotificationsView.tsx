@@ -111,21 +111,24 @@ export default function NotificationsView({
                   value={notificationStrings[type]}
                   save={saveString}
                   type="textarea"
+                  helper={
+                    type !== "timeoutInMillis" && (
+                      <>
+                        <p>You have access to the following tokens:</p>
+                        <div className={styles.tokenContainer}>
+                          {[
+                            ...tokens.alwaysTokens,
+                            ...getOtherTokens(type),
+                          ].map((token) => (
+                            <pre key={type + token} className={styles.token}>
+                              {token}
+                            </pre>
+                          ))}
+                        </div>
+                      </>
+                    )
+                  }
                 />
-                {type !== "timeoutInMillis" && (
-                  <div className={styles.helper} key={type + "Tokens"}>
-                    <p>You have access to the following tokens:</p>
-                    <div className={styles.tokenContainer}>
-                      {[...tokens.alwaysTokens, ...getOtherTokens(type)].map(
-                        (token) => (
-                          <pre key={type + token} className={styles.token}>
-                            {token}
-                          </pre>
-                        )
-                      )}
-                    </div>
-                  </div>
-                )}
               </li>
             ))}
           </div>

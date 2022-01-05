@@ -20,17 +20,13 @@
   list-style: none;
 }
 
-.notificationItem:not(:last-child) {
-  margin-bottom: 1em;
-}
-
 .prefixGroup {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom: 1px solid #666;
+  padding-top: 1.5em;
+  border-bottom: 1px solid var(--primary-border-color);
 }
 
 .prefixGroup:last-of-type {
@@ -55,7 +51,7 @@
 .token {
   border: 1px solid purple;
   background-color: #880088;
-  border-radius: 2px;
+  border-radius: .25em;
   padding: .1em .25em;
   color: white;
   font-style: normal;

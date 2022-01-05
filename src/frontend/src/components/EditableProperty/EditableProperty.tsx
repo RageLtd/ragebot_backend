@@ -1,14 +1,23 @@
-import { FormEvent, useState, ChangeEvent } from "react";
+import {
+  FormEvent,
+  useState,
+  ChangeEvent,
+  useRef,
+  useEffect,
+  ReactElement,
+} from "react";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 
 import styles from "./EditableProperty.module.css";
 
 interface EditableValueProps {
+  [key: string]: any;
   value: any;
   name: string;
   save: Function;
-  type?: "input" | "textarea";
+  type?: "input" | "textarea" | "select";
+  options?: ReactElement;
 }
 
 function camelToHuman(string: string) {
@@ -33,13 +42,27 @@ export default function EditableValue({
   name,
   save,
   type = "input",
+  options,
+  ...rest
 }: EditableValueProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
 
+  const textAreaRef = useRef(null);
+
+  useEffect(() => {
+    /// @ts-expect-error
+    if (textAreaRef.current?.tagName.toLowerCase() === "textarea") {
+      /// @ts-expect-error
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+    }
+  }, [textAreaRef, editedValue]);
+
   const toggleEdit = () => setIsEditing(!isEditing);
-  /// @ts-expect-error
-  const updateProperty = (e: ChangeEvent) => setEditedValue(e.target.value);
+  const updateProperty = (e: ChangeEvent) => {
+    /// @ts-expect-error
+    setEditedValue(e.target.value);
+  };
 
   const saveEdit = (e: FormEvent) => {
     e.preventDefault();
@@ -54,29 +77,55 @@ export default function EditableValue({
     toggleEdit();
   };
 
+  const getInputElement = (type: string) => {
+    switch (type) {
+      case "textarea":
+        return (
+          <textarea
+            ref={textAreaRef}
+            disabled={!isEditing}
+            onChange={updateProperty}
+            value={editedValue}
+          />
+        );
+      case "select": {
+        if (!options) {
+          throw new Error(
+            "If you want to use a select you must give it options"
+          );
+        }
+        return (
+          <select
+            disabled={!isEditing}
+            value={editedValue}
+            onChange={updateProperty}
+          >
+            {options}
+          </select>
+        );
+      }
+      default:
+        return (
+          <input
+            type="text"
+            disabled={!isEditing}
+            onChange={updateProperty}
+            value={editedValue}
+          />
+        );
+    }
+  };
+
   return (
     <form onSubmit={saveEdit}>
       <label>
-        {(name.match(/[A-Z]/gm) ?? []).length > 0 ? camelToHuman(name) : name}:
+        {(name.match(/[A-Z]/gm) ?? []).length > 0
+          ? camelToHuman(name)
+          : name[0].toUpperCase() + name.slice(1)}
+        :
         <Input
           className={styles.input}
           disabled={!isEditing}
-          input={
-            type === "textarea" ? (
-              <textarea
-                disabled={!isEditing}
-                onChange={updateProperty}
-                value={editedValue}
-              ></textarea>
-            ) : (
-              <input
-                type="text"
-                disabled={!isEditing}
-                onChange={updateProperty}
-                value={editedValue}
-              />
-            )
-          }
           postfix={
             <>
               {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
@@ -88,7 +137,10 @@ export default function EditableValue({
               {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
             </>
           }
-        />
+          {...rest}
+        >
+          {getInputElement(type)}
+        </Input>
       </label>
     </form>
   );

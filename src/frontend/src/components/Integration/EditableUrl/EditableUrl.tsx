@@ -33,13 +33,6 @@ export default function EditableUrl({ url, save, remove }: EditableUrlProps) {
     <li>
       <form onSubmit={saveEdit}>
         <Input
-          input={
-            <input
-              disabled={!isEditing}
-              onChange={updateUrl}
-              value={editedUrl}
-            />
-          }
           postfix={
             <div>
               {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
@@ -48,7 +41,9 @@ export default function EditableUrl({ url, save, remove }: EditableUrlProps) {
               {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
             </div>
           }
-        />
+        >
+          <input disabled={!isEditing} onChange={updateUrl} value={editedUrl} />
+        </Input>
       </form>
     </li>
   );
