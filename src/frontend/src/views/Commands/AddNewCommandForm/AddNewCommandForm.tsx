@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
+import RadioInput from "../../../components/RadioInput/RadioInput";
 
 import styles from "./AddNewCommandForm.module.css";
 
@@ -107,34 +108,30 @@ export default function AddNewCommandForm({
         <div>
           Permissions:
           <div className={styles.radioContainer}>
-            <label>
-              <input
-                type="radio"
-                name="permissions"
-                value="modonly"
-                onChange={handlePermissionsChange}
-              />
-              Mod only
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="permissions"
-                value="subonly"
-                onChange={handlePermissionsChange}
-              />
-              Sub only
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="permissions"
-                defaultChecked
-                value="everyone"
-                onChange={handlePermissionsChange}
-              />
+            <RadioInput
+              name="permissions"
+              value="modonly"
+              checked={modOnly}
+              onChange={handlePermissionsChange}
+            >
+              Mod Only
+            </RadioInput>
+            <RadioInput
+              name="permissions"
+              value="subonly"
+              checked={subOnly}
+              onChange={handlePermissionsChange}
+            >
+              Sub Only
+            </RadioInput>
+            <RadioInput
+              name="permissions"
+              checked={!modOnly && !subOnly}
+              value="everyone"
+              onChange={handlePermissionsChange}
+            >
               Anyone
-            </label>
+            </RadioInput>
           </div>
           <div className={styles.helper}>
             Who should be able to trigger the command?

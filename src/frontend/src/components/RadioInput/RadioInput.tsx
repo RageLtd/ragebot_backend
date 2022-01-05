@@ -6,7 +6,7 @@ interface RadioInputProps {
   name: string;
   children: string | ReactElement;
   checked: boolean;
-  disabled: boolean;
+  disabled?: boolean;
   onChange: Function;
   value: string;
 }
