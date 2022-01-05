@@ -3,7 +3,7 @@
   margin-left: 1em;
 }
 
-.wrapper > *  {
+.wrapper > *:not(:last-child)  {
   padding-bottom: .5em;
 }
 
