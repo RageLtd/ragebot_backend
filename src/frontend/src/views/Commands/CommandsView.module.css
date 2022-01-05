@@ -1,8 +1,38 @@
 .commandList {
   list-style: none;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  padding-bottom: 1em;
+  border-bottom: 1px solid var(--primary-border-color);
+}
+
+.commandList > .addNew {
+  flex: 1 0 auto;
+  max-width: 100%;
+  width: 100%;
+  margin-bottom: 2em;
+  background-color: var(--secondary-background-color);
+  border-radius: .25em;
+  padding: 0 1em 1em;
 }
 
 .commandList > li {
-  border-bottom: 1px solid var(--primary-border-color);
-  padding: 1.5em 0;
+  flex: 0 1 auto;
+  max-width: 50%;
+  width: 100%;
+  box-sizing:border-box;
+  padding-right: 1em;
+  margin-bottom: 2em;
+}
+
+.commandList:last-of-type {
+  border-bottom: none;
+}
+
+@media (max-width: 800px) {
+  .commandList > li {
+    flex: 1 1 auto;
+    max-width: 100%;
+  }
 }

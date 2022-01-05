@@ -72,6 +72,7 @@ export default function AddNewCommandForm({
 
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Add New Command</h2>
       <div className={styles.fieldContainer}>
         <div>
           <label>

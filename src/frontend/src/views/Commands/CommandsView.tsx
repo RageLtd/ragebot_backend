@@ -81,7 +81,7 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
       )}
       <ul className={styles.commandList}>
         {isAddingCommand && (
-          <li>
+          <li className={styles.addNew}>
             <AddNewCommandForm
               onSubmit={handleSubmit}
               onCancel={handleCancel}
