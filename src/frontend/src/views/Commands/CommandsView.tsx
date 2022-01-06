@@ -88,14 +88,16 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
             />
           </li>
         )}
-        {customCommands.map((command) => (
-          <CommandListItem
-            key={command.id}
-            username={twitchUserInfo.username!}
-            {...command}
-            removeCommand={handleRemoveCommand}
-          />
-        ))}
+        {customCommands
+          .filter((command) => command.id !== "fake-id")
+          .map((command) => (
+            <CommandListItem
+              key={command.id}
+              username={twitchUserInfo.username!}
+              {...command}
+              removeCommand={handleRemoveCommand}
+            />
+          ))}
       </ul>
     </>
   );
