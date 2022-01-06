@@ -1,4 +1,4 @@
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch
 - [x] Quote command thinger
 - [x] dark theme
-- [ ] filter notifications via a query parameter
+- [x] filter notifications via a query parameter
