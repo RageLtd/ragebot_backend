@@ -14,9 +14,6 @@ cd ./src/frontend
 npm ci
 npm run build
 
-# Copy built files into output directory
-mv -f ./build/* ../../public
-
 # Build backend
 echo "Building Backend..."
 cd ../../
