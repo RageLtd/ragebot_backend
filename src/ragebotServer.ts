@@ -6,8 +6,8 @@ import { webPort } from ".";
 import { handleEventSubPost } from "./webhooks/twitchEventSub";
 import followRouter from "./routes/follows";
 import chatRouter from "./routes/chat";
-import notificationsApiRouter from "./routes/notificationsApi";
-import notificationsRouter from "./routes/notifications";
+import alertsApiRouter from "./routes/alertsApi";
+import alertsRouter from "./routes/alerts";
 import chatApiRouter from "./routes/chatApi";
 import integrationsApiRouter from "./routes/integrationsApi";
 import commandsApiRouter from "./routes/commandsApi";
@@ -56,14 +56,14 @@ export function initializeRagebotServer() {
   );
 
   ragebot.use("/chat", chatRouter);
-  ragebot.use("/notifications", notificationsRouter);
+  ragebot.use("/alerts", alertsRouter);
 
   ragebot.use("/api/backlog", backlogApiRouter);
   ragebot.use("/api/chat", chatApiRouter);
   ragebot.use("/api/commands", commandsApiRouter);
   ragebot.use("/api/follows", followRouter);
   ragebot.use("/api/integrations", integrationsApiRouter);
-  ragebot.use("/api/notifications", notificationsApiRouter);
+  ragebot.use("/api/alerts", alertsApiRouter);
   ragebot.use("/api/user-setup", userSetupApiRouter);
 
   ragebot.post("/eventsub", handleEventSubPost);
