@@ -162,7 +162,6 @@ export const getDataByPageQuery = (
   Paginate(Documents(Collection(`${command}_random`)), {
     before,
     after,
-    size: 1,
   });
 
 export const createRandomCollection = (name: string) =>
