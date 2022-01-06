@@ -80,6 +80,7 @@ export function sendNotification(notification: TwitchNotification) {
       `data: ${JSON.stringify({
         notificationHTML,
         timeoutInMillis,
+        type: notification.subscription.type,
       })}\n\n`
     );
   });

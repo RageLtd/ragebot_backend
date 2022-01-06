@@ -21,7 +21,7 @@ interface TokenMap {
 const tokens: TokenMap = {
   alwaysTokens: ["%user_name%", "%broadcaster_user_name%"],
   followTokens: [],
-  newsubTokens: ["%tier%"],
+  newSubTokens: ["%tier%"],
   resubTokens: [
     "%cumulative_months%",
     "%streak_months%",
@@ -56,7 +56,7 @@ export default function NotificationsView({
   const [notificationStrings, setNotificationStrings] =
     useState<NotificationStrings>({});
   const getNotifications = () =>
-    fetch(`/api/notifications/${twitchUserInfo.username?.toLowerCase()}`)
+    fetch(`/api/alerts/${twitchUserInfo.username?.toLowerCase()}`)
       .then((res) => res.json())
       .then((json) => setNotificationStrings(json.data));
 

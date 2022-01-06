@@ -7,6 +7,13 @@ function initializeNotifications(body: HTMLBodyElement) {
 
 const parser = new DOMParser();
 
+const { search } = window.location;
+
+const notificationTypes =
+  search.indexOf("?") > -1
+    ? search.substring(search.indexOf("=") + 1).split(",")
+    : [];
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeNotifications(document.querySelector("body")!);
 
@@ -15,8 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   messageSource.onmessage = (message) => {
-    const parsedMessage = JSON.parse(message.data);
-    const timeoutInMillis = parsedMessage.timeoutInMillis;
+    const parsed = JSON.parse(message.data);
+    if (
+      notificationTypes.length > 0 &&
+      !notificationTypes.includes(parsed.type)
+    ) {
+      return;
+    }
+
+    const timeoutInMillis = parsed.timeoutInMillis;
 
     const notificationContainer = document.querySelector(
       "#notification-container"
@@ -26,8 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
     notification.classList.add("notification");
 
     notification.append(
-      ...parser.parseFromString(parsedMessage.notificationHTML, "text/html")
-        .body.children
+      ...parser.parseFromString(parsed.notificationHTML, "text/html").body
+        .children
     );
 
     notificationContainer?.append(notification);
