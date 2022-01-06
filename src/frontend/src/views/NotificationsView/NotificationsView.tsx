@@ -100,6 +100,13 @@ export default function NotificationsView({
   return (
     <>
       <h1>Notifications</h1>
+      <p>
+        This is where you can control the notifications that show up at{" "}
+        <span className={styles.code}>/alerts/:userName</span>. You can define
+        custom strings using the tokens listed below each message and then the
+        tokens will be replaced with data from Twitch's API
+      </p>
+      <h2>Configuration</h2>
       <ul className={styles.notificationList}>
         {Object.values(prefixGrouped).map((group) => (
           <div key={group.toString()} className={styles.prefixGroup}>

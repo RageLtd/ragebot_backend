@@ -48,7 +48,7 @@
   }
 }
 
-.token {
+.token, .code {
   border: 1px solid purple;
   background-color: #880088;
   border-radius: .25em;
