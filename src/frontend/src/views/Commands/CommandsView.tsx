@@ -75,7 +75,13 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
 
   return (
     <>
-      <h1>This is the commands view</h1>
+      <h1>Commands</h1>
+      <p>
+        These are the custom commands you have registered on your channel. Here
+        you can configure the behavior, response, timeout and even name of your
+        custom commands.
+      </p>
+      <h2>Configuration</h2>
       {!isAddingCommand && (
         <Button onClick={toggleAdding}>Add new Command</Button>
       )}
