@@ -7,6 +7,7 @@ import {
   Command,
   CommandResponse,
   CountResponse,
+  createRandomCollection,
   decrementCounterQuery,
   getCountQuery,
   getCustomCommandsQuery,
@@ -45,7 +46,21 @@ export class CustomCommandRegistry {
       getCustomCommandsQuery()
     )) as CommandResponse;
 
-    return data;
+    return data.reduce((acc: Command[], command: Command) => {
+      acc.push(command);
+      if (command.behavior === "random") {
+        acc.push({
+          id: "fake-id",
+          name: `add${command.name}`,
+          behavior: "respond",
+          response: `${command.name} added`,
+          modOnly: true,
+          subOnly: false,
+          timeoutInMillis: 0,
+        });
+      }
+      return acc;
+    }, []);
   }
 
   async addCommand(
@@ -69,6 +84,10 @@ export class CustomCommandRegistry {
         )
       )
       .catch(console.error);
+
+    if (behavior === "random") {
+      await client?.query(createRandomCollection(name)).catch(console.error);
+    }
     return res;
   }
 

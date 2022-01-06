@@ -2,6 +2,7 @@ import {
   Add,
   Collection,
   Create,
+  CreateCollection,
   Delete,
   Documents,
   Get,
@@ -153,3 +154,21 @@ export const decrementCounterQuery = (command: string, count: number) =>
       ),
     },
   });
+
+export const getDataByPageQuery = (
+  command: string,
+  { before, after }: { before?: string; after?: string }
+) =>
+  Paginate(Documents(Collection(`${command}_random`)), {
+    before,
+    after,
+    size: 1,
+  });
+
+export const createRandomCollection = (name: string) =>
+  CreateCollection({ name: `${name}_random` });
+
+export const addRandomDataQuery = (
+  command: string,
+  formattedParams: { value: string; notes?: string }
+) => Create(Collection(`${command}_random`), { data: formattedParams });

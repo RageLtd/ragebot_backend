@@ -1,5 +1,7 @@
+import { Client, Get } from "faunadb";
+import { merge } from "lodash";
 import { Userstate } from "tmi.js";
-import { customCommandRegistry, tmiClient } from "..";
+import { clientRegistry, customCommandRegistry, tmiClient } from "..";
 import {
   addBacklog,
   getBacklog,
@@ -10,6 +12,10 @@ import {
   removeCustomCommand,
   updateCustomCommand,
 } from "../commands/custom/custom";
+import {
+  addRandomDataQuery,
+  getDataByPageQuery,
+} from "../commands/custom/customQueries";
 import {
   getGame,
   getLobby,
@@ -27,6 +33,19 @@ import {
   removeTermFromBlacklist,
   removeTermFromWhitelist,
 } from "./whitelist";
+
+interface FaunaResponse {
+  data: any[];
+  after?: string;
+  before?: string;
+}
+
+interface RandomResult {
+  data: {
+    value: string;
+    notes: string;
+  };
+}
 
 export function parseMessage(
   target: string,
@@ -156,6 +175,10 @@ async function parseCustomCommand(
   response: string,
   params: string[]
 ) {
+  if (command.startsWith("add") && behavior === "respond") {
+    await addRandomData(target, command, params);
+    tmiClient.say(target, response);
+  }
   switch (behavior) {
     case "respond": {
       tmiClient.say(target, response);
@@ -179,8 +202,74 @@ async function parseCustomCommand(
       tmiClient.say(target, response);
       return;
     }
+    case "random": {
+      const randomResult = await parseRandomCommand(target, command);
+
+      const formattedResult = `${randomResult.data.value} - ${randomResult.data.notes}`;
+
+      tmiClient.say(target, formattedResult);
+      return;
+    }
     default: {
       return;
     }
   }
+}
+
+async function getAllData(
+  target: string,
+  command: string,
+  client: Client,
+  { after }: { after?: string }
+): Promise<any[]> {
+  const firstRes = (await client?.query(
+    getDataByPageQuery(command, { after })
+  )) as FaunaResponse;
+
+  const allData = [];
+
+  allData.push(...firstRes.data);
+
+  if (firstRes.after) {
+    const newData = await getAllData(target, command, client, {
+      after: firstRes.after,
+    });
+    allData.push(...newData);
+  }
+
+  return allData;
+}
+
+async function parseRandomCommand(
+  target: string,
+  command: string
+): Promise<RandomResult> {
+  const client = await clientRegistry.getClient(target);
+
+  const allResult = await getAllData(target, command, client!, {});
+
+  const randomIndex = Math.floor(Math.random() * allResult.length);
+
+  const result = (await client?.query(
+    Get(allResult[randomIndex])
+  )) as RandomResult;
+
+  return result;
+}
+
+async function addRandomData(
+  target: string,
+  command: string,
+  params: string[]
+) {
+  const client = await clientRegistry.getClient(target);
+
+  const splitParams = params.join(" ").split(/\||\-|:/gm);
+  const formattedParams = {
+    value: splitParams.shift()!,
+    notes: splitParams.shift(),
+  };
+  await client?.query(
+    addRandomDataQuery(command.substring(3).toLowerCase(), formattedParams)
+  );
 }

@@ -4,7 +4,7 @@ import { isModerator } from "../../messages/isModerator";
 import { setCommand, setCustomCounter, updateCommand } from "../utils";
 import { removeCustomCommandByNameQuery } from "./customQueries";
 
-const allowedCommandBehaviors = ["count", "respond", "timer"];
+const allowedCommandBehaviors = ["count", "respond", "timer", "random"];
 
 export async function addCustomCommand(
   target: string,
@@ -23,7 +23,9 @@ export async function addCustomCommand(
     let timeoutInMillis: number = 0;
 
     if (!allowedCommandBehaviors.includes(behavior)) {
-      throw new Error("Behavior must be 'count', 'timer' or 'respond'");
+      throw new Error(
+        "Behavior must be 'count', 'timer', 'random' or 'respond'"
+      );
     }
 
     if (behavior === "timer") {

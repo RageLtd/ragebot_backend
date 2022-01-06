@@ -15,7 +15,7 @@
   box-sizing: border-box;
   flex: 1 1 auto;
   height: 100%;
-  padding: .1em;
+  padding: .25em;
 }
 
 .prefixContainer, .postfixContainer {

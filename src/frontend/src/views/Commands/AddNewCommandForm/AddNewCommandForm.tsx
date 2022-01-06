@@ -90,6 +90,7 @@ export default function AddNewCommandForm({
                 <option value="respond">Respond</option>
                 <option value="count">Count</option>
                 <option value="timer">Timer</option>
+                <option value="random">Random</option>
               </select>
             </Input>
           </label>
