@@ -6,7 +6,7 @@ import { getAuthToken } from "./authToken";
 
 const SUBSCRIPTION_URL = "https://api.twitch.tv/helix/eventsub/subscriptions";
 
-interface Database {
+export interface Database {
   data: {
     [key: string]: string;
   };

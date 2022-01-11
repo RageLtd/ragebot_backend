@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import EditableValue from "../../components/EditableProperty/EditableProperty";
+import CustomBehaviorControls from "./CustomBehaviorControls/CustomBehaviorControls";
 
 import styles from "./NotificationsView.module.css";
+import {
+  getHumanGroupHeader,
+  tokens,
+  getOtherTokens,
+  getHumanGroupName,
+} from "./notificationViewUtils";
 
 interface NotificationsViewProps {
   twitchUserInfo: {
@@ -12,42 +19,6 @@ interface NotificationsViewProps {
 
 interface NotificationStrings {
   [key: string]: any;
-}
-
-interface TokenMap {
-  [key: string]: string[];
-}
-
-const tokens: TokenMap = {
-  alwaysTokens: ["%user_name%", "%broadcaster_user_name%"],
-  followTokens: [],
-  newSubTokens: ["%tier%"],
-  resubTokens: [
-    "%cumulative_months%",
-    "%streak_months%",
-    "%tier%",
-    "%message%",
-    "%duration_months%",
-  ],
-  channelGiftTokens: ["%total%", "%tier%", "%cumulative_total%"],
-  cheerTokens: ["%bits%", "%message%"],
-  raidTokens: ["%from_broadcaster_user_name%", "%viewers%"],
-  redemptionTokens: [
-    "%user_input%",
-    "%reward.title%",
-    "%reward.prompt%",
-    "%reward.cost%",
-  ],
-};
-
-function getOtherTokens(type: string) {
-  const matches = type.match(/[A-Z]/gm)!;
-
-  const prefix = type.substring(0, type.indexOf(matches.shift()!));
-
-  const [key] = Object.keys(tokens).filter((key) => key.startsWith(prefix));
-
-  return tokens[key];
 }
 
 export default function NotificationsView({
@@ -78,7 +49,6 @@ export default function NotificationsView({
     }
   }, [twitchUserInfo.username]);
 
-
   const prefixGrouped = Object.keys(notificationStrings).reduce(
     (acc: { [key: string]: string[] }, string) => {
       const matches = string.match(/[A-Z]/gm)!;
@@ -108,9 +78,10 @@ export default function NotificationsView({
       </p>
       <h2>Configuration</h2>
       <ul className={styles.notificationList}>
-        {Object.values(prefixGrouped).map((group) => (
-          <div key={group.toString()} className={styles.prefixGroup}>
-            {group.map((type) => (
+        {Object.keys(prefixGrouped).map((groupName) => (
+          <div key={groupName} className={styles.prefixGroup}>
+            {getHumanGroupHeader(groupName)}
+            {prefixGrouped[groupName].map((type) => (
               <li className={styles.notificationItem} key={type}>
                 <EditableValue
                   key={type}
@@ -138,6 +109,11 @@ export default function NotificationsView({
                 />
               </li>
             ))}
+            <CustomBehaviorControls
+              name={groupName}
+              formattedName={getHumanGroupName(groupName)}
+              twitchUserInfo={twitchUserInfo}
+            />
           </div>
         ))}
       </ul>

@@ -16,6 +16,8 @@
   --disabled-action-background-color: #ddd;
 
   --primary-border-color: #666;
+  
+  font-size: 24px;
 }
 
 @media (prefers-color-scheme:dark) {
@@ -40,6 +42,7 @@ body {
   font-family: "LatoLatinWeb", Arial, Helvetica, sans-serif;
   font-weight: 400;
   line-height: 1.75;
+  font-variant: no-common-ligatures;
 }
 
 p {margin-bottom: 1rem;}
@@ -66,7 +69,6 @@ h5 {font-size: 1.25rem;}
 small, .text_small {font-size: 0.8rem;}
 
 .App {
-  font-size: 24px;
   color: var(--primary-text-color);
   min-height: calc(100vh);
 }

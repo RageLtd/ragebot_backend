@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { clientRegistry } from "..";
 import {
+  getCustomBehaviorsQuery,
   getNotificationVariablesQuery,
   NotificationVariablesResponse,
+  saveCustomBehaviorQuery,
   updateNotificationStringQuery,
 } from "../notifications/notificationQueries";
 import {
@@ -80,6 +82,30 @@ notificationsApiRouter.patch("/:userName", async (req, res) => {
   );
 
   res.send(notificationSaveResponse);
+});
+
+notificationsApiRouter.post("/:userName/behaviors/:type", async (req, res) => {
+  const { userName, type } = req.params;
+  const target = `#${userName.toLowerCase()}`;
+  const client = await clientRegistry.getClient(target);
+
+  const behaviorSaveResponse = await client?.query(
+    saveCustomBehaviorQuery(type, req.body)
+  );
+
+  res.send(behaviorSaveResponse);
+});
+
+notificationsApiRouter.get("/:userName/behaviors/:type", async (req, res) => {
+  const { userName, type } = req.params;
+  const target = `#${userName.toLowerCase()}`;
+  const client = await clientRegistry.getClient(target);
+
+  const getBehaviorsResponse = await client?.query(
+    getCustomBehaviorsQuery(type)
+  );
+
+  res.send(getBehaviorsResponse);
 });
 
 export default notificationsApiRouter;

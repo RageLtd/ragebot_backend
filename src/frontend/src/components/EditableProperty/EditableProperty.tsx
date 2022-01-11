@@ -17,7 +17,7 @@ interface EditableValueProps {
   name: string;
   save: Function;
   type?: "input" | "textarea" | "select";
-  options?: ReactElement;
+  options?: ReactElement | ReactElement[];
 }
 
 function camelToHuman(string: string) {

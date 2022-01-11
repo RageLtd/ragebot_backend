@@ -1,9 +1,12 @@
+import { Client } from "faunadb";
 import { replace, get } from "lodash";
-import { clientRegistry } from "..";
+import { clientRegistry, tmiClient } from "..";
+import { addBacklogQuery } from "../commands/backlog/backlogQueries";
 import {
   getNotificationStylesQuery,
   getNotificationVariablesQuery,
   NotificationStylesResponse,
+  NotificationVariablesResponse,
 } from "./notificationQueries";
 import { TwitchNotification, TwitchNotificationEvent } from "./notifications";
 
@@ -129,7 +132,9 @@ export function getUserName(notification: TwitchNotification) {
 
 export async function getNotificationVariables(username: string) {
   const client = await clientRegistry.getClient(`#${username}`);
-  return await client?.query(getNotificationVariablesQuery());
+  return (await client?.query(
+    getNotificationVariablesQuery()
+  )) as NotificationVariablesResponse;
 }
 
 export function parseFollowNotification(eventData: TwitchNotificationEvent) {
@@ -236,10 +241,11 @@ export function parseChannelPointRedemptionMessage(
   );
 }
 
-function formatMessages(
+export function formatMessages(
   tokens: string[],
   messages: string[],
-  eventData: TwitchNotificationEvent
+  eventData: TwitchNotificationEvent,
+  isHTML: boolean = true
 ) {
   return tokens.reduce((messages, token) => {
     const tokenIndex = token.substring(1, token.length - 1);
@@ -249,7 +255,9 @@ function formatMessages(
         return replace(
           message,
           token,
-          `<span class="${tokenIndex}">An Anonymous user</span>`
+          `${isHTML ? `<span class="${tokenIndex}">` : ""}An Anonymous user${
+            isHTML ? "</span>" : ""
+          }`
         );
       }
       if (eventData.is_anonymous && tokenIndex === "cumulative_total") {
@@ -261,11 +269,65 @@ function formatMessages(
       return replace(
         message,
         token,
-        `<span class="${tokenIndex}">${get(
+        `${isHTML ? `<span class="${tokenIndex}">` : ""}${get(
           eventData,
           tokenIndex
-        )?.toString()}</span>`
+        )?.toString()}${isHTML ? `</span>` : ""}`
       );
     });
   }, messages);
+}
+
+export async function executeCustomBehavior(
+  client: Client,
+  broadcasterUsername: string,
+  behavior: any,
+  type: string,
+  eventData: TwitchNotificationEvent
+) {
+  switch (behavior.behavior) {
+    case "addToBacklog": {
+      if (behavior.condition === eventData.reward?.title) {
+        await client.query(
+          addBacklogQuery(eventData.user_input!, eventData.user_name)
+        );
+        tmiClient.say(
+          `#${broadcasterUsername.toLowerCase()}`,
+          `${eventData.user_name} added ${eventData.user_input} to the backlog`
+        );
+        return;
+      }
+    }
+    case "say": {
+      const [message] = formatMessages(
+        [...alwaysTokens, ...getTokensByEventType(type)],
+        [behavior.response],
+        eventData,
+        false
+      );
+      tmiClient.say(`#${broadcasterUsername.toLowerCase()}`, message);
+      return;
+    }
+  }
+}
+
+function getTokensByEventType(type: string) {
+  switch (type) {
+    case "channel.follow":
+      return followTokens;
+    case "channel.subscribe":
+      return newSubTokens;
+    case "channel.subscription.gift":
+      return giftSubTokens;
+    case "channel.subscription.message":
+      return resubTokens;
+    case "channel.cheer":
+      return cheerTokens;
+    case "channel.raid":
+      return raidTokens;
+    case "channel.channel_points_custom_reward_redemption.add":
+      return redemptionTokens;
+    default:
+      return [];
+  }
 }

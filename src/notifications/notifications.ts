@@ -1,10 +1,16 @@
 import { merge } from "lodash";
-import { webhookRegistry } from "..";
+import { clientRegistry, webhookRegistry } from "..";
 import { parseEmotes } from "../chat/chat";
 import discord from "../discord/discord";
 import { notification_sse_clients } from "../ragebotServer";
+import { customBehaviorTypes } from "../users/setupUserDb";
+import { getCustomBehaviorsQuery } from "./notificationQueries";
 import {
+  applyNotificationVariables,
+  executeCustomBehavior,
+  getNotificationVariables,
   getUserName,
+  NotificationVariables,
   parseChannelPointRedemptionMessage,
   parseCheerMessage,
   parseFollowNotification,
@@ -28,11 +34,14 @@ export interface TwitchNotification {
       emotes?: { begin: number; end: number; id: string }[];
       text: string;
     };
+    reward?: {
+      title: string;
+    };
   };
 }
 
 export interface TwitchNotificationEvent {
-  [key: string]: string | number | boolean | undefined | null;
+  [key: string]: any;
   user_name: string;
   cumulative_months?: number;
   duration_months?: number;
@@ -41,13 +50,19 @@ export interface TwitchNotificationEvent {
   tier?: string;
   is_anonymous?: boolean;
   cumulative_total?: number | null;
+  reward?: {
+    id: string;
+    title: string;
+    cost: number;
+  };
+  user_input?: string;
 }
 
 interface FormattedEmotes {
   [key: string]: string[];
 }
 
-export function sendNotification(notification: TwitchNotification) {
+export async function sendNotification(notification: TwitchNotification) {
   const broadcasterUsername = getUserName(notification).toLowerCase();
 
   let eventWithParsedMessage = {};
@@ -73,7 +88,7 @@ export function sendNotification(notification: TwitchNotification) {
     event: merge(notification.event, eventWithParsedMessage),
   };
 
-  const notificationHTML = generateNotificationHTML(parsedNotification);
+  const notificationHTML = await generateNotificationHTML(parsedNotification);
 
   notification_sse_clients[broadcasterUsername]?.forEach((sse_client) => {
     sse_client.res.write(
@@ -81,6 +96,7 @@ export function sendNotification(notification: TwitchNotification) {
         notificationHTML,
         timeoutInMillis,
         type: notification.subscription.type,
+        alertName: notification.event.reward?.title,
       })}\n\n`
     );
   });
@@ -104,31 +120,130 @@ async function postStatusUpdate(
   });
 }
 
-function generateNotificationHTML(parsedNotification: TwitchNotification) {
+async function generateNotificationHTML(
+  parsedNotification: TwitchNotification
+) {
   const broadcasterUsername = getUserName(parsedNotification);
   const eventData =
     parsedNotification.event as unknown as TwitchNotificationEvent;
 
+  const { data: variables } = await getNotificationVariables(
+    broadcasterUsername.toLowerCase()
+  );
+  applyNotificationVariables(variables as unknown as NotificationVariables);
+
+  const client = await clientRegistry.getClient(
+    `#${broadcasterUsername.toLowerCase()}`
+  );
+
+  const customBehaviors: { [key: string]: any[] } = {};
+
+  await Promise.all(
+    customBehaviorTypes.map(async (type) => {
+      const { data: behaviors } = (await client?.query(
+        getCustomBehaviorsQuery(type)
+      )) as { data: any[] };
+      customBehaviors[type] = behaviors;
+    })
+  );
+
   switch (parsedNotification.subscription.type) {
     case "channel.follow": {
+      if (customBehaviors.follow) {
+        customBehaviors.follow.forEach((behavior) => {
+          executeCustomBehavior(
+            client!,
+            broadcasterUsername,
+            behavior,
+            parsedNotification.subscription.type,
+            eventData
+          );
+        });
+      }
       return parseFollowNotification(eventData);
     }
     case "channel.subscribe": {
+      if (customBehaviors.new) {
+        customBehaviors.new.forEach((behavior) => {
+          executeCustomBehavior(
+            client!,
+            broadcasterUsername,
+            behavior,
+            parsedNotification.subscription.type,
+            eventData
+          );
+        });
+      }
       return parseNewSubscription(eventData);
     }
     case "channel.subscription.message": {
+      if (customBehaviors.resub) {
+        customBehaviors.resub.forEach((behavior) => {
+          executeCustomBehavior(
+            client!,
+            broadcasterUsername,
+            behavior,
+            parsedNotification.subscription.type,
+            eventData
+          );
+        });
+      }
       return parseResubMessage(eventData);
     }
     case "channel.subscription.gift": {
+      if (customBehaviors.gift) {
+        customBehaviors.gift.forEach((behavior) => {
+          executeCustomBehavior(
+            client!,
+            broadcasterUsername,
+            behavior,
+            parsedNotification.subscription.type,
+            eventData
+          );
+        });
+      }
       return parseGiftSubMessage(eventData);
     }
     case "channel.cheer": {
+      if (customBehaviors.cheer) {
+        customBehaviors.cheer.forEach((behavior) => {
+          executeCustomBehavior(
+            client!,
+            broadcasterUsername,
+            behavior,
+            parsedNotification.subscription.type,
+            eventData
+          );
+        });
+      }
       return parseCheerMessage(eventData);
     }
     case "channel.raid": {
+      if (customBehaviors.raid) {
+        customBehaviors.raid.forEach((behavior) => {
+          executeCustomBehavior(
+            client!,
+            broadcasterUsername,
+            behavior,
+            parsedNotification.subscription.type,
+            eventData
+          );
+        });
+      }
       return parseRaidMessage(eventData);
     }
     case "channel.channel_points_custom_reward_redemption.add": {
+      if (customBehaviors.redemption) {
+        customBehaviors.redemption.forEach((behavior) => {
+          executeCustomBehavior(
+            client!,
+            broadcasterUsername,
+            behavior,
+            parsedNotification.subscription.type,
+            eventData
+          );
+        });
+      }
       return parseChannelPointRedemptionMessage(eventData);
     }
     case "channel.update": {

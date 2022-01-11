@@ -8,6 +8,16 @@ import {
   createUserChildDBQuery,
 } from "./setupUserDbQueries";
 
+export const customBehaviorTypes = [
+  "channel",
+  "cheer",
+  "follow",
+  "new",
+  "raid",
+  "redemption",
+  "resub",
+];
+
 export async function setupUserDb(username: string, twitchId: string) {
   // TODO: Fix potential DB creation exploit
   if (await childDbExists(`#${username}`)) {
@@ -30,6 +40,7 @@ export async function setupUserDb(username: string, twitchId: string) {
       "notification_styles",
       "notification_variables",
       "webhooks",
+      ...customBehaviorTypes.map((type) => `${type}_custom_behaviors`),
     ].map(async (collection) => {
       console.info(
         `Creating collection ${collection} for new user: ${username}`
