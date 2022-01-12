@@ -1,5 +1,4 @@
 import { Client, Get } from "faunadb";
-import { merge } from "lodash";
 import { Userstate } from "tmi.js";
 import { clientRegistry, customCommandRegistry, tmiClient } from "..";
 import {
@@ -25,6 +24,7 @@ import {
   setRun,
 } from "../commands/game/game";
 import { shoutout } from "../commands/shoutout";
+import { disableBot } from "../commands/utils";
 import { isModerator } from "./isModerator";
 import { isSubscriber } from "./isSubscriber";
 import {
@@ -57,6 +57,11 @@ export function parseMessage(
   const params = messageArr;
 
   switch (command.toLowerCase()) {
+    case "!off":
+    case "!disable": {
+      disableBot(target);
+      return;
+    }
     case "!setgame": {
       setGame(target, userState, params);
       return;

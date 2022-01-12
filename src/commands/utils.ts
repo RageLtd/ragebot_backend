@@ -1,5 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
-import { clientRegistry } from "..";
+import {
+  clientRegistry,
+  customCommandRegistry,
+  faunaClient,
+  tmiClient,
+} from "..";
+import {
+  getIsUserBotEnabledStateQuery,
+  setUserBotEnabledStateQuery,
+} from "../users/userQueries";
 import {
   addBacklogQuery,
   getBacklogQuery,
@@ -121,4 +130,22 @@ export async function getRemote(remote: Remote, target: string) {
       return client?.query(getBacklogQuery());
     }
   }
+}
+
+export async function enableBot(target: string) {
+  await faunaClient.query(setUserBotEnabledStateQuery(target, true));
+  await customCommandRegistry.refreshCommands(target);
+
+  tmiClient.say(target, "Ragebot enabled");
+}
+
+export async function disableBot(target: string) {
+  await faunaClient.query(setUserBotEnabledStateQuery(target, false));
+  customCommandRegistry.disableTimers(target);
+
+  tmiClient.say(target, "Ragebot disabled");
+}
+
+export async function isBotEnabled(target: string) {
+  return await faunaClient.query(getIsUserBotEnabledStateQuery(target));
 }

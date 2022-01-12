@@ -156,6 +156,12 @@ export class CustomCommandRegistry {
       }, {});
   }
 
+  disableTimers(target: string) {
+    Object.values(this.timerRegistry[target]).map((timer) =>
+      clearInterval(timer)
+    );
+  }
+
   async getCount(target: string, command: string) {
     const client = await clientRegistry.getClient(target);
 

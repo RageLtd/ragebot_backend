@@ -6,8 +6,8 @@ import {
   CreateIndex,
 } from "faunadb";
 
-export const createUserChildDBQuery = (name: string, twitchId: string) =>
-  CreateDatabase({ name, data: { twitchId } });
+export const createUserChildDBQuery = (name: string, user_id: string) =>
+  CreateDatabase({ name, data: { user_id, botEnabledState: false } });
 
 export const createBaseCollectionQuery = (name: string) =>
   CreateCollection({ name });

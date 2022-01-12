@@ -1,6 +1,8 @@
 import { Userstate } from "tmi.js";
 import { filterRegistry, tmiClient } from ".";
 import { postToChat } from "./chat/chat";
+import { enableBot, isBotEnabled } from "./commands/utils";
+import { isModerator } from "./messages/isModerator";
 import { parseMessage } from "./messages/parseMessage";
 
 async function checkProfanity(target: string, message: string) {
@@ -14,7 +16,15 @@ export const messageHandler = async (
   message: string,
   self: boolean
 ) => {
-  if (self) {
+  const messageArr = message.split(" ");
+  const command = messageArr.shift()!;
+
+  if (command === "!on" && isModerator(userState)) {
+    enableBot(channel);
+    return;
+  }
+
+  if (self || !(await isBotEnabled(channel))) {
     return;
   }
 
