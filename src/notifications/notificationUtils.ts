@@ -82,6 +82,9 @@ export interface NotificationVariables {
 
 export function applyNotificationVariables(variables: NotificationVariables) {
   ({
+    cheerMessage,
+    cheerPostfixString,
+    cheerPrefixString,
     followMessage,
     followPrefixString,
     followPostfixString,
