@@ -2,6 +2,7 @@
 - [x] Quote command thinger
 - [x] dark theme
 - [x] filter notifications via a query parameter
+- [ ] Notification queuing
 - [ ] Way to test notifications (make sure they look right)
 - [ ] Chat custom emotes (ffz etc)
 - [ ] Chat italics
