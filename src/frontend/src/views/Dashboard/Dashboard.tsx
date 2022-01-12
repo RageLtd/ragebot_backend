@@ -59,20 +59,11 @@ export default function DashboardView({ twitchUserInfo }: DashboardViewProps) {
         state={isRagebotEnabled}
         onChange={setRagebot}
       >
-        Ragebot On/Off
+        Ragebot {isRagebotEnabled ? "On" : "Off"}
         {isLoadingRagebot && <Spinner className={styles.spinner} />}
       </Toggle>
       <p>Holy shit auth is working</p>
       <p>Username: {twitchUserInfo?.username}</p>
-      <p>
-        <Link to="/followers">Followers</Link>
-      </p>
-      <p>
-        <Link to="/integrations">Integrations</Link>
-      </p>
-      <p>
-        <Link to="/commands">Commands</Link>
-      </p>
     </div>
   );
 }
