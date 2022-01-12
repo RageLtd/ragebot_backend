@@ -25,5 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chatContainer?.append(chatMessageContainer);
     chatContainer?.lastElementChild?.scrollIntoView();
+
+    setTimeout(() => chatMessageContainer.remove(), 5 * 1000 * 60);
   };
 });
