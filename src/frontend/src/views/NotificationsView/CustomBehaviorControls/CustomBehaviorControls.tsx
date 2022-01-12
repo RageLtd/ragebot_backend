@@ -62,9 +62,7 @@ export default function CustomBehaviorControls({
     <div>
       <h4>{formattedName} Custom Behaviors</h4>
       {!isAddingBehavior && (
-        <Button weight="secondary" onClick={handleAddBehaviorClick}>
-          Add New Behavior
-        </Button>
+        <Button onClick={handleAddBehaviorClick}>Add New Behavior</Button>
       )}
       {isAddingBehavior && (
         <AddNewCustomBehaviorForm

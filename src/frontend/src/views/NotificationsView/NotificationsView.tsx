@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import EditableValue from "../../components/EditableProperty/EditableProperty";
 import CustomBehaviorControls from "./CustomBehaviorControls/CustomBehaviorControls";
 
-import styles from "./NotificationsView.module.css";
+import notifications from "./testNotifications";
 import {
   getHumanGroupHeader,
   tokens,
   getOtherTokens,
   getHumanGroupName,
 } from "./notificationViewUtils";
+import styles from "./NotificationsView.module.css";
+import Button from "../../components/Button/Button";
 
 interface NotificationsViewProps {
   twitchUserInfo: {
@@ -19,6 +21,26 @@ interface NotificationsViewProps {
 
 interface NotificationStrings {
   [key: string]: any;
+}
+
+function generateSendTestNotification(groupName: string, username: string) {
+  return () => {
+    if (groupName === "timeout") {
+      return;
+    }
+    return fetch("/eventsub", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Twitch-Eventsub-Message-Type": "notification",
+      },
+      body: JSON.stringify(
+        (notifications as { [key: string]: any })[
+          groupName === "new" ? "subscribe" : groupName
+        ]
+      ),
+    });
+  };
 }
 
 export default function NotificationsView({
@@ -81,6 +103,15 @@ export default function NotificationsView({
         {Object.keys(prefixGrouped).map((groupName) => (
           <div key={groupName} className={styles.prefixGroup}>
             {getHumanGroupHeader(groupName)}
+            <Button
+              weight="secondary"
+              onClick={generateSendTestNotification(
+                groupName,
+                twitchUserInfo.username!
+              )}
+            >
+              Send Test Notification
+            </Button>
             {prefixGrouped[groupName].map((type) => (
               <li className={styles.notificationItem} key={type}>
                 <EditableValue
