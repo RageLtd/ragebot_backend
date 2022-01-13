@@ -14,12 +14,26 @@ const notificationTypes =
     ? search.substring(search.indexOf("=") + 1).split(",")
     : [];
 
+const notificationQueue: any[] = [];
+
+function createNotification(parsed: any) {
+  const notification = document.createElement("div");
+  notification.classList.add("notification");
+
+  notification.append(
+    ...parser.parseFromString(parsed.notificationHTML, "text/html").body
+      .children
+  );
+
+  return notification;
+}
+
+let queueCheckInterval: NodeJS.Timer;
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeNotifications(document.querySelector("body")!);
 
-  const messageSource = new EventSource(
-    `//${window.location.host}/api${window.location.pathname}/feed`
-  );
+  const messageSource = new EventSource(`/api${window.location.pathname}/feed`);
 
   messageSource.onmessage = (message) => {
     const parsed = JSON.parse(message.data);
@@ -36,16 +50,23 @@ document.addEventListener("DOMContentLoaded", () => {
       "#notification-container"
     );
 
-    const notification = document.createElement("div");
-    notification.classList.add("notification");
+    const notification = createNotification(parsed);
 
-    notification.append(
-      ...parser.parseFromString(parsed.notificationHTML, "text/html").body
-        .children
-    );
+    const readFromQueue = () => {
+      const newNotification = notificationQueue.shift();
+      if (newNotification) {
+        notificationContainer?.append(newNotification);
 
-    notificationContainer?.append(notification);
+        setTimeout(() => {
+          newNotification.remove();
+        }, timeoutInMillis);
+      }
+    };
 
-    setTimeout(() => notification.remove(), timeoutInMillis);
+    notificationQueue.push(notification);
+
+    if (queueCheckInterval === undefined) {
+      queueCheckInterval = setInterval(readFromQueue, timeoutInMillis * 1.1);
+    }
   };
 });
