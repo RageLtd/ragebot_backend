@@ -102,16 +102,19 @@ export default function NotificationsView({
       <ul className={styles.notificationList}>
         {Object.keys(prefixGrouped).map((groupName) => (
           <div key={groupName} className={styles.prefixGroup}>
-            {getHumanGroupHeader(groupName)}
-            <Button
-              weight="secondary"
-              onClick={generateSendTestNotification(
-                groupName,
-                twitchUserInfo.username!
-              )}
-            >
-              Send Test Notification
-            </Button>
+            <div>
+              {getHumanGroupHeader(groupName)}
+              <Button
+                weight="secondary"
+                className={styles.testButton}
+                onClick={generateSendTestNotification(
+                  groupName,
+                  twitchUserInfo.username!
+                )}
+              >
+                Send Test Notification
+              </Button>
+            </div>
             {prefixGrouped[groupName].map((type) => (
               <li className={styles.notificationItem} key={type}>
                 <EditableValue

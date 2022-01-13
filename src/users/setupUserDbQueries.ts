@@ -4,16 +4,17 @@ import {
   CreateCollection,
   CreateDatabase,
   CreateIndex,
+  Do,
 } from "faunadb";
 
 export const createUserChildDBQuery = (name: string, user_id: string) =>
   CreateDatabase({ name, data: { user_id, botEnabledState: false } });
 
-export const createBaseCollectionQuery = (name: string) =>
-  CreateCollection({ name });
+export const createBaseCollectionsQuery = (collections: string[]) =>
+  Do(...collections.map((name) => CreateCollection({ name })));
 
-export const createBaseIndexQuery = (config: { [key: string]: any }) =>
-  CreateIndex(config);
+export const createBaseIndexesQuery = (indexes: { [key: string]: any }[]) =>
+  Do(...indexes.map((index) => CreateIndex(index)));
 
 export const createDefaultNotificationVarsQuery = () =>
   Create(Collection("notification_variables"), {

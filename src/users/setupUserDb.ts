@@ -2,8 +2,8 @@ import { Collection } from "faunadb";
 import { clientRegistry, faunaClient } from "..";
 import { childDbExists } from "../clientRegistry";
 import {
-  createBaseCollectionQuery,
-  createBaseIndexQuery,
+  createBaseCollectionsQuery,
+  createBaseIndexesQuery,
   createDefaultNotificationVarsQuery,
   createUserChildDBQuery,
 } from "./setupUserDbQueries";
@@ -20,45 +20,49 @@ export const customBehaviorTypes = [
 
 export async function setupUserDb(username: string, twitchId: string) {
   // TODO: Fix potential DB creation exploit
-  if (await childDbExists(`#${username}`)) {
+  if (await childDbExists(`#${username}`).catch(console.error)) {
     return;
   }
-  await faunaClient.query(createUserChildDBQuery(username, twitchId));
-  const client = await clientRegistry.getClient(`#${username}`);
-
-  await Promise.all(
-    [
-      "backlog",
-      "commands",
-      "counters",
-      "game",
-      "lobby",
-      "run",
-      "filter_whitelist",
-      "filter_blacklist",
-      "chat_styles",
-      "notification_styles",
-      "notification_variables",
-      "webhooks",
-      ...customBehaviorTypes.map((type) => `${type}_custom_behaviors`),
-    ].map(async (collection) => {
-      console.info(
-        `Creating collection ${collection} for new user: ${username}`
-      );
-      return await client?.query(createBaseCollectionQuery(collection));
+  await faunaClient
+    .query(createUserChildDBQuery(username, twitchId))
+    .then(() => console.log("DB created"))
+    .catch(console.error);
+  const client = await clientRegistry
+    .getClient(`#${username}`)
+    .then((res) => {
+      console.log("Key created successfully");
+      return res;
     })
-  );
+    .catch(console.error);
 
-  await Promise.all(
-    indexDefinitions.map(async (indexDefinition) => {
-      console.info(
-        `Creating new index ${indexDefinition.name} for ${username}`
-      );
-      return await client?.query(createBaseIndexQuery(indexDefinition));
-    })
-  );
+  await client
+    ?.query(
+      createBaseCollectionsQuery([
+        "backlog",
+        "commands",
+        "counters",
+        "game",
+        "lobby",
+        "run",
+        "filter_whitelist",
+        "filter_blacklist",
+        "chat_styles",
+        "notification_styles",
+        "notification_variables",
+        "webhooks",
+        ...customBehaviorTypes.map((type) => `${type}_custom_behaviors`),
+      ])
+    )
+    .then(() => console.info(`Created collections for new user: ${username}`))
+    .catch(console.error);
 
-  await client?.query(createDefaultNotificationVarsQuery());
+  await client
+    ?.query(createBaseIndexesQuery(indexDefinitions))
+    .catch(console.error);
+
+  await client
+    ?.query(createDefaultNotificationVarsQuery())
+    .catch(console.error);
 }
 
 const indexDefinitions = [
@@ -174,7 +178,7 @@ const indexDefinitions = [
     name: "blacklist_by_value",
     unique: false,
     serialized: true,
-    source: "filter_blacklist",
+    source: Collection("filter_blacklist"),
     terms: [
       {
         field: ["data", "value"],
@@ -185,7 +189,7 @@ const indexDefinitions = [
     name: "webhook_by_name",
     unique: false,
     serialized: true,
-    source: "webhooks",
+    source: Collection("webhooks"),
     terms: [
       {
         field: ["data", "name"],
@@ -196,7 +200,7 @@ const indexDefinitions = [
     name: "command_by_id",
     unique: false,
     serialized: true,
-    source: "commands",
+    source: Collection("commands"),
     terms: [
       {
         field: ["data", "id"],

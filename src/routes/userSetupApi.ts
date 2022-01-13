@@ -7,7 +7,7 @@ const userSetupApiRouter = Router();
 userSetupApiRouter.get("/", async (req, res) => {
   const { username } = req.query;
 
-  const exists = await childDbExists(`#${username}`);
+  const exists = await childDbExists(`#${username}`).catch(console.error);
 
   if (exists) {
     res.sendStatus(200);

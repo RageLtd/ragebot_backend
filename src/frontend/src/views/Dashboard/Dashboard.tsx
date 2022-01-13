@@ -29,7 +29,7 @@ async function setRagebotRemote(botEnabledState: boolean, username: string) {
     .then((res) => res === "true");
 }
 
-export default function DashboardView({ twitchUserInfo }: DashboardViewProps) {
+function DashboardView({ twitchUserInfo }: DashboardViewProps) {
   const [isRagebotEnabled, setRagebotEnabled] = useState(false);
   const [isLoadingRagebot, setIsLoadingRagebot] = useState(true);
 
@@ -66,3 +66,5 @@ export default function DashboardView({ twitchUserInfo }: DashboardViewProps) {
     </div>
   );
 }
+
+export default DashboardView;

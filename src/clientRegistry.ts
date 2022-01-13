@@ -34,15 +34,17 @@ export class ClientRegistry {
     // Create a new client if one doesn't exist
     if (await childDbExists(target)) {
       // If the DB exists already we need keys
-      const { secret, ref } = (await faunaClient.query(
-        CreateKey({
-          data: {
-            name: `${target.substring(1)}_key`,
-          },
-          role: "server",
-          database: Database(target.substring(1)),
-        })
-      )) as KeyCreateReponse;
+      const { secret, ref } = (await faunaClient
+        .query(
+          CreateKey({
+            data: {
+              name: `${target.substring(1)}_key`,
+            },
+            role: "server",
+            database: Database(target.substring(1)),
+          })
+        )
+        .catch(console.error)) as KeyCreateReponse;
 
       this.clients[target] = {};
 
@@ -57,7 +59,5 @@ export class ClientRegistry {
 
       return this.clients[target].client;
     }
-
-    //Todo: Handle cases when the DB doesn't exist
   }
 }

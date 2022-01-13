@@ -16,9 +16,10 @@ function App() {
   const { isAuthenticated, user, isLoading, error, getAccessTokenSilently } =
     useAuth0();
   const [isUserLoading, setIsUserLoading] = useState(true);
+  const [isUserCreating, setIsUserCreating] = useState(false);
 
   const isApplicationLoading = () => {
-    return isLoading && isUserLoading;
+    return isLoading || isUserLoading || isUserCreating;
   };
 
   const [twitchUserInfo, setTwitchUserInfo] = useState({
@@ -53,46 +54,70 @@ function App() {
             ...user,
             user_id: user.user_id.split("|").pop(),
           });
-          return { ...user, user_id: user.user_id.split("|").pop };
+          return { ...user, user_id: user.user_id.split("|").pop() };
         })
         .then(async (user) => {
-          if (!userDbExists(user.username)) {
-            setupUserDb(user.username, user.user_id);
+          if (!(await userDbExists(user.username).catch(console.error))) {
+            setIsUserCreating(true);
+            await setupUserDb(user.username, user.user_id).catch(console.error);
+            setIsUserCreating(false);
+            return;
           }
+          return;
         })
         .then(() => {
           setIsUserLoading(false);
         })
-        .catch((error: Error) => console.error(error));
+        .catch(console.error);
     }
   }, [getAccessTokenSilently, user, isAuthenticated]);
 
+  function loader(Component: any) {
+    return (loading: boolean, props: any) => {
+      if (loading) {
+        return <div>loading</div>;
+      }
+      return <Component {...props} />;
+    };
+  }
   const routes = (
     <div className={styles.wrapper}>
       <Routes>
         <Route
           path="/"
-          element={<DashboardView twitchUserInfo={twitchUserInfo} />}
+          element={loader(DashboardView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
         />
         <Route
           path="/followers"
-          element={<Followers twitchUserInfo={twitchUserInfo} />}
+          element={loader(Followers)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
         />
         <Route
           path="/integrations"
-          element={<IntegrationsView twitchUserInfo={twitchUserInfo} />}
+          element={loader(IntegrationsView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
         />
         <Route
           path="/commands"
-          element={<CommandsView twitchUserInfo={twitchUserInfo} />}
+          element={loader(CommandsView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
         />
         <Route
           path="/backlog"
-          element={<BacklogView twitchUserInfo={twitchUserInfo} />}
+          element={loader(BacklogView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
         />
         <Route
           path="/notifications"
-          element={<NotificationsView twitchUserInfo={twitchUserInfo} />}
+          element={loader(NotificationsView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
         />
       </Routes>
     </div>
