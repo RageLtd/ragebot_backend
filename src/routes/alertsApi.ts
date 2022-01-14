@@ -4,6 +4,7 @@ import {
   getCustomBehaviorsQuery,
   getNotificationVariablesQuery,
   NotificationVariablesResponse,
+  removeCustomBehaviorQuery,
   saveCustomBehaviorQuery,
   updateNotificationStringQuery,
 } from "../notifications/notificationQueries";
@@ -14,13 +15,14 @@ import {
 } from "../notifications/notificationUtils";
 import { notification_sse_clients } from "../ragebotServer";
 
-const notificationsApiRouter = Router();
+const alertsApiRouter = Router();
 
-notificationsApiRouter.get("/:userName/feed", async (req, res) => {
+alertsApiRouter.get("/:userName/feed", async (req, res) => {
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
     Connection: "keep-alive",
     "Cache-Control": "no-cache",
+    "Feature-Policy": "autoplay *",
   });
 
   const { userName } = req.params;
@@ -58,7 +60,7 @@ notificationsApiRouter.get("/:userName/feed", async (req, res) => {
   });
 });
 
-notificationsApiRouter.get("/:userName", async (req, res) => {
+alertsApiRouter.get("/:userName", async (req, res) => {
   const { userName } = req.params;
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
@@ -70,7 +72,7 @@ notificationsApiRouter.get("/:userName", async (req, res) => {
   res.send(notificationsResponse);
 });
 
-notificationsApiRouter.patch("/:userName", async (req, res) => {
+alertsApiRouter.patch("/:userName", async (req, res) => {
   const { userName } = req.params;
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
@@ -84,7 +86,7 @@ notificationsApiRouter.patch("/:userName", async (req, res) => {
   res.send(notificationSaveResponse);
 });
 
-notificationsApiRouter.post("/:userName/behaviors/:type", async (req, res) => {
+alertsApiRouter.post("/:userName/behaviors/:type", async (req, res) => {
   const { userName, type } = req.params;
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
@@ -96,7 +98,7 @@ notificationsApiRouter.post("/:userName/behaviors/:type", async (req, res) => {
   res.send(behaviorSaveResponse);
 });
 
-notificationsApiRouter.get("/:userName/behaviors/:type", async (req, res) => {
+alertsApiRouter.get("/:userName/behaviors/:type", async (req, res) => {
   const { userName, type } = req.params;
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
@@ -108,4 +110,17 @@ notificationsApiRouter.get("/:userName/behaviors/:type", async (req, res) => {
   res.send(getBehaviorsResponse);
 });
 
-export default notificationsApiRouter;
+alertsApiRouter.delete("/:userName/behaviors/:type", async (req, res) => {
+  const { userName, type } = req.params;
+  const behavior = req.body;
+  const target = `#${userName.toLowerCase()}`;
+  const client = await clientRegistry.getClient(target);
+
+  const deleteBehaviorResponse = await client
+    ?.query(removeCustomBehaviorQuery(type, behavior))
+    .catch(console.error);
+
+  res.send(deleteBehaviorResponse);
+});
+
+export default alertsApiRouter;

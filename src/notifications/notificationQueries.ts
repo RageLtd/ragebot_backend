@@ -9,12 +9,10 @@ import {
   Create,
   Lambda,
   Var,
-  Union,
-  Reduce,
-  Let,
-  Merge,
+  Match,
+  Index,
+  Delete,
 } from "faunadb";
-import { customBehaviorTypes } from "../users/setupUserDb";
 
 export interface NotificationStylesResponse {
   data: {
@@ -54,4 +52,10 @@ export const getCustomBehaviorsQuery = (type: string) =>
   Map(
     Paginate(Documents(Collection(`${type}_custom_behaviors`))),
     Lambda("behavior", Select(["data"], Get(Var("behavior"))))
+  );
+
+export const removeCustomBehaviorQuery = (type: string, behavior: any) =>
+  Map(
+    Paginate(Match(Index(`${type}_custom_behaviors_by_name`), behavior.name)),
+    Lambda(["ref"], Delete(Var("ref")))
   );

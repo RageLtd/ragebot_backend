@@ -1,0 +1,14 @@
+.nameContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+}
+
+.nameContainer > :first-child {
+  flex: 1 0 auto;
+  margin-right: .5em;
+}
+
+.removeButton {
+  height: 2.25em;
+}

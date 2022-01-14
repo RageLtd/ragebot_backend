@@ -78,6 +78,7 @@ export default function AddNewCustomBehaviorForm({
   const [behavior, setBehavior] = useState("sound");
   const [condition, setCondition] = useState<string>("");
   const [response, setResponse] = useState("");
+  const [sound, setSound] = useState();
   // const [redemptionConditions, setRedemptionConditions] = useState<
   //   ReactElement[]
   // >([]);
@@ -94,7 +95,7 @@ export default function AddNewCustomBehaviorForm({
     e.preventDefault();
     e.stopPropagation();
 
-    save({ name, behavior, condition, response });
+    save({ name, behavior, condition, response, sound });
     cancel();
   };
   const handleCancel = () => {
@@ -111,6 +112,8 @@ export default function AddNewCustomBehaviorForm({
     setCondition(e.target.value);
   /// @ts-expect-error
   const handleResponseChange = (e: ChangeEvent) => setResponse(e.target.value);
+  /// @ts-expect-error
+  const handleSoundChange = (e: ChangeEvent) => setSound(e.target.value);
 
   const addConditionalFields = (
     type: string,
@@ -137,7 +140,6 @@ export default function AddNewCustomBehaviorForm({
         if (behavior !== "say") {
           return fields;
         }
-        console.log(type);
         return [
           ...fields,
           <label>
@@ -168,6 +170,17 @@ export default function AddNewCustomBehaviorForm({
           </label>,
         ];
       default:
+        if (behavior === "sound") {
+          return [
+            ...fields,
+            <label>
+              Sound URL
+              <Input helper="URL for sound you would like to play">
+                <input type="text" value={sound} onChange={handleSoundChange} />
+              </Input>
+            </label>,
+          ];
+        }
         return fields;
     }
   };

@@ -286,7 +286,8 @@ export async function executeCustomBehavior(
   broadcasterUsername: string,
   behavior: any,
   type: string,
-  eventData: TwitchNotificationEvent
+  eventData: TwitchNotificationEvent,
+  message: string
 ) {
   switch (behavior.behavior) {
     case "addToBacklog": {
@@ -298,7 +299,7 @@ export async function executeCustomBehavior(
           `#${broadcasterUsername.toLowerCase()}`,
           `${eventData.user_name} added ${eventData.user_input} to the backlog`
         );
-        return;
+        return message;
       }
     }
     case "say": {
@@ -309,8 +310,13 @@ export async function executeCustomBehavior(
         false
       );
       tmiClient.say(`#${broadcasterUsername.toLowerCase()}`, message);
-      return;
+      return message;
     }
+    case "sound": {
+      return `${message}<audio src=${behavior.sound} autoplay />`;
+    }
+    default:
+      return message;
   }
 }
 

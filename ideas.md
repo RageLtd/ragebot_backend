@@ -7,3 +7,4 @@
 - [ ] Chat custom emotes (ffz etc)
 - [x] Chat italics
 - [ ] sound playback on notification
+- [ ] Make file input not suck

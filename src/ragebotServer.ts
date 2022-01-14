@@ -48,6 +48,7 @@ export function initializeRagebotServer() {
             process.env.NODE_ENV !== "production" ? "unsafe-inline" : "",
           ],
           frameSrc: ["self", "https:"],
+          mediaSrc: ["self", "https:"],
         },
       },
       crossOriginResourcePolicy: {

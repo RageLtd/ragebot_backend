@@ -7,6 +7,8 @@ function initializeNotifications(body: HTMLBodyElement) {
 
 const parser = new DOMParser();
 
+const audioContext = new AudioContext();
+
 const { search } = window.location;
 
 const notificationTypes =
@@ -14,7 +16,7 @@ const notificationTypes =
     ? search.substring(search.indexOf("=") + 1).split(",")
     : [];
 
-const notificationQueue: any[] = [];
+const notificationQueue: Element[] = [];
 
 function createNotification(parsed: any) {
   const notification = document.createElement("div");
@@ -55,8 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const readFromQueue = () => {
       const newNotification = notificationQueue.shift();
       if (newNotification) {
+        const audioNode = newNotification.querySelector("audio");
         notificationContainer?.append(newNotification);
-
+        if (audioNode !== null) {
+          audioNode.play();
+        }
         setTimeout(() => {
           newNotification.remove();
         }, timeoutInMillis);

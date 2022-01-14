@@ -149,102 +149,116 @@ async function generateNotificationHTML(
 
   switch (parsedNotification.subscription.type) {
     case "channel.follow": {
+      let message = parseFollowNotification(eventData);
       if (customBehaviors.follow) {
-        customBehaviors.follow.forEach((behavior) => {
-          executeCustomBehavior(
+        await Promise.all(customBehaviors.follow.map(async (behavior) => {
+          message = await executeCustomBehavior(
             client!,
             broadcasterUsername,
             behavior,
             parsedNotification.subscription.type,
-            eventData
+            eventData,
+            message
           );
-        });
+        }));
       }
-      return parseFollowNotification(eventData);
+      return message;
     }
     case "channel.subscribe": {
+      let message = parseNewSubscription(eventData);
       if (customBehaviors.new) {
-        customBehaviors.new.forEach((behavior) => {
-          executeCustomBehavior(
+        await Promise.all(customBehaviors.new.map(async (behavior) => {
+          message = await executeCustomBehavior(
             client!,
             broadcasterUsername,
             behavior,
             parsedNotification.subscription.type,
-            eventData
+            eventData,
+            message
           );
-        });
+        }));
       }
-      return parseNewSubscription(eventData);
+      return message;
     }
     case "channel.subscription.message": {
+      let message = parseResubMessage(eventData);
       if (customBehaviors.resub) {
-        customBehaviors.resub.forEach((behavior) => {
-          executeCustomBehavior(
+        await Promise.all(customBehaviors.resub.map(async (behavior) => {
+          message = await executeCustomBehavior(
             client!,
             broadcasterUsername,
             behavior,
             parsedNotification.subscription.type,
-            eventData
+            eventData,
+            message
           );
-        });
+        }));
       }
-      return parseResubMessage(eventData);
+      return message;
     }
     case "channel.subscription.gift": {
+      let message = parseGiftSubMessage(eventData);
       if (customBehaviors.gift) {
-        customBehaviors.gift.forEach((behavior) => {
-          executeCustomBehavior(
+        await Promise.all(customBehaviors.gift.map(async (behavior) => {
+          message = await executeCustomBehavior(
             client!,
             broadcasterUsername,
             behavior,
             parsedNotification.subscription.type,
-            eventData
+            eventData,
+            message
           );
-        });
+        }));
       }
-      return parseGiftSubMessage(eventData);
+      return message;
     }
     case "channel.cheer": {
+      let message = parseCheerMessage(eventData);
       if (customBehaviors.cheer) {
-        customBehaviors.cheer.forEach((behavior) => {
-          executeCustomBehavior(
+        await Promise.all(customBehaviors.cheer.map(async (behavior) => {
+          message = await executeCustomBehavior(
             client!,
             broadcasterUsername,
             behavior,
             parsedNotification.subscription.type,
-            eventData
+            eventData,
+            message
           );
-        });
+        }));
       }
-      return parseCheerMessage(eventData);
+      return message;
     }
     case "channel.raid": {
+      let message = parseRaidMessage(eventData);
       if (customBehaviors.raid) {
-        customBehaviors.raid.forEach((behavior) => {
-          executeCustomBehavior(
+        await Promise.all(customBehaviors.raid.map(async (behavior) => {
+          message = await executeCustomBehavior(
             client!,
             broadcasterUsername,
             behavior,
             parsedNotification.subscription.type,
-            eventData
+            eventData,
+            message
           );
-        });
+        }));
       }
-      return parseRaidMessage(eventData);
+      return message;
     }
     case "channel.channel_points_custom_reward_redemption.add": {
+      let message = parseChannelPointRedemptionMessage(eventData);
       if (customBehaviors.redemption) {
-        customBehaviors.redemption.forEach((behavior) => {
-          executeCustomBehavior(
+        await Promise.all(customBehaviors.redemption.map(async (behavior) => {
+          message = await executeCustomBehavior(
             client!,
             broadcasterUsername,
             behavior,
             parsedNotification.subscription.type,
-            eventData
+            eventData,
+            message
           );
-        });
+        }));
       }
-      return parseChannelPointRedemptionMessage(eventData);
+      return message;
     }
     case "channel.update": {
       return postStatusUpdate(broadcasterUsername, eventData);

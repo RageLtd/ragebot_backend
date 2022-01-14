@@ -55,6 +55,21 @@ export default function CustomBehaviorControls({
     getBehaviors(twitchUserInfo.username!, name);
   };
 
+  const removeCustomBehavior = async (behavior: Behavior) => {
+    await fetch(
+      `/api/alerts/${twitchUserInfo.username?.toLowerCase()}/behaviors/${name}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(behavior),
+      }
+    ).catch(console.error);
+
+    getBehaviors(twitchUserInfo.username!, name);
+  };
+
   const updateBehaviorProperty = (property: { name: string; value: any }) =>
     console.log(property);
 
@@ -79,6 +94,7 @@ export default function CustomBehaviorControls({
             key={behavior.name}
             {...behavior}
             save={updateBehaviorProperty}
+            remove={removeCustomBehavior}
             behaviorType={name}
           />
         ))}

@@ -20,6 +20,7 @@ notificationsRouter.get("/:userName", async (req, res) => {
 
   res
     .status(200)
+    .header("Feature-Policy", "autoplay *")
     .send(
       notificationPage.substring(0, endOfBodyIndex) +
         styleTag +
