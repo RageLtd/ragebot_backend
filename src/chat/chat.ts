@@ -90,10 +90,9 @@ export async function postToChat(
     target.substring(1),
     userState
   )}</div>`;
-  const messageWithEmotes = `<span class="message">${parseEmotes(
-    message,
-    userState.emotes
-  )}</span>`;
+  const messageWithEmotes = `<span class="message ${
+    userState["message-type"] === "action" ? " italics" : ""
+  }">${parseEmotes(message, userState.emotes)}</span>`;
 
   const chatHTML = userIdentity + messageWithEmotes;
 

@@ -5,4 +5,5 @@
 - [x] Notification queuing
 - [x] Way to test notifications (make sure they look right)
 - [ ] Chat custom emotes (ffz etc)
-- [ ] Chat italics
+- [x] Chat italics
+- [ ] sound playback on notification
