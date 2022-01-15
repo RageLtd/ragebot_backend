@@ -299,8 +299,8 @@ export async function executeCustomBehavior(
           `#${broadcasterUsername.toLowerCase()}`,
           `${eventData.user_name} added ${eventData.user_input} to the backlog`
         );
-        return message;
       }
+      return message;
     }
     case "say": {
       const [message] = formatMessages(
