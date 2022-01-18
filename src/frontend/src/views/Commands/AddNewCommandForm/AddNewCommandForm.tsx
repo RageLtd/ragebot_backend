@@ -10,6 +10,44 @@ interface AddNewCommandFormProps {
   onCancel: Function;
 }
 
+function getHelperDescription(behavior: string) {
+  switch (behavior) {
+    case "respond": {
+      return (
+        <p>
+          Respond will cause Ragebot to say the Response value in chat whenever
+          the command is called
+        </p>
+      );
+    }
+    case "timeout": {
+      return (
+        <p>Timeout will cause Ragebot to repeat an action after a delay</p>
+      );
+    }
+    case "random": {
+      return (
+        <p>
+          Random will cause Ragebot to post a random value that has been added
+          with the <span className={styles.code}>!add&lt;commandname&gt;</span>{" "}
+          command.
+        </p>
+      );
+    }
+    case "count": {
+      return (
+        <p>
+          Count will cause Ragebot to post the number of times the command has
+          been called in chat. To add the count to the response, use{" "}
+          <span className={styles.code}>%%</span> token
+        </p>
+      );
+    }
+    default:
+      return "";
+  }
+}
+
 export default function AddNewCommandForm({
   onSubmit,
   onCancel,
@@ -76,7 +114,7 @@ export default function AddNewCommandForm({
       <div className={styles.fieldContainer}>
         <div>
           <label>
-            Name:
+            Name
             <Input helper="The name of your command">
               <input type="text" value={name} onChange={handleNameChange} />
             </Input>
@@ -84,8 +122,18 @@ export default function AddNewCommandForm({
         </div>
         <div>
           <label>
-            Behavior:
-            <Input helper="Commands can trigger a response, a count or be auto-run on a timer">
+            Behavior
+            <Input
+              helper={
+                <>
+                  <p>
+                    Commands can trigger a response, a count or be auto-run on a
+                    timer
+                  </p>
+                  {getHelperDescription(behavior)}
+                </>
+              }
+            >
               <select value={behavior} onChange={handleBehaviorChange}>
                 <option value="respond">Respond</option>
                 <option value="count">Count</option>
@@ -97,7 +145,7 @@ export default function AddNewCommandForm({
         </div>
         <div>
           <label>
-            Response:
+            Response
             <Input helper="What reponse would you like to see in chat?">
               <input
                 type="text"
@@ -108,7 +156,7 @@ export default function AddNewCommandForm({
           </label>
         </div>
         <div>
-          Permissions:
+          Permissions
           <div className={styles.radioContainer}>
             <RadioInput
               name="permissions"
@@ -141,8 +189,8 @@ export default function AddNewCommandForm({
         </div>
         <div>
           <label>
-            Timeout
-            <Input>
+            Interval
+            <Input helper="How many milliseconds should there be between runs of the command?">
               <input
                 type="number"
                 value={timeoutInMillis}

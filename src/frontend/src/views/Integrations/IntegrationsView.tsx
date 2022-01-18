@@ -112,6 +112,11 @@ export default function IntegrationsView({
   return (
     <>
       <h1>This is the integrations view</h1>
+      <p>
+        Here you can add and manage various integrations with Ragebot. Currently
+        only Discord is supported, but any Webhook will be supported in the
+        future!
+      </p>
       <ul>
         {integrations.map(({ name, webhookUrls }) => (
           <Integration

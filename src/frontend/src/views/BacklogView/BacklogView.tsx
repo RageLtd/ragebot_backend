@@ -3,6 +3,8 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import BacklogEntry from "../../components/BacklogEntry/BacklogEntry";
 import Button from "../../components/Button/Button";
 
+import styles from "./BacklogView.module.css";
+
 interface BacklogViewProps {
   twitchUserInfo: {
     username?: string;
@@ -95,6 +97,11 @@ export default function BacklogView({ twitchUserInfo }: BacklogViewProps) {
   return (
     <>
       <h1>Backlog</h1>
+      <p>
+        Here you can manage games in your backlog (or to-play queue). This is
+        accessible in chat via the <span className={styles.code}>!backlog</span>{" "}
+        command.
+      </p>
       <Button onClick={handleAddBacklogClick}>Add Game to Backlog</Button>
       <ol>
         {isAddingBacklog && (

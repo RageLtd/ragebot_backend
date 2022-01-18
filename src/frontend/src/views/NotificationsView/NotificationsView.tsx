@@ -98,6 +98,31 @@ export default function NotificationsView({
         custom strings using the tokens listed below each message and then the
         tokens will be replaced with data from Twitch's API
       </p>
+      <p>
+        To have your notifications show up on stream add a Browser Source in OBS
+        and set the URL to{" "}
+        <span className={styles.code}>
+          {window.location.origin}/alerts/
+          {twitchUserInfo.username?.toLowerCase()}
+        </span>
+        . You can then configure the size and any custom styling within OBS
+        itself.
+      </p>
+      <span>Classes available to style are:</span>
+      <ul>
+        <li>
+          <span className={styles.code}>.prefix</span>
+        </li>
+        <li>
+          <span className={styles.code}>.postfix</span>
+        </li>
+        <li>
+          <span className={styles.code}>.message</span>
+        </li>
+        <li>
+          Any other classes you add to your configuration (it takes valid HTML)
+        </li>
+      </ul>
       <h2>Configuration</h2>
       <ul className={styles.notificationList}>
         {Object.keys(prefixGrouped).map((groupName) => (

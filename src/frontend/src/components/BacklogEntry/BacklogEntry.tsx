@@ -34,14 +34,7 @@ export default function BacklogEntry({
         </dd>
 
         <details>
-          <dt>Notes</dt>
-          <dd>
-            <EditableValue
-              name="notes"
-              value={notes}
-              save={handleSaveProperty}
-            />
-          </dd>
+          <EditableValue name="notes" value={notes} save={handleSaveProperty} />
         </details>
 
         <Button weight="danger" onClick={handleRemove}>

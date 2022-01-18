@@ -149,9 +149,9 @@ export function parseFollowNotification(eventData: TwitchNotificationEvent) {
     );
 
   return (
-    `<div>${formattedPrefixString}</div>` +
-    `<span>${formattedMessage}</span>` +
-    `<div>${formattedPostfixString}</div>`
+    `<div class="prefix">${formattedPrefixString}</div>` +
+    `<span class="message">${formattedMessage}</span>` +
+    `<div class="postfix">${formattedPostfixString}</div>`
   );
 }
 
@@ -164,9 +164,9 @@ export function parseNewSubscription(eventData: TwitchNotificationEvent) {
     );
 
   return (
-    `<div>${formattedPrefixString}</div>` +
-    `<span>${formattedMessage}</span>` +
-    `<div>${formattedPostfixString}</div>`
+    `<div class="prefix">${formattedPrefixString}</div>` +
+    `<span class="message">${formattedMessage}</span>` +
+    `<div class="postfix">${formattedPostfixString}</div>`
   );
 }
 
@@ -179,9 +179,9 @@ export function parseResubMessage(eventData: TwitchNotificationEvent) {
     );
 
   return (
-    `<div>${formattedPrefixString}</div>` +
-    `<span>${formattedMessage}</span>` +
-    `<div>${formattedPostfixString}</div>`
+    `<div class="prefix">${formattedPrefixString}</div>` +
+    `<span class="message">${formattedMessage}</span>` +
+    `<div class="postfix">${formattedPostfixString}</div>`
   );
 }
 
@@ -194,9 +194,9 @@ export function parseGiftSubMessage(eventData: TwitchNotificationEvent) {
     );
 
   return (
-    `<div>${formattedPrefixString}</div>` +
-    `<span>${formattedMessage}</span>` +
-    `<div>${formattedPostfixString}</div>`
+    `<div class="prefix">${formattedPrefixString}</div>` +
+    `<span class="message">${formattedMessage}</span>` +
+    `<div class="postfix">${formattedPostfixString}</div>`
   );
 }
 
@@ -208,9 +208,9 @@ export function parseCheerMessage(eventData: TwitchNotificationEvent) {
       eventData
     );
   return (
-    `<div>${formattedPrefixString}</div>` +
-    `<span>${formattedMessage}</span>` +
-    `<div>${formattedPostfixString}</div>`
+    `<div class="prefix">${formattedPrefixString}</div>` +
+    `<span class="message">${formattedMessage}</span>` +
+    `<div class="postfix">${formattedPostfixString}</div>`
   );
 }
 
@@ -222,9 +222,9 @@ export function parseRaidMessage(eventData: TwitchNotificationEvent) {
       eventData
     );
   return (
-    `<div>${formattedPrefixString}</div>` +
-    `<span>${formattedMessage}</span>` +
-    `<div>${formattedPostfixString}</div>`
+    `<div class="prefix">${formattedPrefixString}</div>` +
+    `<span class="message">${formattedMessage}</span>` +
+    `<div class="postfix">${formattedPostfixString}</div>`
   );
 }
 
@@ -238,9 +238,9 @@ export function parseChannelPointRedemptionMessage(
       eventData
     );
   return (
-    `<div>${formattedPrefixString}</div>` +
-    `<span>${formattedMessage}</span>` +
-    `<div>${formattedPostfixString}</div>`
+    `<div class="prefix">${formattedPrefixString}</div>` +
+    `<span class="message">${formattedMessage}</span>` +
+    `<div class="postfix">${formattedPostfixString}</div>`
   );
 }
 

@@ -6,5 +6,8 @@
 - [x] Way to test notifications (make sure they look right)
 - [ ] Chat custom emotes (ffz etc)
 - [x] Chat italics
-- [ ] sound playback on notification
+- [x] sound playback on notification
 - [ ] Make file input not suck
+- [ ] custom behaviors on keyword
+- [ ] Add ability for user to define custom css for alerts
+- [ ] add ability for user to define custom css for chat

@@ -11,6 +11,7 @@ import Navigation from "./components/Navigation/Navigation";
 import styles from "./App.module.css";
 import BacklogView from "./views/BacklogView/BacklogView";
 import NotificationsView from "./views/NotificationsView/NotificationsView";
+import ChatView from "./views/ChatView/ChatView";
 
 function App() {
   const { isAuthenticated, user, isLoading, error, getAccessTokenSilently } =
@@ -118,6 +119,10 @@ function App() {
           element={loader(NotificationsView)(isApplicationLoading(), {
             twitchUserInfo,
           })}
+        />
+        <Route
+          path="/chat-config"
+          element={loader(ChatView)(isApplicationLoading(), { twitchUserInfo })}
         />
       </Routes>
     </div>

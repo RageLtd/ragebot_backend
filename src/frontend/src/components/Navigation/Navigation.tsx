@@ -28,6 +28,9 @@ export default function Navigation() {
         <li className={styles.navItem}>
           <Link to="/notifications">Notifications</Link>
         </li>
+        <li className={styles.navItem}>
+          <Link to="/chat-config">Chat</Link>
+        </li>
       </ul>
       <div>
         <Button onClick={handleLogout}>Log out</Button>

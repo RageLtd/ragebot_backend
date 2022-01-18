@@ -20,3 +20,13 @@
   max-width: 100%;
   color: var(--secondary-text-color);
 }
+
+.code {
+  border: 1px solid purple;
+  background-color: #880088;
+  border-radius: .25em;
+  padding: .1em .25em;
+  color: white;
+  font-style: normal;
+  font-family: 'hack', 'Courier New', Courier, monospace;
+}
