@@ -45,3 +45,6 @@ export const createDefaultNotificationVarsQuery = () =>
       timeoutInMillis: 5000,
     },
   });
+
+export const createDefaultChatStylesQuery = () =>
+  Create(Collection("chat_styles"), { data: {} });

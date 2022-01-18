@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { clientRegistry } from "..";
+import { getChatStylesQuery, saveChatStylesQuery } from "../chat/chatQueries";
 import { chat_sse_clients } from "../ragebotServer";
 
 const chatApiRouter = Router();
@@ -34,6 +36,30 @@ chatApiRouter.get("/:userName/feed", (req, res) => {
       req.params.userName
     ].filter((client) => client.id !== clientId);
   });
+});
+
+chatApiRouter.post("/:userName/styles", async (req, res) => {
+  const { userName } = req.params;
+  const styles = req.body;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const saveRes = await client
+    ?.query(saveChatStylesQuery(styles))
+    .catch(console.error);
+
+  res.send(saveRes);
+});
+
+chatApiRouter.get("/:userName/styles", async (req, res) => {
+  const { userName } = req.params;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const stylesRes = await client
+    ?.query(getChatStylesQuery())
+    .catch(console.error);
+
+  /// @ts-expect-error
+  res.send(stylesRes.data);
 });
 
 export default chatApiRouter;

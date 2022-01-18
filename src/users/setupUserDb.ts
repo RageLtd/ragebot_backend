@@ -4,6 +4,7 @@ import indexDefinitions from "./indexDefinitions";
 import {
   createBaseCollectionsQuery,
   createBaseIndexesQuery,
+  createDefaultChatStylesQuery,
   createDefaultNotificationVarsQuery,
   createUserChildDBQuery,
 } from "./setupUserDbQueries";
@@ -63,4 +64,6 @@ export async function setupUserDb(username: string, twitchId: string) {
   await client
     ?.query(createDefaultNotificationVarsQuery())
     .catch(console.error);
+
+  await client?.query(createDefaultChatStylesQuery()).catch(console.error);
 }

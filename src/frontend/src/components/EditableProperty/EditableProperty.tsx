@@ -58,6 +58,10 @@ export default function EditableValue({
     }
   }, [textAreaRef, editedValue]);
 
+  useEffect(() => {
+    setEditedValue(value);
+  }, [value]);
+
   const toggleEdit = () => setIsEditing(!isEditing);
   const updateProperty = (e: ChangeEvent) => {
     /// @ts-expect-error
