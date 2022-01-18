@@ -2,10 +2,12 @@ import { Router } from "express";
 import { clientRegistry } from "..";
 import {
   getCustomBehaviorsQuery,
+  getNotificationStylesQuery,
   getNotificationVariablesQuery,
   NotificationVariablesResponse,
   removeCustomBehaviorQuery,
   saveCustomBehaviorQuery,
+  saveNotificationStylesQuery,
   updateNotificationStringQuery,
 } from "../notifications/notificationQueries";
 import {
@@ -121,6 +123,30 @@ alertsApiRouter.delete("/:userName/behaviors/:type", async (req, res) => {
     .catch(console.error);
 
   res.send(deleteBehaviorResponse);
+});
+
+alertsApiRouter.post("/:userName/styles", async (req, res) => {
+  const { userName } = req.params;
+  const styles = req.body;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const saveRes = await client
+    ?.query(saveNotificationStylesQuery(styles))
+    .catch(console.error);
+
+  res.send(saveRes);
+});
+
+alertsApiRouter.get("/:userName/styles", async (req, res) => {
+  const { userName } = req.params;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const stylesRes = await client
+    ?.query(getNotificationStylesQuery())
+    .catch(console.error);
+
+  /// @ts-expect-error
+  res.send(stylesRes.data);
 });
 
 export default alertsApiRouter;

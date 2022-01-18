@@ -66,6 +66,9 @@ h4 {font-size: 1.563rem;}
 
 h5 {font-size: 1.25rem;}
 
+a { color: var(--primary-text-color) }
+a:visited { color: var(--primary-text-color) }
+
 small, .text_small {font-size: 0.8rem;}
 
 .App {

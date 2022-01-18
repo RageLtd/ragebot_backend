@@ -1,4 +1,12 @@
-import { Collection, Documents, Get, Select, Update } from "faunadb";
+import {
+  Collection,
+  Create,
+  Delete,
+  Do,
+  Documents,
+  Get,
+  Select,
+} from "faunadb";
 
 export interface ChatStylesResponse {
   data: {
@@ -12,6 +20,7 @@ export const getChatStylesQuery = () =>
   Get(Documents(Collection("chat_styles")));
 
 export const saveChatStylesQuery = (styles: { [key: string]: string }) =>
-  Update(Select("ref", Get(Documents(Collection("chat_styles")))), {
-    data: styles,
-  });
+  Do(
+    Delete(Select("ref", Get(Documents(Collection("chat_styles"))))),
+    Create(Collection("chat_styles"), { data: styles })
+  );

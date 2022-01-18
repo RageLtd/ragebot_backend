@@ -48,3 +48,6 @@ export const createDefaultNotificationVarsQuery = () =>
 
 export const createDefaultChatStylesQuery = () =>
   Create(Collection("chat_styles"), { data: {} });
+
+export const createDefaultNotificationStylesQuery = () =>
+  Create(Collection("notification_styles"), { data: {} });

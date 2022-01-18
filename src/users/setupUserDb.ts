@@ -5,6 +5,7 @@ import {
   createBaseCollectionsQuery,
   createBaseIndexesQuery,
   createDefaultChatStylesQuery,
+  createDefaultNotificationStylesQuery,
   createDefaultNotificationVarsQuery,
   createUserChildDBQuery,
 } from "./setupUserDbQueries";
@@ -63,6 +64,9 @@ export async function setupUserDb(username: string, twitchId: string) {
 
   await client
     ?.query(createDefaultNotificationVarsQuery())
+    .catch(console.error);
+  await client
+    ?.query(createDefaultNotificationStylesQuery())
     .catch(console.error);
 
   await client?.query(createDefaultChatStylesQuery()).catch(console.error);

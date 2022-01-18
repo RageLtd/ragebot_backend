@@ -12,6 +12,7 @@ import {
   Match,
   Index,
   Delete,
+  Do,
 } from "faunadb";
 
 export interface NotificationStylesResponse {
@@ -34,6 +35,14 @@ export interface getAllCustomBehaviorsResponse {
 
 export const getNotificationStylesQuery = () =>
   Get(Documents(Collection("notification_styles")));
+
+export const saveNotificationStylesQuery = (styles: {
+  [key: string]: string;
+}) =>
+  Do(
+    Delete(Select("ref", Get(Documents(Collection("notification_styles"))))),
+    Create(Collection("notification_styles"), { data: styles })
+  );
 
 export const getNotificationVariablesQuery = () =>
   Get(Documents(Collection("notification_variables")));

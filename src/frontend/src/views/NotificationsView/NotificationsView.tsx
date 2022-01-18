@@ -11,6 +11,7 @@ import {
 } from "./notificationViewUtils";
 import styles from "./NotificationsView.module.css";
 import Button from "../../components/Button/Button";
+import EditableProperty from "../../components/EditableProperty/EditableProperty";
 
 interface NotificationsViewProps {
   twitchUserInfo: {
@@ -43,11 +44,78 @@ function generateSendTestNotification(groupName: string, username: string) {
   };
 }
 
+function getNotificationStyles(username: string) {
+  return fetch(`/api/alerts/${username.toLowerCase()}/styles`)
+    .then((res) => res.json())
+    .then((res) => {
+      const formattedStyles = Object.keys(res)
+        .map((selector) => {
+          let value = res[selector];
+          if (typeof value === "object") {
+            value = Object.keys(res[selector])
+              .map((name) => `${name}: ${res[selector][name]};`)
+              .join("\r\n");
+          }
+          return `${selector} ${value}`;
+        })
+        .join("\n");
+      return formattedStyles;
+    });
+}
+
 export default function NotificationsView({
   twitchUserInfo,
 }: NotificationsViewProps) {
   const [notificationStrings, setNotificationStrings] =
     useState<NotificationStrings>({});
+  const [notificationStyles, setNotificationStyles] = useState("");
+
+  /// @ts-expect-error
+  const handleStylesChange = (e: ChangeEvent) =>
+    setNotificationStyles(e.target.value);
+
+  const handleSaveStyles = async () => {
+    const formattedStyles = notificationStyles
+      .split("}")
+      .map((string) => (string + "}").trim())
+      .slice(0, -1)
+      .map((string) => {
+        const separated = string.split("{");
+        separated[1] = `{${separated[1]}`;
+        return separated;
+      })
+      .reduce((acc: { [key: string]: string }, style) => {
+        acc[style[0].trim()] = style[1]
+          .split(": ")
+          .map((string, idx) => {
+            if ((idx + 1) % 2 === 0 && !string.includes(";")) {
+              return `${string.slice(
+                0,
+                string.lastIndexOf(" ")
+              )};${string.slice(string.lastIndexOf(" "))}`;
+            }
+            return string;
+          })
+          .join(": ");
+        return acc;
+      }, {});
+
+    await fetch(
+      `/api/alerts/${twitchUserInfo?.username?.toLowerCase()}/styles`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedStyles),
+      }
+    );
+
+    getNotificationStyles(twitchUserInfo?.username!).then((res) =>
+      setNotificationStyles(res)
+    );
+  };
+
   const getNotifications = () =>
     fetch(`/api/alerts/${twitchUserInfo.username?.toLowerCase()}`)
       .then((res) => res.json())
@@ -68,6 +136,9 @@ export default function NotificationsView({
   useEffect(() => {
     if (twitchUserInfo.username) {
       getNotifications();
+      getNotificationStyles(twitchUserInfo.username).then((res) =>
+        setNotificationStyles(res)
+      );
     }
   }, [twitchUserInfo.username]);
 
@@ -89,6 +160,36 @@ export default function NotificationsView({
     {}
   );
 
+  const stylesHelper = (
+    <>
+      <span>Classes available to style are:</span>
+      <ul className={styles.tokenContainer}>
+        <li>
+          <pre className={styles.code}>.prefix</pre>
+        </li>
+        <li>
+          <pre className={styles.code}>.postfix</pre>
+        </li>
+        <li>
+          <pre className={styles.code}>.message</pre>
+        </li>
+        {Object.values(tokens)
+          .reduce((acc, tokenArr) => {
+            acc.push(...tokenArr);
+            return acc;
+          }, [])
+          .map((token) => (
+            <li>
+              <pre className={styles.code}>.{token.slice(1, -1)}</pre>
+            </li>
+          ))}
+        <li>
+          Any other classes you add to your configuration (it takes valid HTML)
+        </li>
+      </ul>
+    </>
+  );
+
   return (
     <>
       <h1>Notifications</h1>
@@ -108,22 +209,24 @@ export default function NotificationsView({
         . You can then configure the size and any custom styling within OBS
         itself.
       </p>
-      <span>Classes available to style are:</span>
-      <ul>
-        <li>
-          <span className={styles.code}>.prefix</span>
-        </li>
-        <li>
-          <span className={styles.code}>.postfix</span>
-        </li>
-        <li>
-          <span className={styles.code}>.message</span>
-        </li>
-        <li>
-          Any other classes you add to your configuration (it takes valid HTML)
-        </li>
-      </ul>
       <h2>Configuration</h2>
+      <EditableProperty
+        name="styles"
+        type="textarea"
+        helper={
+          <>
+            <p>
+              Define how your notification display looks using{" "}
+              <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">CSS</a>
+              .
+            </p>
+            {stylesHelper}
+          </>
+        }
+        value={notificationStyles}
+        onChange={handleStylesChange}
+        save={handleSaveStyles}
+      />
       <ul className={styles.notificationList}>
         {Object.keys(prefixGrouped).map((groupName) => (
           <div key={groupName} className={styles.prefixGroup}>
