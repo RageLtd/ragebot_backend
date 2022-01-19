@@ -52,6 +52,7 @@ export async function setupUserDb(username: string, twitchId: string) {
         "chat_styles",
         "notification_styles",
         "notification_variables",
+        "triggers",
         "webhooks",
         ...customBehaviorTypes.map((type) => `${type}_custom_behaviors`),
       ])

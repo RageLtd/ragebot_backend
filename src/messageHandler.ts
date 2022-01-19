@@ -3,6 +3,7 @@ import { filterRegistry, tmiClient } from ".";
 import { postToChat } from "./chat/chat";
 import { enableBot, isBotEnabled } from "./commands/utils";
 import { isModerator } from "./messages/isModerator";
+import { parseKeywords } from "./messages/parseKeywords";
 import { parseMessage } from "./messages/parseMessage";
 
 async function checkProfanity(target: string, message: string) {
@@ -46,6 +47,8 @@ export const messageHandler = async (
       .catch((err) => console.error(err));
     return;
   }
+
+  parseKeywords(channel, userState, message);
 
   postToChat(channel, userState, message);
 };

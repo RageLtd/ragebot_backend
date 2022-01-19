@@ -14,6 +14,7 @@
 - [ ] Move on/off to nav
 - [ ] Enable/disable commands
 - [ ] enable/disable timers
+- [ ] Custom behavior permissions
 
 ## Post launch
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch

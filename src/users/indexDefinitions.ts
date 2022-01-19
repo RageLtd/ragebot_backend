@@ -230,4 +230,15 @@ export default [
       },
     ],
   },
+  {
+    name: "triggers_by_keyword",
+    unique: false,
+    serialized: true,
+    source: Collection("triggers"),
+    terms: [
+      {
+        field: ["data", "keyword"],
+      },
+    ],
+  },
 ];
