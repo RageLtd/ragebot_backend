@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../components/Button/Button";
 import Trigger, { iTrigger } from "../../components/Trigger/Trigger";
 import AddNewTriggerForm from "./AddNewTriggerForm/AddNewTriggerForm";
