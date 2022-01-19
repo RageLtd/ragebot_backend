@@ -4,6 +4,7 @@ import AddNewCustomBehaviorForm from "./AddNewCustomBehaviorForm/AddNewCustomBeh
 import CustomBehavior from "./CustomBehavior/CustomBehavior";
 
 interface CustomBehaviorControlsProps {
+  category: string;
   name: string;
   formattedName: string;
   twitchUserInfo: {
@@ -17,6 +18,7 @@ export interface Behavior {
 }
 
 export default function CustomBehaviorControls({
+  category,
   name,
   formattedName,
   twitchUserInfo,
@@ -26,9 +28,9 @@ export default function CustomBehaviorControls({
 
   const getBehaviors = async (username: string, categoryName: string) => {
     const { data } = await fetch(
-      `/api/alerts/${username.toLowerCase()}/behaviors/${name}`
+      `/api/${category}/${username.toLowerCase()}/behaviors/${name}`
     ).then((res) => res.json());
-    setBehaviors(data);
+    setBehaviors(data || []);
   };
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function CustomBehaviorControls({
 
   const addNewBehavior = async (behavior: Behavior) => {
     await fetch(
-      `/api/alerts/${twitchUserInfo.username?.toLowerCase()}/behaviors/${name}`,
+      `/api/${category}/${twitchUserInfo.username?.toLowerCase()}/behaviors/${name}`,
       {
         method: "POST",
         headers: {
@@ -57,7 +59,7 @@ export default function CustomBehaviorControls({
 
   const removeCustomBehavior = async (behavior: Behavior) => {
     await fetch(
-      `/api/alerts/${twitchUserInfo.username?.toLowerCase()}/behaviors/${name}`,
+      `/api/${category}/${twitchUserInfo.username?.toLowerCase()}/behaviors/${name}`,
       {
         method: "DELETE",
         headers: {
@@ -89,15 +91,17 @@ export default function CustomBehaviorControls({
       )}
       <ul>
         {behaviors.length === 0 && <li>No custom behaviors added</li>}
-        {behaviors.map((behavior) => (
-          <CustomBehavior
-            key={behavior.name}
-            {...behavior}
-            save={updateBehaviorProperty}
-            remove={removeCustomBehavior}
-            behaviorType={name}
-          />
-        ))}
+        {behaviors
+          .map(({ commandName, ...rest }) => rest)
+          .map((behavior) => (
+            <CustomBehavior
+              key={behavior.name}
+              {...behavior}
+              save={updateBehaviorProperty}
+              remove={removeCustomBehavior}
+              behaviorType={name}
+            />
+          ))}
       </ul>
     </div>
   );

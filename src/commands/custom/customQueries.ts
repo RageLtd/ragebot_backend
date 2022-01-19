@@ -171,3 +171,17 @@ export const addRandomDataQuery = (
   command: string,
   formattedParams: { value: string; notes?: string }
 ) => Create(Collection(`${command}_random`), { data: formattedParams });
+
+export const getCommandsCustomBehaviorsQuery = (name: string) =>
+  Map(
+    Paginate(Match(Index("commands_custom_behaviors_by_command_name"), name)),
+    Lambda("command", Select("data", Get(Var("command"))))
+  );
+
+export const saveCommandsCustomBehaviorQuery = (
+  commandName: string,
+  data: any
+) =>
+  Create(Collection("commands_custom_behaviors"), {
+    data: { ...data, commandName },
+  });

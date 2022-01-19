@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { customCommandRegistry } from "..";
+import { clientRegistry, customCommandRegistry } from "..";
+import {
+  getCommandsCustomBehaviorsQuery,
+  saveCommandsCustomBehaviorQuery,
+} from "../commands/custom/customQueries";
 
 const commandsApiRouter = Router();
 
@@ -44,5 +48,30 @@ commandsApiRouter.delete("/:userName", async (req, res) => {
 
   res.send(commandRes);
 });
+
+commandsApiRouter.get("/:userName/behaviors/:commandName", async (req, res) => {
+  const { commandName, userName } = req.params;
+  const client = await clientRegistry.getClient(`#${userName}`);
+
+  const behaviorsResponse = await client
+    ?.query(getCommandsCustomBehaviorsQuery(commandName))
+    .catch(console.error);
+
+  res.send(behaviorsResponse);
+});
+
+commandsApiRouter.post(
+  "/:userName/behaviors/:commandName",
+  async (req, res) => {
+    const { commandName, userName } = req.params;
+    const client = await clientRegistry.getClient(`#${userName}`);
+
+    const saveResponse = await client
+      ?.query(saveCommandsCustomBehaviorQuery(commandName, req.body))
+      .catch(console.error);
+
+    res.send(saveResponse);
+  }
+);
 
 export default commandsApiRouter;

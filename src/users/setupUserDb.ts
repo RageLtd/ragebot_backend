@@ -18,6 +18,7 @@ export const customBehaviorTypes = [
   "raid",
   "redemption",
   "resub",
+  "commands",
 ];
 
 export async function setupUserDb(username: string, twitchId: string) {

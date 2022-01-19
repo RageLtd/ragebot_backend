@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Command } from "../../views/Commands/CommandsView";
+import CustomBehaviorControls from "../../views/NotificationsView/CustomBehaviorControls/CustomBehaviorControls";
 import Button from "../Button/Button";
 import EditableProperty from "../EditableProperty/EditableProperty";
 import RadioInput from "../RadioInput/RadioInput";
@@ -180,6 +181,12 @@ export default function CommandListItem({
             Who should be able to trigger the command?
           </div>
         </div>
+        <CustomBehaviorControls
+          category="commands"
+          name={command.name}
+          formattedName={command.name}
+          twitchUserInfo={{ username }}
+        />
       </div>
       <Button weight="danger" onClick={handleRemoveClick}>
         Delete Command

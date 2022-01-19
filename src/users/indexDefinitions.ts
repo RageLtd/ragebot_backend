@@ -219,4 +219,15 @@ export default [
       },
     ],
   },
+  {
+    name: "commands_custom_behaviors_by_command_name",
+    unique: false,
+    serialized: true,
+    source: Collection("commands_custom_behaviors"),
+    terms: [
+      {
+        field: ["data", "commandName"],
+      },
+    ],
+  },
 ];

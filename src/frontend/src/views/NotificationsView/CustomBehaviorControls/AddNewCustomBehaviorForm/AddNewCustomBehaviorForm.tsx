@@ -180,6 +180,19 @@ export default function AddNewCustomBehaviorForm({
               </Input>
             </label>,
           ];
+        } else if (behavior === "say") {
+          fields.push(
+            <label>
+              Response:
+              <Input helper={<div>What should be said in chat?</div>}>
+                <input
+                  type="text"
+                  value={response}
+                  onChange={handleResponseChange}
+                />
+              </Input>
+            </label>
+          );
         }
         return fields;
     }

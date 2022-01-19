@@ -9,5 +9,7 @@
 - [x] sound playback on notification
 - [ ] Make file input not suck
 - [ ] custom behaviors on keyword
-- [ ] Add ability for user to define custom css for alerts
-- [ ] add ability for user to define custom css for chat
+- [x] Add ability for user to define custom css for alerts
+- [x] add ability for user to define custom css for chat
+- [ ] Now playing for various services
+- [ ] Move on/off to nav

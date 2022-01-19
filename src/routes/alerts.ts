@@ -16,6 +16,8 @@ notificationsRouter.get("/:userName", async (req, res) => {
   const { userName } = req.params;
   const notificationStyles = await getNotificationStyles(userName);
 
+  console.log(notificationStyles);
+
   const styleTag = `<style>${notificationStyles}</style>`;
 
   res

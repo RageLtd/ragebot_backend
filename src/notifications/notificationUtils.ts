@@ -113,12 +113,7 @@ export async function getNotificationStyles(username: string) {
     getNotificationStylesQuery()
   )) as NotificationStylesResponse;
   return Object.keys(elements)
-    .map(
-      (element) =>
-        `${element} { ${Object.keys(elements[element])
-          .map((style) => `${style}: ${elements[element][style]};`)
-          .join("\r\n")} }`
-    )
+    .map((element) => `${element} ${elements[element]}`)
     .join(" ");
 }
 
@@ -313,7 +308,7 @@ export async function executeCustomBehavior(
       return message;
     }
     case "sound": {
-      return `${message}<audio src=${behavior.sound} autoplay />`;
+      return `${message}<audio src="${behavior.sound}" autoplay />`;
     }
     default:
       return message;

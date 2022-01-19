@@ -177,11 +177,6 @@ export async function getChatStyles(username: string) {
     getChatStylesQuery()
   )) as ChatStylesResponse;
   return Object.keys(elements)
-    .map(
-      (element) =>
-        `${element} { ${Object.keys(elements[element])
-          .map((style) => `${style}: ${elements[element][style]};`)
-          .join("\r\n")} }`
-    )
+    .map((element) => `${element} ${elements[element]}`)
     .join(" ");
 }

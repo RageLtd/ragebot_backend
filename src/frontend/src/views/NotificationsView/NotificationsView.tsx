@@ -272,6 +272,7 @@ export default function NotificationsView({
               </li>
             ))}
             <CustomBehaviorControls
+              category="alerts"
               name={groupName}
               formattedName={getHumanGroupName(groupName)}
               twitchUserInfo={twitchUserInfo}

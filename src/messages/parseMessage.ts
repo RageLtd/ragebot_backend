@@ -13,6 +13,7 @@ import {
 } from "../commands/custom/custom";
 import {
   addRandomDataQuery,
+  getCommandsCustomBehaviorsQuery,
   getDataByPageQuery,
 } from "../commands/custom/customQueries";
 import {
@@ -25,6 +26,11 @@ import {
 } from "../commands/game/game";
 import { shoutout } from "../commands/shoutout";
 import { disableBot } from "../commands/utils";
+import {
+  executeCustomBehavior,
+  timeoutInMillis,
+} from "../notifications/notificationUtils";
+import { notification_sse_clients } from "../ragebotServer";
 import { isModerator } from "./isModerator";
 import { isSubscriber } from "./isSubscriber";
 import {
@@ -152,6 +158,21 @@ export async function handleCustomCommands(
   params: string[]
 ) {
   const customCommands = await customCommandRegistry.getCommands(target);
+  const customBehaviors: { [key: string]: any[] } = {};
+  const client = await clientRegistry.getClient(target);
+  await Promise.all(
+    Object.values(customCommands)
+      .reduce((acc: string[], command) => {
+        acc.push(command.name);
+        return acc;
+      }, [])
+      .map(async (type) => {
+        const { data: behaviors } = (await client?.query(
+          getCommandsCustomBehaviorsQuery(type)
+        )) as { data: any[] };
+        customBehaviors[type] = behaviors;
+      })
+  );
   const command = bangCommand.substring(1);
 
   if (customCommands.filter((c) => c.name === command).length === 0) {
@@ -168,6 +189,28 @@ export async function handleCustomCommands(
 
   if (subOnly && (!isSubscriber(userState) || !isModerator(userState))) {
     return;
+  }
+  if (customBehaviors[command] && customBehaviors[command].length > 0) {
+    customBehaviors[command].forEach(async (behavior) => {
+      const message = await executeCustomBehavior(
+        client!,
+        target.substring(1),
+        behavior,
+        "",
+        { user_name: userState.username! },
+        params.join(" ")
+      );
+      notification_sse_clients[target.substring(1)]?.forEach((sse_client) => {
+        sse_client.res.write(
+          `data: ${JSON.stringify({
+            notificationHTML: message,
+            timeoutInMillis,
+            type: "command",
+            alertName: command,
+          })}\n\n`
+        );
+      });
+    });
   }
 
   parseCustomCommand(target, command, behavior, response, params);
