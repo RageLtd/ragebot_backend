@@ -12,6 +12,7 @@ import styles from "./App.module.css";
 import BacklogView from "./views/BacklogView/BacklogView";
 import NotificationsView from "./views/NotificationsView/NotificationsView";
 import ChatView from "./views/ChatView/ChatView";
+import TriggersView from "./views/TriggersView/TriggersView";
 
 function App() {
   const { isAuthenticated, user, isLoading, error, getAccessTokenSilently } =
@@ -123,6 +124,12 @@ function App() {
         <Route
           path="/chat-config"
           element={loader(ChatView)(isApplicationLoading(), { twitchUserInfo })}
+        />
+        <Route
+          path="/triggers"
+          element={loader(TriggersView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
         />
       </Routes>
     </div>

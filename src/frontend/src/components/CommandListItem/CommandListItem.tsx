@@ -107,6 +107,7 @@ export default function CommandListItem({
   return (
     <li>
       <div className={styles.wrapper}>
+        <h3>{`!${command.name}`}</h3>
         {Object.keys(command)
           .filter(
             (key) => key !== "id" && key !== "modOnly" && key !== "subOnly"
@@ -184,7 +185,7 @@ export default function CommandListItem({
         <CustomBehaviorControls
           category="commands"
           name={command.name}
-          formattedName={command.name}
+          formattedName={`!${command.name}`}
           twitchUserInfo={{ username }}
         />
       </div>

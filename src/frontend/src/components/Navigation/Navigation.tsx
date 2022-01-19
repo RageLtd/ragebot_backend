@@ -17,10 +17,7 @@ export default function Navigation() {
           <Link to="/commands">Commands</Link>
         </li>
         <li className={styles.navItem}>
-          <Link to="/integrations">Integrations</Link>
-        </li>
-        <li className={styles.navItem}>
-          <Link to="/followers">Followers</Link>
+          <Link to="/triggers">Triggers</Link>
         </li>
         <li className={styles.navItem}>
           <Link to="/backlog">Backlog</Link>
@@ -30,6 +27,12 @@ export default function Navigation() {
         </li>
         <li className={styles.navItem}>
           <Link to="/chat-config">Chat</Link>
+        </li>
+        <li className={styles.navItem}>
+          <Link to="/integrations">Integrations</Link>
+        </li>
+        <li className={styles.navItem}>
+          <Link to="/followers">Followers</Link>
         </li>
       </ul>
       <div>
