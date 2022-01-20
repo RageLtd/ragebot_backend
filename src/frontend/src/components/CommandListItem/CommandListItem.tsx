@@ -139,7 +139,7 @@ export default function CommandListItem({
             <Button onClick={() => setIsEditingPermissions(true)}>Edit</Button>
           )}
           {isEditingPermissions && (
-            <Button weight="secondary" type="submit">
+            <Button weight="secondary" onClick={handlePermissionsSave}>
               Save
             </Button>
           )}
