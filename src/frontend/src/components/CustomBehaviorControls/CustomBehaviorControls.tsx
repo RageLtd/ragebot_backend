@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Button from "../../../components/Button/Button";
+import Button from "../Button/Button";
 import AddNewCustomBehaviorForm from "./AddNewCustomBehaviorForm/AddNewCustomBehaviorForm";
 import CustomBehavior from "./CustomBehavior/CustomBehavior";
 
@@ -15,6 +15,8 @@ interface CustomBehaviorControlsProps {
 export interface Behavior {
   [key: string]: any;
   name: string;
+  modOnly: boolean;
+  subOnly: boolean;
 }
 
 export default function CustomBehaviorControls({
@@ -26,7 +28,7 @@ export default function CustomBehaviorControls({
   const [behaviors, setBehaviors] = useState<Behavior[]>([]);
   const [isAddingBehavior, setIsAddingBehavior] = useState(false);
 
-  const getBehaviors = async (username: string, categoryName: string) => {
+  const getBehaviors = async (username: string) => {
     const { data } = await fetch(
       `/api/${category}/${username.toLowerCase()}/behaviors/${name}`
     ).then((res) => res.json());
@@ -35,7 +37,7 @@ export default function CustomBehaviorControls({
 
   useEffect(() => {
     if (twitchUserInfo.username) {
-      getBehaviors(twitchUserInfo.username, name);
+      getBehaviors(twitchUserInfo.username);
     }
   }, [twitchUserInfo.username, name]);
 
@@ -54,7 +56,7 @@ export default function CustomBehaviorControls({
       }
     ).catch(console.error);
 
-    getBehaviors(twitchUserInfo.username!, name);
+    getBehaviors(twitchUserInfo.username!);
   };
 
   const removeCustomBehavior = async (behavior: Behavior) => {
@@ -69,11 +71,41 @@ export default function CustomBehaviorControls({
       }
     ).catch(console.error);
 
-    getBehaviors(twitchUserInfo.username!, name);
+    getBehaviors(twitchUserInfo.username!);
   };
 
-  const updateBehaviorProperty = (property: { name: string; value: any }) =>
-    console.log(property);
+  const updateBehaviorProperty = async ({
+    propertyName,
+    behaviorName,
+    value,
+  }: {
+    behaviorName: string;
+    propertyName: string;
+    value: any;
+  }) => {
+    let payload = { [propertyName]: value };
+    if (propertyName === "permissions") {
+      payload = Object.keys(value).reduce(
+        (acc: { [key: string]: any }, key) => {
+          acc[key] = value[key];
+          return acc;
+        },
+        {}
+      );
+    }
+    await fetch(
+      `/api/${category}/${twitchUserInfo.username?.toLowerCase()}/behaviors/${name}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...payload, behaviorName }),
+      }
+    );
+
+    getBehaviors(twitchUserInfo.username!.toLowerCase());
+  };
 
   return (
     <div>

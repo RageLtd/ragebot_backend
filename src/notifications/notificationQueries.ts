@@ -57,6 +57,24 @@ export const saveCustomBehaviorQuery = (
   behavior: { name: string }
 ) => Create(Collection(`${type}_custom_behaviors`), { data: behavior });
 
+export const updateCustomBehaviorQuery = (
+  type: string,
+  {
+    behaviorName,
+    everyone,
+    ...rest
+  }: { behaviorName: string; everyone?: boolean }
+) =>
+  Update(
+    Select(
+      "ref",
+      Get(Match(Index(`${type}_custom_behaviors_by_name`), behaviorName))
+    ),
+    {
+      data: rest,
+    }
+  );
+
 export const getCustomBehaviorsQuery = (type: string) =>
   Map(
     Paginate(Documents(Collection(`${type}_custom_behaviors`))),

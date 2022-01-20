@@ -1,5 +1,4 @@
 import { formatDistance } from "date-fns";
-import { useState } from "react";
 
 import styles from "./Follower.module.css";
 

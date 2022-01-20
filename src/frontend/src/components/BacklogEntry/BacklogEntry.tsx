@@ -1,5 +1,5 @@
 import Button from "../Button/Button";
-import EditableValue from "../EditableProperty/EditableProperty";
+import EditableProperty from "../EditableProperty/EditableProperty";
 
 interface BacklogEntryProps {
   name: string;
@@ -30,11 +30,19 @@ export default function BacklogEntry({
       <dl>
         <dt>Name</dt>
         <dd>
-          <EditableValue name="name" value={name} save={handleSaveProperty} />
+          <EditableProperty
+            name="name"
+            value={name}
+            save={handleSaveProperty}
+          />
         </dd>
 
         <details>
-          <EditableValue name="notes" value={notes} save={handleSaveProperty} />
+          <EditableProperty
+            name="notes"
+            value={notes}
+            save={handleSaveProperty}
+          />
         </details>
 
         <Button weight="danger" onClick={handleRemove}>

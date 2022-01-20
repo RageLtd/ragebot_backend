@@ -5,14 +5,18 @@ import {
   CreateCollection,
   Delete,
   Documents,
+  Equals,
   Get,
+  If,
   Index,
   Lambda,
   Map,
   Match,
+  Merge,
   Paginate,
   Select,
   Subtract,
+  Take,
   Update,
   Var,
 } from "faunadb";
@@ -185,3 +189,25 @@ export const saveCommandsCustomBehaviorQuery = (
   Create(Collection("commands_custom_behaviors"), {
     data: { ...data, commandName },
   });
+
+export const updateCommandsCustomBehaviorQuery = (
+  commandName: string,
+  {
+    behaviorName,
+    everyone,
+    ...rest
+  }: { behaviorName: string; everyone?: boolean }
+) =>
+  Map(
+    Paginate(
+      Match(Index("commands_custom_behaviors_by_command_name"), commandName)
+    ),
+    Lambda(
+      "behavior",
+      If(
+        Equals(Select(["data", "name"], Get(Var("behavior"))), behaviorName),
+        Update(Var("behavior"), { data: rest }),
+        null
+      )
+    )
+  );

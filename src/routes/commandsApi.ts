@@ -3,6 +3,7 @@ import { clientRegistry, customCommandRegistry } from "..";
 import {
   getCommandsCustomBehaviorsQuery,
   saveCommandsCustomBehaviorQuery,
+  updateCommandsCustomBehaviorQuery,
 } from "../commands/custom/customQueries";
 
 const commandsApiRouter = Router();
@@ -68,6 +69,20 @@ commandsApiRouter.post(
 
     const saveResponse = await client
       ?.query(saveCommandsCustomBehaviorQuery(commandName, req.body))
+      .catch(console.error);
+
+    res.send(saveResponse);
+  }
+);
+
+commandsApiRouter.patch(
+  "/:userName/behaviors/:commandName",
+  async (req, res) => {
+    const { commandName, userName } = req.params;
+    const client = await clientRegistry.getClient(`#${userName}`);
+
+    const saveResponse = await client
+      ?.query(updateCommandsCustomBehaviorQuery(commandName, req.body))
       .catch(console.error);
 
     res.send(saveResponse);

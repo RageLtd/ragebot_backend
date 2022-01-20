@@ -5,9 +5,12 @@ import {
   useRef,
   useEffect,
   ReactElement,
+  ChangeEventHandler,
+  Ref,
 } from "react";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
+import RadioInput from "../RadioInput/RadioInput";
 
 import styles from "./EditableProperty.module.css";
 
@@ -16,12 +19,15 @@ interface EditableValueProps {
   value: any;
   name: string;
   save: Function;
-  type?: "input" | "textarea" | "select";
+  type?: "input" | "textarea" | "select" | "radio";
   options?: ReactElement | ReactElement[];
 }
 
 function camelToHuman(string: string) {
   const uppercaseCharacters = string.match(/[A-Z]/gm);
+  if (uppercaseCharacters === null) {
+    return string[0].toUpperCase() + string.substring(1);
+  }
   const words: string[] = [];
 
   uppercaseCharacters?.reduce((acc, char, idx, arr) => {
@@ -37,7 +43,58 @@ function camelToHuman(string: string) {
     .join(" ");
 }
 
-export default function EditableValue({
+const getInputElement = (
+  type: string,
+  editedValue: any,
+  {
+    isEditing,
+    updateProperty,
+    textAreaRef,
+    options,
+  }: {
+    isEditing: boolean;
+    updateProperty: ChangeEventHandler;
+    textAreaRef?: Ref<HTMLTextAreaElement>;
+    options?: ReactElement | ReactElement[];
+  }
+) => {
+  switch (type) {
+    case "textarea":
+      return (
+        <textarea
+          ref={textAreaRef}
+          disabled={!isEditing}
+          onChange={updateProperty}
+          value={editedValue}
+        />
+      );
+    case "select": {
+      if (!options) {
+        throw new Error("If you want to use a select you must give it options");
+      }
+      return (
+        <select
+          disabled={!isEditing}
+          value={editedValue}
+          onChange={updateProperty}
+        >
+          {options}
+        </select>
+      );
+    }
+    default:
+      return (
+        <input
+          type="text"
+          disabled={!isEditing}
+          onChange={updateProperty}
+          value={editedValue}
+        />
+      );
+  }
+};
+
+export default function EditableProperty({
   value,
   name,
   save,
@@ -62,10 +119,24 @@ export default function EditableValue({
     setEditedValue(value);
   }, [value]);
 
-  const toggleEdit = () => setIsEditing(!isEditing);
+  const toggleEdit = (e: ChangeEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsEditing(!isEditing);
+  };
   const updateProperty = (e: ChangeEvent) => {
     /// @ts-expect-error
     setEditedValue(e.target.value);
+  };
+
+  const handleRadioChange = (e: ChangeEvent) => {
+    setEditedValue(
+      Object.keys(editedValue).reduce((acc, v) => {
+        /// @ts-expect-error
+        acc[v] = v === e.target.value;
+        return acc;
+      }, {})
+    );
   };
 
   const saveEdit = (e: FormEvent) => {
@@ -73,51 +144,15 @@ export default function EditableValue({
     e.stopPropagation();
 
     save({ value: editedValue, name });
-    toggleEdit();
+    setIsEditing(false);
   };
 
-  const discardEdit = () => {
+  const discardEdit = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     setEditedValue(value);
-    toggleEdit();
-  };
-
-  const getInputElement = (type: string) => {
-    switch (type) {
-      case "textarea":
-        return (
-          <textarea
-            ref={textAreaRef}
-            disabled={!isEditing}
-            onChange={updateProperty}
-            value={editedValue}
-          />
-        );
-      case "select": {
-        if (!options) {
-          throw new Error(
-            "If you want to use a select you must give it options"
-          );
-        }
-        return (
-          <select
-            disabled={!isEditing}
-            value={editedValue}
-            onChange={updateProperty}
-          >
-            {options}
-          </select>
-        );
-      }
-      default:
-        return (
-          <input
-            type="text"
-            disabled={!isEditing}
-            onChange={updateProperty}
-            value={editedValue}
-          />
-        );
-    }
+    setIsEditing(false);
   };
 
   return (
@@ -127,24 +162,62 @@ export default function EditableValue({
           ? camelToHuman(name)
           : name[0].toUpperCase() + name.slice(1)}
         :
-        <Input
-          className={styles.input}
-          disabled={!isEditing}
-          postfix={
-            <>
-              {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
-              {isEditing && (
-                <Button weight="secondary" type="submit">
-                  Save
-                </Button>
-              )}
-              {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
-            </>
-          }
-          {...rest}
-        >
-          {getInputElement(type)}
-        </Input>
+        {type !== "radio" && (
+          <Input
+            className={styles.input}
+            disabled={!isEditing}
+            postfix={
+              <>
+                {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
+                {isEditing && (
+                  <Button weight="secondary" type="submit">
+                    Save
+                  </Button>
+                )}
+                {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
+              </>
+            }
+            {...rest}
+          >
+            {getInputElement(type, editedValue, {
+              isEditing,
+              updateProperty,
+              options,
+            })}
+          </Input>
+        )}
+        {type === "radio" && (
+          <>
+            {!isEditing && <Button onClick={toggleEdit}>Edit</Button>}
+            {isEditing && (
+              <Button weight="secondary" type="submit">
+                Save
+              </Button>
+            )}
+            {isEditing && <Button onClick={discardEdit}>Cancel</Button>}
+            <div className={styles.radioContainer}>
+              {
+                <>
+                  {Object.keys(editedValue).map((v) => {
+                    return (
+                      <RadioInput
+                        key={name + v}
+                        name={name}
+                        value={v}
+                        onChange={handleRadioChange}
+                        checked={editedValue[v]}
+                        disabled={!isEditing}
+                      >
+                        {camelToHuman(v)}
+                      </RadioInput>
+                    );
+                  })}
+                </>
+              }
+            </div>
+            {rest.helper && <div className={styles.helper}>{rest.helper}</div>}
+          </>
+        )}
       </label>
     </form>
   );

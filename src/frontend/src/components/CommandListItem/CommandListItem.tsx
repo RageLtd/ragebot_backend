@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Command } from "../../views/Commands/CommandsView";
-import CustomBehaviorControls from "../../views/NotificationsView/CustomBehaviorControls/CustomBehaviorControls";
 import Button from "../Button/Button";
+import CustomBehaviorControls from "../CustomBehaviorControls/CustomBehaviorControls";
 import EditableProperty from "../EditableProperty/EditableProperty";
 import RadioInput from "../RadioInput/RadioInput";
 

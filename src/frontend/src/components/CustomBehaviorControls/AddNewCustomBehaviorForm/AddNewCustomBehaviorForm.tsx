@@ -1,9 +1,9 @@
 import { ChangeEvent, FormEvent, ReactElement, useState } from "react";
-import Button from "../../../../components/Button/Button";
-import Input from "../../../../components/Input/Input";
+import Button from "../../Button/Button";
+import Input from "../../Input/Input";
 
-import styles from "../../NotificationsView.module.css";
-import { tokens } from "../../notificationViewUtils";
+import styles from "./AddNewCustomBehaviorForm.module.css";
+import { tokens } from "../../../views/NotificationsView/notificationViewUtils";
 
 interface AddNewCustomBehaviorFormProps {
   save: Function;

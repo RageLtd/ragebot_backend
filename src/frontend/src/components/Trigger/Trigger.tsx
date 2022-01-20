@@ -1,4 +1,4 @@
-import CustomBehaviorControls from "../../views/NotificationsView/CustomBehaviorControls/CustomBehaviorControls";
+import CustomBehaviorControls from "../CustomBehaviorControls/CustomBehaviorControls";
 import Button from "../Button/Button";
 
 export interface iTrigger {

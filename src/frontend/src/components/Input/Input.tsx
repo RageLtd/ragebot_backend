@@ -3,7 +3,7 @@ import styles from "./Input.module.css";
 
 interface InputProps {
   [key: string]: any;
-  children: ReactElement;
+  children: ReactElement | ReactElement[];
   prefix?: ReactElement;
   postfix?: ReactElement;
   disabled?: boolean;

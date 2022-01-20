@@ -6,6 +6,7 @@ import {
   getTriggerCustomBehaviorsQuery,
   getTriggersQuery,
   saveNewTriggerQuery,
+  updateTriggerCustomBehaviorQuery,
 } from "../triggers/triggerQueries";
 
 const triggersApiRouter = Router();
@@ -45,6 +46,17 @@ triggersApiRouter.post("/:userName/behaviors/:keyword", async (req, res) => {
 
   const createRes = await client
     ?.query(createTriggerCustomBehaviorQuery(keyword, req.body))
+    .catch(console.error);
+
+  res.send(createRes);
+});
+
+triggersApiRouter.patch("/:userName/behaviors/:keyword", async (req, res) => {
+  const { keyword, userName } = req.params;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const createRes = await client
+    ?.query(updateTriggerCustomBehaviorQuery(keyword, req.body))
     .catch(console.error);
 
   res.send(createRes);

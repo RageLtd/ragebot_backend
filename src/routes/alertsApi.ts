@@ -8,6 +8,7 @@ import {
   removeCustomBehaviorQuery,
   saveCustomBehaviorQuery,
   saveNotificationStylesQuery,
+  updateCustomBehaviorQuery,
   updateNotificationStringQuery,
 } from "../notifications/notificationQueries";
 import {
@@ -96,6 +97,18 @@ alertsApiRouter.post("/:userName/behaviors/:type", async (req, res) => {
   const behaviorSaveResponse = await client?.query(
     saveCustomBehaviorQuery(type, req.body)
   );
+
+  res.send(behaviorSaveResponse);
+});
+
+alertsApiRouter.patch("/:userName/behaviors/:type", async (req, res) => {
+  const { userName, type } = req.params;
+  const target = `#${userName.toLowerCase()}`;
+  const client = await clientRegistry.getClient(target);
+
+  const behaviorSaveResponse = await client
+    ?.query(updateCustomBehaviorQuery(type, req.body))
+    .catch(console.error);
 
   res.send(behaviorSaveResponse);
 });

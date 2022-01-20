@@ -15,6 +15,7 @@
 - [ ] Enable/disable commands
 - [ ] enable/disable timers
 - [ ] Custom behavior permissions
+- [ ] Actually save custom behavior props not just log kek
 
 ## Post launch
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch

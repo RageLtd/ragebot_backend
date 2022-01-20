@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import EditableValue from "../../components/EditableProperty/EditableProperty";
-import CustomBehaviorControls from "./CustomBehaviorControls/CustomBehaviorControls";
+import CustomBehaviorControls from "../../components/CustomBehaviorControls/CustomBehaviorControls";
 
 import notifications from "./testNotifications";
 import {
@@ -245,7 +244,7 @@ export default function NotificationsView({
             </div>
             {prefixGrouped[groupName].map((type) => (
               <li className={styles.notificationItem} key={type}>
-                <EditableValue
+                <EditableProperty
                   key={type}
                   name={type}
                   value={notificationStrings[type]}

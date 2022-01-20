@@ -14,6 +14,9 @@ import {
   Update,
   Let,
   Append,
+  Equals,
+  If,
+  Merge,
 } from "faunadb";
 
 export const getTriggersQuery = () =>
@@ -45,6 +48,38 @@ export const createTriggerCustomBehaviorQuery = (
     Update(Select("ref", Get(Match(Index("triggers_by_keyword"), keyword))), {
       data: {
         behaviors: Append(behavior, Var("behaviors")),
+      },
+    })
+  );
+
+export const updateTriggerCustomBehaviorQuery = (
+  keyword: string,
+  {
+    behaviorName,
+    everyone,
+    ...rest
+  }: { behaviorName: string; everyone?: boolean }
+) =>
+  Let(
+    {
+      behaviors: Select(
+        ["data", "behaviors"],
+        Get(Match(Index("triggers_by_keyword"), keyword))
+      ),
+    },
+    Update(Select("ref", Get(Match(Index("triggers_by_keyword"), keyword))), {
+      data: {
+        behaviors: Map(
+          Var("behaviors"),
+          Lambda(
+            "behavior",
+            If(
+              Equals(Select("name", Var("behavior")), behaviorName),
+              Merge(Var("behavior"), rest),
+              Var("behavior")
+            )
+          )
+        ),
       },
     })
   );
