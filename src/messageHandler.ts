@@ -2,9 +2,9 @@ import { Userstate } from "tmi.js";
 import { filterRegistry, tmiClient } from ".";
 import { postToChat } from "./chat/chat";
 import { enableBot, isBotEnabled } from "./commands/utils";
-import { isModerator } from "./messages/isModerator";
 import { parseKeywords } from "./messages/parseKeywords";
 import { parseMessage } from "./messages/parseMessage";
+import { isModerator } from "./utils/permissioning";
 
 async function checkProfanity(target: string, message: string) {
   const filter = await filterRegistry.getFilter(target);

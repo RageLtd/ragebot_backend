@@ -1,6 +1,6 @@
 import { Userstate } from "tmi.js";
 import { filterRegistry } from "..";
-import { isModerator } from "./isModerator";
+import { isModerator } from "../utils/permissioning";
 
 export async function addTermToWhitelist(
   target: string,

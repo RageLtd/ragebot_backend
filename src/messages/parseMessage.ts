@@ -31,8 +31,7 @@ import {
   timeoutInMillis,
 } from "../notifications/notificationUtils";
 import { notification_sse_clients } from "../ragebotServer";
-import { isModerator } from "./isModerator";
-import { isSubscriber } from "./isSubscriber";
+import { userHasPermission } from "../utils/permissioning";
 import {
   addTermToBlacklist,
   addTermToWhitelist,
@@ -183,15 +182,16 @@ export async function handleCustomCommands(
     (c) => c.name === command
   )[0];
 
-  if (modOnly && !isModerator(userState)) {
+  if (!userHasPermission(userState, { modOnly, subOnly })) {
     return;
   }
 
-  if (subOnly && (!isSubscriber(userState) || !isModerator(userState))) {
-    return;
-  }
   if (customBehaviors[command] && customBehaviors[command].length > 0) {
     customBehaviors[command].forEach(async (behavior) => {
+      if (!userHasPermission(userState, behavior)) {
+        return;
+      }
+
       const message = await executeCustomBehavior(
         client!,
         target.substring(1),

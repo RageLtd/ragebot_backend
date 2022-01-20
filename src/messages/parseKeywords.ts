@@ -6,13 +6,16 @@ import {
 } from "../notifications/notificationUtils";
 import { notification_sse_clients } from "../ragebotServer";
 import { getTriggersQuery } from "../triggers/triggerQueries";
+import { userHasPermission } from "../utils/permissioning";
 
 export async function parseKeywords(
   target: string,
   userState: Userstate,
   message: string
 ) {
-  const keywords: { [key: string]: { name: string }[] } = {};
+  const keywords: {
+    [key: string]: { name: string; modOnly: boolean; subOnly: boolean }[];
+  } = {};
 
   const client = await clientRegistry.getClient(target);
 
@@ -32,6 +35,9 @@ export async function parseKeywords(
       keywords[keyword].length > 0
     ) {
       keywords[keyword].forEach(async (behavior) => {
+        if (!userHasPermission(userState, behavior)) {
+          return;
+        }
         const notificationHTML = await executeCustomBehavior(
           client!,
           target.substring(1),

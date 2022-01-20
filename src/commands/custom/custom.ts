@@ -1,6 +1,6 @@
 import { Userstate } from "tmi.js";
 import { clientRegistry, customCommandRegistry, tmiClient } from "../..";
-import { isModerator } from "../../messages/isModerator";
+import { isModerator } from "../../utils/permissioning";
 import { setCommand, setCustomCounter, updateCommand } from "../utils";
 import { removeCustomCommandByNameQuery } from "./customQueries";
 

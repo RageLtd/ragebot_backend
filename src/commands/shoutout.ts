@@ -1,6 +1,6 @@
 import { Userstate } from "tmi.js";
 import { tmiClient } from "..";
-import { isModerator } from "../messages/isModerator";
+import { isModerator } from "../utils/permissioning";
 
 export function shoutout(
   target: string,

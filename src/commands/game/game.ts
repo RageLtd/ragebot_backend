@@ -1,6 +1,6 @@
 import { Userstate } from "tmi.js";
 import { tmiClient } from "../../index";
-import { isModerator } from "../../messages/isModerator";
+import { isModerator } from "../../utils/permissioning";
 import { getRemote, Remote, setRemote } from "../utils";
 import { GameResponse, LobbyResponse, RunResponse } from "./gameQueries";
 
