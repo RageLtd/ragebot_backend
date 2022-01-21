@@ -74,6 +74,7 @@ export default function TriggersView({ twitchUserInfo }: TriggersViewProps) {
       <ul>
         {triggers.map((trigger) => (
           <Trigger
+            key={trigger.keyword}
             {...trigger}
             twitchUserInfo={twitchUserInfo}
             remove={handleRemove}
