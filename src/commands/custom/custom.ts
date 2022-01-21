@@ -101,7 +101,8 @@ export async function updateCustomCommand(
       modOnly,
       subOnly,
       timeoutInMillis,
-      response.join(" ")
+      response.join(" "),
+      true
     );
     await customCommandRegistry.refreshCommands(target);
     tmiClient.say(target, `${name} command updated`);

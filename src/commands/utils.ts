@@ -91,7 +91,8 @@ export async function updateCommand(
   modOnly: boolean,
   subOnly: boolean,
   timeoutInMillis: number,
-  response: string
+  response: string,
+  isEnabled: boolean
 ) {
   const client = await clientRegistry.getClient(target);
 
@@ -102,7 +103,8 @@ export async function updateCommand(
       modOnly,
       subOnly,
       timeoutInMillis,
-      response
+      response,
+      isEnabled
     )
   );
 }

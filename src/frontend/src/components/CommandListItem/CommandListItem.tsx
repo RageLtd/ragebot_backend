@@ -4,12 +4,14 @@ import Button from "../Button/Button";
 import CustomBehaviorControls from "../CustomBehaviorControls/CustomBehaviorControls";
 import EditableProperty from "../EditableProperty/EditableProperty";
 import RadioInput from "../RadioInput/RadioInput";
+import Toggle from "../Toggle/Toggle";
 
 import styles from "./CommandListItem.module.css";
 
 interface CommandListItemProps extends Command {
   username: string;
   removeCommand: Function;
+  setCommandEnabled: Function;
 }
 
 function getHelperText(property: string) {
@@ -39,6 +41,8 @@ function getPropertyType(name: string) {
 export default function CommandListItem({
   username,
   removeCommand,
+  setCommandEnabled,
+  isEnabled,
   ...command
 }: CommandListItemProps) {
   const [modOnly, setModOnly] = useState(command.modOnly);
@@ -104,10 +108,20 @@ export default function CommandListItem({
     setIsEditingPermissions(false);
   };
 
+  const handleSetCommandEnabled = async (e: ChangeEvent) => {
+    /// @ts-expect-error
+    setCommandEnabled(e.target.checked);
+  };
+
   return (
     <li>
       <div className={styles.wrapper}>
-        <h3>{`!${command.name}`}</h3>
+        <div className={styles.header}>
+          <h3>{`!${command.name}`}</h3>
+          <Toggle state={isEnabled} onChange={handleSetCommandEnabled}>
+            {isEnabled ? "On" : "Off"}
+          </Toggle>
+        </div>
         {Object.keys(command)
           .filter(
             (key) => key !== "id" && key !== "modOnly" && key !== "subOnly"

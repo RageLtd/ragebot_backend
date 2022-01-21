@@ -178,11 +178,14 @@ export async function handleCustomCommands(
     return;
   }
 
-  const { behavior, response, modOnly, subOnly } = customCommands.filter(
-    (c) => c.name === command
-  )[0];
+  const { behavior, response, modOnly, subOnly, isEnabled } =
+    customCommands.filter((c) => c.name === command)[0];
 
   if (!userHasPermission(userState, { modOnly, subOnly })) {
+    return;
+  }
+
+  if (!isEnabled) {
     return;
   }
 

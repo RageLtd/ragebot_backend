@@ -21,3 +21,13 @@
   max-width: 100%;
   color: var(--secondary-text-color);
 }
+
+.header {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: baseline;
+}
+
+.header > * {
+  margin-right: .5em;
+}

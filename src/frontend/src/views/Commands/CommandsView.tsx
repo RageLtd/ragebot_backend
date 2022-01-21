@@ -73,6 +73,21 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
       .catch(console.error);
   };
 
+  const generateHandleSetCommandEnabled =
+    (command: Command) => async (isEnabled: boolean) => {
+      await fetch(`/api/commands/${twitchUserInfo.username?.toLowerCase()}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...command,
+          isEnabled,
+        }),
+      });
+      loadCommands();
+    };
+
   return (
     <>
       <h1>Commands</h1>
@@ -96,14 +111,17 @@ export default function CommandsView({ twitchUserInfo }: CommandsViewProps) {
         )}
         {customCommands
           .filter((command) => command.id !== "fake-id")
-          .map((command) => (
-            <CommandListItem
-              key={command.id}
-              username={twitchUserInfo.username!}
-              {...command}
-              removeCommand={handleRemoveCommand}
-            />
-          ))}
+          .map((command) => {
+            return (
+              <CommandListItem
+                key={command.id}
+                username={twitchUserInfo.username!}
+                {...command}
+                removeCommand={handleRemoveCommand}
+                setCommandEnabled={generateHandleSetCommandEnabled(command)}
+              />
+            );
+          })}
       </ul>
     </>
   );

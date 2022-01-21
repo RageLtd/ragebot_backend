@@ -40,6 +40,7 @@ export interface Command {
   modOnly: boolean;
   subOnly: boolean;
   timeoutInMillis: number;
+  isEnabled: boolean;
 }
 
 export interface CommandResponse {
@@ -73,6 +74,7 @@ export const addCustomCommandQuery = (
       modOnly,
       subOnly,
       timeoutInMillis,
+      isEnabled: true,
     },
   });
 
@@ -82,7 +84,8 @@ export const updateCustomCommandByNameQuery = (
   modOnly: boolean,
   subOnly: boolean,
   timeoutInMillis: number,
-  response: string
+  response: string,
+  isEnabled: boolean
 ) =>
   Update(Select("ref", Get(Match(Index("command_by_name"), name))), {
     data: {
@@ -91,6 +94,7 @@ export const updateCustomCommandByNameQuery = (
       subOnly,
       timeoutInMillis,
       response,
+      isEnabled,
     },
   });
 
@@ -102,6 +106,7 @@ export const updateCustomCommandByIdQuery = (command: {
   subOnly: boolean;
   timeoutInMillis: number;
   response: string;
+  isEnabled: boolean;
 }) => {
   const { id, ...rest } = command;
   return Update(Select("ref", Get(Match(Index("command_by_id"), id))), {

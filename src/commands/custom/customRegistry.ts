@@ -57,6 +57,7 @@ export class CustomCommandRegistry {
           modOnly: true,
           subOnly: false,
           timeoutInMillis: 0,
+          isEnabled: command.isEnabled,
         });
       }
       return acc;
