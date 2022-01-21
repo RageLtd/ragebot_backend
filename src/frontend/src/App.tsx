@@ -162,7 +162,7 @@ function App() {
 
   return (
     <div className={styles.App}>
-      <Navigation />
+      <Navigation twitchUserInfo={twitchUserInfo} />
       {content}
     </div>
   );

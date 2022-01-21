@@ -8,14 +8,14 @@
 - [x] sound playback on notification
 - [ ] Make file input not suck
 - [x] custom behaviors on command
-- [ ] custom behaviors on keyword
+- [x] custom behaviors on keyword
 - [x] Add ability for user to define custom css for alerts
 - [x] add ability for user to define custom css for chat
-- [ ] Move on/off to nav
+- [x] Move on/off to nav
 - [ ] Enable/disable commands
 - [ ] enable/disable timers
-- [ ] Custom behavior permissions
-- [ ] Actually save custom behavior props not just log kek
+- [x] Custom behavior permissions
+- [x] Actually save custom behavior props not just log kek
 
 ## Post launch
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch
