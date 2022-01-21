@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { clientRegistry } from "..";
+import { clientRegistry, filterRegistry } from "..";
 import { getChatStylesQuery, saveChatStylesQuery } from "../chat/chatQueries";
+import {
+  getBlacklistQuery,
+  getWhitelistQuery,
+} from "../messages/filterQueries";
 import { chat_sse_clients } from "../ragebotServer";
 
 const chatApiRouter = Router();
@@ -60,6 +64,60 @@ chatApiRouter.get("/:userName/styles", async (req, res) => {
 
   /// @ts-expect-error
   res.send(stylesRes.data);
+});
+
+chatApiRouter.get("/:userName/allowlist", async (req, res) => {
+  const { userName } = req.params;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const getRes = await client?.query(getWhitelistQuery());
+
+  res.send(getRes);
+});
+
+chatApiRouter.post("/:userName/allowlist", async (req, res) => {
+  const { userName } = req.params;
+  const addRes = await filterRegistry
+    .addToWhitelist(`#${userName.toLowerCase()}`, req.body.value)
+    .catch(console.error);
+
+  res.send(addRes);
+});
+
+chatApiRouter.delete("/:userName/allowlist", async (req, res) => {
+  const { userName } = req.params;
+  const removeRes = await filterRegistry
+    .removeFromWhitelist(`#${userName}`, req.body.value)
+    .catch(console.error);
+
+  res.send(removeRes);
+});
+
+chatApiRouter.get("/:userName/blocklist", async (req, res) => {
+  const { userName } = req.params;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const getRes = await client?.query(getBlacklistQuery());
+
+  res.send(getRes);
+});
+
+chatApiRouter.post("/:userName/blocklist", async (req, res) => {
+  const { userName } = req.params;
+  const addRes = await filterRegistry
+    .addToBlacklist(`#${userName.toLowerCase()}`, req.body.value)
+    .catch(console.error);
+
+  res.send(addRes);
+});
+
+chatApiRouter.delete("/:userName/blocklist", async (req, res) => {
+  const { userName } = req.params;
+  const removeRes = await filterRegistry
+    .removeFromBlacklist(`#${userName}`, req.body.value)
+    .catch(console.error);
+
+  res.send(removeRes);
 });
 
 export default chatApiRouter;

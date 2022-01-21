@@ -12,10 +12,11 @@
 - [x] Add ability for user to define custom css for alerts
 - [x] add ability for user to define custom css for chat
 - [x] Move on/off to nav
-- [ ] Enable/disable commands
-- [ ] enable/disable timers
+- [x] Enable/disable commands
+- [x] enable/disable timers
 - [x] Custom behavior permissions
 - [x] Actually save custom behavior props not just log kek
+- [x] customize white/black list in ui
 
 ## Post launch
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch

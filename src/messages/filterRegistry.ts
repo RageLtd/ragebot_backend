@@ -29,7 +29,6 @@ export class ChatFilterRegistry {
   }
 
   async initializeFilter(target: string) {
-    // Create a new filter if one doesn't exist
     this.filters[target] = new Filter();
 
     // Go get whitelist

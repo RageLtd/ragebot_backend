@@ -1,40 +1,62 @@
-import { useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  MouseEvent,
+  useEffect,
+  useState,
+} from "react";
+import Button from "../../components/Button/Button";
 import EditableProperty from "../../components/EditableProperty/EditableProperty";
+import Input from "../../components/Input/Input";
 import styles from "./ChatView.module.css";
 
 interface ChatViewProps {
   twitchUserInfo?: {
-    username?: string;
+    username: string;
   };
 }
 
-function getChatStyles(username: string) {
-  return fetch(`/api/chat/${username.toLowerCase()}/styles`)
-    .then((res) => res.json())
-    .then((res) => {
-      const formattedStyles = Object.keys(res)
-        .map((selector) => {
-          let value = res[selector];
-          if (typeof value === "object") {
-            value = Object.keys(res[selector])
-              .map((name) => `${name}: ${res[selector][name]};`)
-              .join("\r\n");
-          }
-          return `${selector} ${value}`;
-        })
-        .join("\n");
-      return formattedStyles;
-    });
+async function getChatStyles(username: string) {
+  const res = await fetch(`/api/chat/${username.toLowerCase()}/styles`);
+  const json = await res.json();
+  const formattedStyles = Object.keys(json)
+    .map((selector) => {
+      let value = json[selector];
+      if (typeof value === "object") {
+        value = Object.keys(json[selector])
+          .map((name) => `${name}: ${json[selector][name]};`)
+          .join("\r\n");
+      }
+      return `${selector} ${value}`;
+    })
+    .join("\n");
+  return formattedStyles;
+}
+
+async function getAllowList(username: string) {
+  const res = await fetch(`/api/chat/${username.toLowerCase()}/allowlist`);
+  return await res.json().then((res) => res.data);
+}
+
+async function getBlockList(username: string) {
+  const res = await fetch(`/api/chat/${username.toLowerCase()}/blocklist`);
+  return await res.json().then((res) => res.data);
 }
 
 export default function ChatView({ twitchUserInfo }: ChatViewProps) {
   const [chatStyles, setChatStyles] = useState("");
+  const [blockList, setBlockList] = useState<string[]>([]);
+  const [allowList, setAllowList] = useState<string[]>([]);
+  const [newAllowlistEntry, setNewAllowlistEntry] = useState("");
+  const [newBlocklistEntry, setNewBlocklistEntry] = useState("");
 
   useEffect(() => {
     if (twitchUserInfo?.username) {
-      getChatStyles(twitchUserInfo?.username).then((res) => {
+      getChatStyles(twitchUserInfo.username).then((res) => {
         setChatStyles(res);
       });
+      getAllowList(twitchUserInfo.username).then((res) => setAllowList(res));
+      getBlockList(twitchUserInfo.username).then((res) => setBlockList(res));
     }
   }, [twitchUserInfo?.username]);
 
@@ -77,6 +99,80 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
 
     getChatStyles(twitchUserInfo?.username!).then((res) => setChatStyles(res));
   };
+
+  const handleNewBlocklistEntryChange = (e: ChangeEvent) =>
+    /// @ts-expect-error
+    setNewBlocklistEntry(e.target.value);
+
+  const addNewBlocklistEntry = async () => {
+    await fetch(
+      `/api/chat/${twitchUserInfo!.username.toLowerCase()}/blocklist`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          value: newBlocklistEntry,
+        }),
+      }
+    );
+
+    getBlockList(twitchUserInfo!.username).then((res) => setBlockList(res));
+    setNewBlocklistEntry("");
+  };
+
+  const generateRemoveBlocklistEntry = (value: string) => async () => {
+    await fetch(
+      `/api/chat/${twitchUserInfo!.username.toLowerCase()}/blocklist`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ value }),
+      }
+    );
+    getBlockList(twitchUserInfo!.username).then((res) => setBlockList(res));
+  };
+
+  const handleNewAllowlistEntryChange = (e: ChangeEvent) =>
+    /// @ts-expect-error
+    setNewAllowlistEntry(e.target.value);
+
+  const addNewAllowlistEntry = async () => {
+    await fetch(
+      `/api/chat/${twitchUserInfo!.username.toLowerCase()}/allowlist`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          value: newAllowlistEntry,
+        }),
+      }
+    );
+
+    getAllowList(twitchUserInfo!.username).then((res) => setAllowList(res));
+    setNewAllowlistEntry("");
+  };
+
+  const generateRemoveAllowlistEntry = (value: string) => async () => {
+    await fetch(
+      `/api/chat/${twitchUserInfo!.username.toLowerCase()}/allowlist`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ value }),
+      }
+    );
+
+    getAllowList(twitchUserInfo!.username).then((res) => setAllowList(res));
+  };
+
   return (
     <>
       <h1>Chat</h1>
@@ -119,6 +215,70 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
         onChange={handleStylesChange}
         save={handleSaveStyles}
       />
+      <h3>Allowlist</h3>
+      <label>
+        New entry
+        <Input
+          helper="A new entry for the allow list"
+          postfix={<Button onClick={addNewAllowlistEntry}>Add</Button>}
+        >
+          <input
+            value={newAllowlistEntry}
+            onChange={handleNewAllowlistEntryChange}
+            onKeyDown={(e: KeyboardEvent) => {
+              /// @ts-expect-error
+              if (e.key === "Enter" && e.target.value !== "") {
+                addNewAllowlistEntry();
+              }
+            }}
+          />
+        </Input>
+      </label>
+      <ul className={styles.list}>
+        {allowList.map((word) => (
+          <li key={`allowlist_${word}`} className={styles.listItem}>
+            {word}
+            <Button
+              weight="danger"
+              onClick={generateRemoveAllowlistEntry(word)}
+            >
+              Remove
+            </Button>
+          </li>
+        ))}
+      </ul>
+      <h3>Blocklist</h3>
+      <label>
+        New entry
+        <Input
+          helper="A new entry for the block list"
+          postfix={<Button onClick={addNewBlocklistEntry}>Add</Button>}
+        >
+          <input
+            value={newBlocklistEntry}
+            onChange={handleNewBlocklistEntryChange}
+            onKeyDown={(e: KeyboardEvent) => {
+              /// @ts-expect-error
+              if (e.key === "Enter" && e.target.value !== "") {
+                addNewBlocklistEntry();
+              }
+            }}
+          />
+        </Input>
+      </label>
+      <ul className={styles.list}>
+        {blockList.map((word) => (
+          <li key={`blocklist_${word}`} className={styles.listItem}>
+            {word}
+            <Button
+              weight="danger"
+              onClick={generateRemoveBlocklistEntry(word)}
+            >
+              Remove
+            </Button>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

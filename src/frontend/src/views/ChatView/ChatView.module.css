@@ -7,3 +7,23 @@
   font-style: normal;
   font-family: 'hack', 'Courier New', Courier, monospace;
 }
+
+.list {
+  max-height: 10rem;
+  overflow-y: auto;
+  background-color: var(--primary-background-color);
+  border-radius: .25em;
+  padding: .5em;
+}
+
+.listItem {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: .25em 0;
+}
+
+.listItem:not(:last-of-type) {
+  border-bottom: 1px solid var(--primary-border-color)
+}

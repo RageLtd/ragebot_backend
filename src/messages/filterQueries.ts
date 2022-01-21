@@ -11,6 +11,9 @@ import {
   Delete,
   Match,
   Index,
+  Let,
+  If,
+  Exists,
 } from "faunadb";
 
 export interface WhitelistResponse {
@@ -28,17 +31,21 @@ export const getWhitelistQuery = () =>
   );
 
 export const addToWhitelistQuery = (value: string) =>
-  Create(Collection("filter_whitelist"), {
-    data: {
-      value,
-    },
-  });
+  Let(
+    { entry: Exists(Match(Index("whitelist_by_value"), value)) },
+    If(
+      Var("entry"),
+      null,
+      Create(Collection("filter_whitelist"), {
+        data: {
+          value,
+        },
+      })
+    )
+  );
 
 export const removeFromWhitelistQuery = (value: string) =>
-  Map(
-    Paginate(Match(Index("whitelist_by_value"), value)),
-    Lambda(["ref"], Delete(Var("ref")))
-  );
+  Delete(Select("ref", Get(Match(Index("whitelist_by_value"), value))));
 
 export const getBlacklistQuery = () =>
   Map(
@@ -47,14 +54,18 @@ export const getBlacklistQuery = () =>
   );
 
 export const addToBlacklistQuery = (value: string) =>
-  Create(Collection("filter_blacklist"), {
-    data: {
-      value,
-    },
-  });
+  Let(
+    { entry: Exists(Match(Index("blacklist_by_value"), value)) },
+    If(
+      Var("entry"),
+      null,
+      Create(Collection("filter_blacklist"), {
+        data: {
+          value,
+        },
+      })
+    )
+  );
 
 export const removeFromBlacklistQuery = (value: string) =>
-  Map(
-    Paginate(Match(Index("blacklist_by_value"), value)),
-    Lambda(["ref"], Delete(Var("ref")))
-  );
+  Delete(Select("ref", Get(Match(Index("blacklist_by_value"), value))));
