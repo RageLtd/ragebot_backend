@@ -25,7 +25,7 @@ export const messageHandler = async (
     return;
   }
 
-  if (self || !(await isBotEnabled(channel))) {
+  if (!(await isBotEnabled(channel))) {
     return;
   }
 
