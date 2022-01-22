@@ -2,6 +2,7 @@ import { Router } from "express";
 import { clientRegistry } from "..";
 import {
   getCustomBehaviorsQuery,
+  getNotificationLogQuery,
   getNotificationStylesQuery,
   getNotificationVariablesQuery,
   NotificationVariablesResponse,
@@ -160,6 +161,17 @@ alertsApiRouter.get("/:userName/styles", async (req, res) => {
 
   /// @ts-expect-error
   res.send(stylesRes.data);
+});
+
+alertsApiRouter.get("/:userName/log", async (req, res) => {
+  const { userName } = req.params;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const logRes = await client
+    ?.query(getNotificationLogQuery())
+    .catch(console.error);
+
+  res.send(logRes);
 });
 
 export default alertsApiRouter;

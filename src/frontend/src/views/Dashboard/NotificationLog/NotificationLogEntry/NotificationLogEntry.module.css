@@ -1,0 +1,11 @@
+.username {
+  color: var(--attention-color);
+}
+
+.action {
+  color: var(--primary-action-color);
+}
+
+.entry:not(:last-of-type) {
+  border-bottom: 1px solid var(--primary-border-color)
+}

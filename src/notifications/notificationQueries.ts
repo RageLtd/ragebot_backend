@@ -13,7 +13,12 @@ import {
   Index,
   Delete,
   Do,
+  Count,
+  If,
+  Range,
+  Equals,
 } from "faunadb";
+import { TwitchNotification } from "./notifications";
 
 export interface NotificationStylesResponse {
   data: {
@@ -85,4 +90,22 @@ export const removeCustomBehaviorQuery = (type: string, behavior: any) =>
   Map(
     Paginate(Match(Index(`${type}_custom_behaviors_by_name`), behavior.name)),
     Lambda(["ref"], Delete(Var("ref")))
+  );
+
+export const addNotificationLogEntryQuery = (
+  notification: TwitchNotification
+) =>
+  Do(
+    If(
+      Equals(Count(Documents(Collection("notification_log"))), 64),
+      Delete(Select("ref", Get(Documents(Collection("notification_log"))))),
+      null
+    ),
+    Create(Collection("notification_log"), { data: notification })
+  );
+
+export const getNotificationLogQuery = () =>
+  Map(
+    Paginate(Documents(Collection("notification_log"))),
+    Lambda("ref", Select("data", Get(Var("ref"))))
   );

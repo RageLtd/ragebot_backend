@@ -4,9 +4,13 @@
   --primary-text-color: #333;
   --secondary-text-color: #666;
   --disabled-text-color: #999;
+  --inverted-text-color: #ccc;
 
   --primary-background-color: #999;
   --secondary-background-color: #aaa;
+
+  --inverted-attention-color: #910ea8;
+  --attention-color: #d410f6;
 
   --primary-action-color: #03b403;
   --secondary-action-color: #1e90ff;
@@ -25,6 +29,10 @@
     --primary-text-color: white;
     --secondary-text-color: #ddd;
     --disabled-text-color: #bbb;
+    --inverted-text-color: #333;
+    
+    --inverted-attention-color: #910ea8;
+    --attention-color: #d410f6;
 
     --primary-background-color: #999;
     --secondary-background-color: #666;

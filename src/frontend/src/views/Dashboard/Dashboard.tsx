@@ -1,4 +1,5 @@
 import CommandToggles from "./CommandToggles/CommandToggles";
+import NotificationLog from "./NotificationLog/NotificationLog";
 import TriggerToggles from "./TriggerToggles/TriggerToggles";
 
 interface DashboardViewProps {
@@ -11,6 +12,7 @@ interface DashboardViewProps {
 function DashboardView({ twitchUserInfo }: DashboardViewProps) {
   return (
     <div>
+      <NotificationLog twitchUserInfo={twitchUserInfo} />
       <CommandToggles twitchUserInfo={twitchUserInfo} />
       <TriggerToggles twitchUserInfo={twitchUserInfo} />
       <p>Holy shit auth is working</p>

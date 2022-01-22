@@ -4,7 +4,10 @@ import { parseEmotes } from "../chat/chat";
 import discord from "../discord/discord";
 import { notification_sse_clients } from "../ragebotServer";
 import { customBehaviorTypes } from "../users/setupUserDb";
-import { getCustomBehaviorsQuery } from "./notificationQueries";
+import {
+  addNotificationLogEntryQuery,
+  getCustomBehaviorsQuery,
+} from "./notificationQueries";
 import {
   applyNotificationVariables,
   executeCustomBehavior,
@@ -64,6 +67,14 @@ interface FormattedEmotes {
 
 export async function sendNotification(notification: TwitchNotification) {
   const broadcasterUsername = getUserName(notification).toLowerCase();
+
+  const client = await clientRegistry
+    .getClient(`#${broadcasterUsername.toLowerCase()}`)
+    .catch(console.error);
+
+  await client
+    ?.query(addNotificationLogEntryQuery(notification))
+    .catch(console.error);
 
   let eventWithParsedMessage = {};
 

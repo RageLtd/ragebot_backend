@@ -1,0 +1,10 @@
+.notificationList {
+  list-style: none;
+  max-height: 30em;
+  overflow-y: auto;
+  margin-bottom: 2em;
+  background-color: var(--action-background-color);
+  color: var(--inverted-text-color);
+  padding: .5em;
+  border-radius: .25em;
+}
