@@ -30,7 +30,7 @@ export async function parseKeywords(
 
   Object.keys(keywords).forEach((keyword) => {
     if (
-      message.includes(keyword) &&
+      message.split(" ").includes(keyword) &&
       keywords[keyword] &&
       keywords[keyword].length > 0
     ) {
