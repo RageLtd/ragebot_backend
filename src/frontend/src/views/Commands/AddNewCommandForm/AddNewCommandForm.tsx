@@ -74,38 +74,31 @@ export default function AddNewCommandForm({
 
   const handleCancel = () => onCancel();
 
-  const handlePermissionsChange = (e: ChangeEvent) => {
-    /// @ts-expect-error
+  const handlePermissionsChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "modonly") {
       setModOnly(true);
       setSubOnly(false);
     }
-    /// @ts-expect-error
     if (e.target.value === "subonly") {
       setSubOnly(true);
       setModOnly(false);
     }
-    /// @ts-expect-error
     if (e.target.value === "everyone") {
       setModOnly(false);
       setSubOnly(false);
     }
   };
 
-  const handleTimeoutChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
-    setTimeoutInMillis(e.target.value);
+  const handleTimeoutChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setTimeoutInMillis(Number(e.target.value));
 
-  const handleResponseChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleResponseChange = (e: ChangeEvent<HTMLInputElement>) =>
     setResponse(e.target.value);
 
-  const handleBehaviorChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleBehaviorChange = (e: ChangeEvent<HTMLSelectElement>) =>
     setBehavior(e.target.value);
 
-  const handleNameChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) =>
     setName(e.target.value);
 
   return (

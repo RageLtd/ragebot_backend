@@ -3,6 +3,8 @@ import Button from "../Button/Button";
 import AddNewCustomBehaviorForm from "./AddNewCustomBehaviorForm/AddNewCustomBehaviorForm";
 import CustomBehavior from "./CustomBehavior/CustomBehavior";
 
+import styles from "./CustomBehaviorControls.module.css";
+
 interface CustomBehaviorControlsProps {
   category: string;
   name: string;
@@ -109,7 +111,7 @@ export default function CustomBehaviorControls({
 
   return (
     <div>
-      <h4>{formattedName} Custom Behaviors</h4>
+      <h4 className={styles.title}>{formattedName} Custom Behaviors</h4>
       {!isAddingBehavior && (
         <Button onClick={handleAddBehaviorClick}>Add New Behavior</Button>
       )}

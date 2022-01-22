@@ -105,12 +105,10 @@ export default function EditableProperty({
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
 
-  const textAreaRef = useRef(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    /// @ts-expect-error
     if (textAreaRef.current?.tagName.toLowerCase() === "textarea") {
-      /// @ts-expect-error
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
   }, [textAreaRef, editedValue]);
@@ -124,15 +122,13 @@ export default function EditableProperty({
     e.preventDefault();
     setIsEditing(!isEditing);
   };
-  const updateProperty = (e: ChangeEvent) => {
-    /// @ts-expect-error
+  const updateProperty = (e: ChangeEvent<HTMLInputElement>) => {
     setEditedValue(e.target.value);
   };
 
-  const handleRadioChange = (e: ChangeEvent) => {
+  const handleRadioChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEditedValue(
-      Object.keys(editedValue).reduce((acc, v) => {
-        /// @ts-expect-error
+      Object.keys(editedValue).reduce((acc: { [key: string]: boolean }, v) => {
         acc[v] = v === e.target.value;
         return acc;
       }, {})

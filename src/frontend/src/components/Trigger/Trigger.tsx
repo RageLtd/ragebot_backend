@@ -1,8 +1,13 @@
 import CustomBehaviorControls from "../CustomBehaviorControls/CustomBehaviorControls";
 import Button from "../Button/Button";
 
+import styles from "./Trigger.module.css";
+import Toggle from "../Toggle/Toggle";
+import { ChangeEvent } from "react";
+
 export interface iTrigger {
   keyword: string;
+  isEnabled: boolean;
   behaviors?: {
     behavior: string;
     response?: string;
@@ -15,6 +20,7 @@ interface TriggerProps extends iTrigger {
     username?: string;
   };
   remove: Function;
+  onChange: Function;
 }
 
 export default function Trigger({
@@ -22,6 +28,8 @@ export default function Trigger({
   behaviors,
   twitchUserInfo,
   remove,
+  isEnabled,
+  onChange,
 }: TriggerProps) {
   const handleRemove = () => {
     // eslint-disable-next-line no-restricted-globals
@@ -29,8 +37,29 @@ export default function Trigger({
       remove({ keyword, behaviors });
     }
   };
+
+  const toggleTriggerIsEnabled = async (e: ChangeEvent<HTMLInputElement>) => {
+    await fetch(
+      `/api/triggers/${twitchUserInfo.username?.toLowerCase()}/${keyword}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isEnabled: e.target.checked }),
+      }
+    );
+    onChange();
+  };
+
   return (
-    <div>
+    <>
+      <div className={styles.header}>
+        <h3 className={styles.keyword}>{keyword}</h3>
+        <Toggle state={isEnabled} onChange={toggleTriggerIsEnabled}>
+          {isEnabled ? "On" : "Off"}
+        </Toggle>
+      </div>
       <CustomBehaviorControls
         category="triggers"
         name={keyword}
@@ -40,6 +69,6 @@ export default function Trigger({
       <Button weight="danger" onClick={handleRemove}>
         Remove Trigger
       </Button>
-    </div>
+    </>
   );
 }

@@ -17,6 +17,7 @@
 - [x] Custom behavior permissions
 - [x] Actually save custom behavior props not just log kek
 - [x] customize white/black list in ui
+- [ ] Dashboard: command switches, trigger switches, notification history, chat?
 
 ## Post launch
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch

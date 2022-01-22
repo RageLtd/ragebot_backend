@@ -13,8 +13,8 @@ export default function AddNewTriggerForm({
 }: AddNewTriggerFormProps) {
   const [keyword, setKeyword] = useState("");
 
-  /// @ts-expect-error
-  const handleKeywordChange = (e: ChangeEvent) => setKeyword(e.target.value);
+  const handleKeywordChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setKeyword(e.target.value);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

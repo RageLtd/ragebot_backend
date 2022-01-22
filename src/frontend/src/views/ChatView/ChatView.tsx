@@ -60,8 +60,8 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
     }
   }, [twitchUserInfo?.username]);
 
-  /// @ts-expect-error
-  const handleStylesChange = (e: ChangeEvent) => setChatStyles(e.target.value);
+  const handleStylesChange = (e: ChangeEvent<HTMLTextAreaElement>) =>
+    setChatStyles(e.target.value);
 
   const handleSaveStyles = async () => {
     const formattedStyles = chatStyles
@@ -100,8 +100,7 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
     getChatStyles(twitchUserInfo?.username!).then((res) => setChatStyles(res));
   };
 
-  const handleNewBlocklistEntryChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleNewBlocklistEntryChange = (e: ChangeEvent<HTMLInputElement>) =>
     setNewBlocklistEntry(e.target.value);
 
   const addNewBlocklistEntry = async () => {
@@ -136,8 +135,7 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
     getBlockList(twitchUserInfo!.username).then((res) => setBlockList(res));
   };
 
-  const handleNewAllowlistEntryChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleNewAllowlistEntryChange = (e: ChangeEvent<HTMLInputElement>) =>
     setNewAllowlistEntry(e.target.value);
 
   const addNewAllowlistEntry = async () => {
@@ -225,7 +223,7 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
           <input
             value={newAllowlistEntry}
             onChange={handleNewAllowlistEntryChange}
-            onKeyDown={(e: KeyboardEvent) => {
+            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
               /// @ts-expect-error
               if (e.key === "Enter" && e.target.value !== "") {
                 addNewAllowlistEntry();
@@ -257,7 +255,7 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
           <input
             value={newBlocklistEntry}
             onChange={handleNewBlocklistEntryChange}
-            onKeyDown={(e: KeyboardEvent) => {
+            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
               /// @ts-expect-error
               if (e.key === "Enter" && e.target.value !== "") {
                 addNewBlocklistEntry();

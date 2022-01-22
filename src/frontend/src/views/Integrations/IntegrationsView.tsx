@@ -38,13 +38,13 @@ export default function IntegrationsView({
     }
   }, [twitchUserInfo]);
 
-  const updateNewIntegration = (e: ChangeEvent) => {
+  const updateNewIntegration = (
+    e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
+  ) => {
     if (e.target.getAttribute("name") === "name") {
-      /// @ts-expect-error
       setNewIntegration({ ...newIntegration, name: e.target.value });
       return;
     }
-    /// @ts-expect-error
     setNewIntegration({ ...newIntegration, draftUrl: e.target.value });
   };
 

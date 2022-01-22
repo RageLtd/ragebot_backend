@@ -78,7 +78,7 @@ export default function AddNewCustomBehaviorForm({
   const [behavior, setBehavior] = useState("sound");
   const [condition, setCondition] = useState<string>("");
   const [response, setResponse] = useState("");
-  const [sound, setSound] = useState();
+  const [sound, setSound] = useState("");
   // const [redemptionConditions, setRedemptionConditions] = useState<
   //   ReactElement[]
   // >([]);
@@ -103,17 +103,19 @@ export default function AddNewCustomBehaviorForm({
     cancel();
   };
 
-  /// @ts-expect-error
-  const handleNameChange = (e: ChangeEvent) => setName(e.target.value);
-  /// @ts-expect-error
-  const handleBehvaiorChange = (e: ChangeEvent) => setBehavior(e.target.value);
-  const handleConditionChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setName(e.target.value);
+
+  const handleBehvaiorChange = (e: ChangeEvent<HTMLSelectElement>) =>
+    setBehavior(e.target.value);
+  const handleConditionChange = (e: ChangeEvent<HTMLInputElement>) =>
     setCondition(e.target.value);
-  /// @ts-expect-error
-  const handleResponseChange = (e: ChangeEvent) => setResponse(e.target.value);
-  /// @ts-expect-error
-  const handleSoundChange = (e: ChangeEvent) => setSound(e.target.value);
+
+  const handleResponseChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setResponse(e.target.value);
+
+  const handleSoundChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setSound(e.target.value);
 
   const addConditionalFields = (
     type: string,

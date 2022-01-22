@@ -9,7 +9,7 @@ interface TriggersViewProps {
   };
 }
 
-function getTriggers(username: string) {
+export function getTriggers(username: string) {
   return fetch(`/api/triggers/${username.toLowerCase()}`).then((res) =>
     res.json()
   );
@@ -55,6 +55,9 @@ export default function TriggersView({ twitchUserInfo }: TriggersViewProps) {
   };
   const handleCancel = () => setIsAddingNew(false);
 
+  const handleTriggerChange = () =>
+    getTriggers(twitchUserInfo.username!).then((res) => setTriggers(res.data));
+
   return (
     <>
       <h1>Triggers</h1>
@@ -78,6 +81,7 @@ export default function TriggersView({ twitchUserInfo }: TriggersViewProps) {
             {...trigger}
             twitchUserInfo={twitchUserInfo}
             remove={handleRemove}
+            onChange={handleTriggerChange}
           />
         ))}
       </ul>

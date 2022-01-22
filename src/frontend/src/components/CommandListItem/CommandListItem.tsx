@@ -72,18 +72,17 @@ export default function CommandListItem({
     }
   };
 
-  const handlePermissionsChange = async (e: ChangeEvent) => {
-    /// @ts-expect-error
+  const handlePermissionsChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "modonly") {
       setModOnly(true);
       setSubOnly(false);
     }
-    /// @ts-expect-error
+
     if (e.target.value === "subonly") {
       setSubOnly(true);
       setModOnly(false);
     }
-    /// @ts-expect-error
+
     if (e.target.value === "everyone") {
       setModOnly(false);
       setSubOnly(false);
@@ -108,8 +107,7 @@ export default function CommandListItem({
     setIsEditingPermissions(false);
   };
 
-  const handleSetCommandEnabled = async (e: ChangeEvent) => {
-    /// @ts-expect-error
+  const handleSetCommandEnabled = async (e: ChangeEvent<HTMLInputElement>) => {
     setCommandEnabled(e.target.checked);
   };
 

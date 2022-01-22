@@ -13,8 +13,8 @@ export default function EditableUrl({ url, save, remove }: EditableUrlProps) {
   const [editedUrl, setEditedUrl] = useState(url);
 
   const toggleEdit = () => setIsEditing(!isEditing);
-  /// @ts-expect-error
-  const updateUrl = (e: ChangeEvent) => setEditedUrl(e.target.value);
+  const updateUrl = (e: ChangeEvent<HTMLInputElement>) =>
+    setEditedUrl(e.target.value);
 
   const saveEdit = (e: FormEvent) => {
     e.preventDefault();

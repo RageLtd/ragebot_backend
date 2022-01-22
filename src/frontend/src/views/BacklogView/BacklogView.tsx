@@ -81,11 +81,9 @@ export default function BacklogView({ twitchUserInfo }: BacklogViewProps) {
       getBacklog();
     });
   };
-  const handleNewItemNameChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleNewItemNameChange = (e: ChangeEvent<HTMLInputElement>) =>
     setNewItemName(e.target.value);
-  const handleNewItemNotesChange = (e: ChangeEvent) =>
-    /// @ts-expect-error
+  const handleNewItemNotesChange = (e: ChangeEvent<HTMLTextAreaElement>) =>
     setNewItemNotes(e.target.value);
 
   const cancelAddItem = () => {

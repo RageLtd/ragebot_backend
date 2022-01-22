@@ -1,0 +1,11 @@
+.keyword {
+  margin-bottom: 0;
+}
+.header {
+  display: flex;
+  align-items: baseline;
+}
+
+.header :last-child {
+  margin-left: .5em;
+}

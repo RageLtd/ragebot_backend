@@ -14,7 +14,10 @@ export async function parseKeywords(
   message: string
 ) {
   const keywords: {
-    [key: string]: { name: string; modOnly: boolean; subOnly: boolean }[];
+    [key: string]: {
+      isEnabled: boolean;
+      behaviors: { name: string; modOnly: boolean; subOnly: boolean }[];
+    };
   } = {};
 
   const client = await clientRegistry.getClient(target);
@@ -23,18 +26,19 @@ export async function parseKeywords(
     data: any[];
   };
 
-  triggers.reduce((acc, trigger) => {
-    acc[trigger.keyword] = trigger.behaviors;
+  triggers.reduce((acc, { keyword, behaviors, isEnabled }) => {
+    acc[keyword] = { behaviors, isEnabled };
     return acc;
   }, keywords);
 
   Object.keys(keywords).forEach((keyword) => {
     if (
       message.split(" ").includes(keyword) &&
-      keywords[keyword] &&
-      keywords[keyword].length > 0
+      keywords[keyword].isEnabled &&
+      keywords[keyword].behaviors &&
+      keywords[keyword].behaviors.length > 0
     ) {
-      keywords[keyword].forEach(async (behavior) => {
+      keywords[keyword].behaviors.forEach(async (behavior) => {
         if (!userHasPermission(userState, behavior)) {
           return;
         }

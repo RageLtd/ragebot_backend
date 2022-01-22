@@ -7,6 +7,7 @@ import {
   getTriggersQuery,
   saveNewTriggerQuery,
   updateTriggerCustomBehaviorQuery,
+  updateTriggerQuery,
 } from "../triggers/triggerQueries";
 
 const triggersApiRouter = Router();
@@ -38,6 +39,17 @@ triggersApiRouter.delete("/:userName/:keyword", async (req, res) => {
   const deleteTriggerRes = await client?.query(deleteTriggerQuery(keyword));
 
   res.send(deleteTriggerRes);
+});
+
+triggersApiRouter.patch("/:userName/:keyword", async (req, res) => {
+  const { userName, keyword } = req.params;
+  const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
+
+  const updateRes = await client
+    ?.query(updateTriggerQuery(keyword, req.body))
+    .catch(console.error);
+
+  res.send(updateRes);
 });
 
 triggersApiRouter.post("/:userName/behaviors/:keyword", async (req, res) => {

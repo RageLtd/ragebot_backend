@@ -1,0 +1,17 @@
+.container {
+  margin-bottom: 2em;
+}
+
+.container h4 {
+  margin-top: 0;
+}
+
+.triggerList {
+  list-style: none;
+}
+
+.triggerItem {
+  display: flex;
+  justify-content: space-between;
+  padding: .25em 0;
+}

@@ -43,8 +43,8 @@ export default function Integration({
     );
   }
 
-  /// @ts-expect-error
-  const updateName = (e: ChangeEvent) => setEditedName(e.target.value);
+  const updateName = (e: ChangeEvent<HTMLSelectElement>) =>
+    setEditedName(e.target.value);
 
   const handleCancel = () => {
     setEditedName(name);
@@ -63,8 +63,8 @@ export default function Integration({
     };
   };
 
-  /// @ts-expect-error
-  const updateDraftUrl = (e: ChangeEvent) => setDraftUrl(e.target.value);
+  const updateDraftUrl = (e: ChangeEvent<HTMLInputElement>) =>
+    setDraftUrl(e.target.value);
 
   const addDraftUrl = (e: FormEvent) => {
     e.preventDefault();

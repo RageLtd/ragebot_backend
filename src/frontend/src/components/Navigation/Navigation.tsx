@@ -45,10 +45,9 @@ export default function Navigation({ twitchUserInfo }: NavigationProps) {
     }
   }, [twitchUserInfo.username]);
 
-  const setRagebot = (e: ChangeEvent) => {
+  const setRagebot = (e: ChangeEvent<HTMLInputElement>) => {
     setIsLoadingRagebot(true);
 
-    /// @ts-expect-error
     setRagebotRemote(e.target.checked, twitchUserInfo.username!).then((res) => {
       setRagebotEnabled(res);
       setIsLoadingRagebot(false);

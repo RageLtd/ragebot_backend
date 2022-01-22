@@ -34,6 +34,14 @@ export const deleteTriggerQuery = (keyword: string) =>
     Lambda("ref", Delete(Var("ref")))
   );
 
+export const updateTriggerQuery = (
+  keyword: string,
+  data: { [key: string]: any }
+) =>
+  Update(Select("ref", Get(Match(Index("triggers_by_keyword"), keyword))), {
+    data,
+  });
+
 export const createTriggerCustomBehaviorQuery = (
   keyword: string,
   behavior: any

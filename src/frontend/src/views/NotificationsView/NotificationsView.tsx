@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import CustomBehaviorControls from "../../components/CustomBehaviorControls/CustomBehaviorControls";
 
 import notifications from "./testNotifications";
@@ -69,8 +69,7 @@ export default function NotificationsView({
     useState<NotificationStrings>({});
   const [notificationStyles, setNotificationStyles] = useState("");
 
-  /// @ts-expect-error
-  const handleStylesChange = (e: ChangeEvent) =>
+  const handleStylesChange = (e: ChangeEvent<HTMLTextAreaElement>) =>
     setNotificationStyles(e.target.value);
 
   const handleSaveStyles = async () => {
