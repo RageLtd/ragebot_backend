@@ -80,7 +80,7 @@ function getNotificationDetails(
             . {event.cumulative_months} months total with a{" "}
             {event.streak_months} month streak.
             {event.message && (
-              <p>
+              <p className={styles.userMessage}>
                 {typeof event.message === "string"
                   ? event.message
                   : event.message?.text}
@@ -96,7 +96,7 @@ function getNotificationDetails(
             <span className={styles.username}>{event.user_name}</span>{" "}
             <span className={styles.action}>cheered {event.bits} bits</span>.
             {event.message && (
-              <p>
+              <p className={styles.userMessage}>
                 {typeof event.message === "string"
                   ? event.message
                   : event.message?.text}
@@ -127,7 +127,7 @@ function getNotificationDetails(
             <span className={styles.action}>
               redeemed {event.reward?.title}
             </span>
-            .{event.user_input && <p>{event.user_input}</p>}
+            .{event.user_input && <p className={styles.userMessage}>{event.user_input}</p>}
           </>
         </NotificationDetailsChrome>
       );

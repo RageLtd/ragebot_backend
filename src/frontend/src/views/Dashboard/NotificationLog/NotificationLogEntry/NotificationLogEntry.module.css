@@ -9,3 +9,8 @@
 .entry:not(:last-of-type) {
   border-bottom: 1px solid var(--primary-border-color)
 }
+
+.userMessage {
+  margin-bottom: .25em;
+  color: var(--secondary-action-color)
+}
