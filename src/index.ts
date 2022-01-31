@@ -63,6 +63,8 @@ getAllChannels().then((rawChannels) => {
     channel.data.name.toLowerCase()
   );
 
+  console.log("registered channels", registeredChannels);
+
   clientRegistry = new ClientRegistry();
   customCommandRegistry = new CustomCommandRegistry();
   filterRegistry = new ChatFilterRegistry();
@@ -72,6 +74,8 @@ getAllChannels().then((rawChannels) => {
 });
 
 async function initialize() {
+  console.log("registered channels", registeredChannels);
+
   tmiClient = new tmi.Client({
     options: { debug: process.env.NODE_ENV !== "production" },
     connection: {
