@@ -68,6 +68,8 @@ interface FormattedEmotes {
 export async function sendNotification(notification: TwitchNotification) {
   const broadcasterUsername = getUserName(notification).toLowerCase();
 
+  console.log("Broadcaster username: ", broadcasterUsername);
+
   const client = await clientRegistry
     .getClient(`#${broadcasterUsername.toLowerCase()}`)
     .catch(console.error);
@@ -75,6 +77,8 @@ export async function sendNotification(notification: TwitchNotification) {
   await client
     ?.query(addNotificationLogEntryQuery(notification))
     .catch(console.error);
+
+  console.log("Added to notificationLogEntries");
 
   let eventWithParsedMessage = {};
 
