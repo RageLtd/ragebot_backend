@@ -15,7 +15,7 @@ const follow = {
     user_name: "testFromUser",
     broadcaster_user_id: "50318906",
     broadcaster_user_login: "50318906",
-    broadcaster_user_name: "testBroadcaster",
+
     followed_at: "2022-01-12T22:08:53.613380565Z",
   },
 };
@@ -37,7 +37,7 @@ const subscribe = {
     user_name: "testFromUser",
     broadcaster_user_id: "23253982",
     broadcaster_user_login: "testBroadcaster",
-    broadcaster_user_name: "testBroadcaster",
+
     tier: "1000",
     is_gift: false,
   },
@@ -60,7 +60,7 @@ const channel = {
     user_name: "testFromUser",
     broadcaster_user_id: "78726669",
     broadcaster_user_login: "testBroadcaster",
-    broadcaster_user_name: "testBroadcaster",
+
     tier: "1000",
     total: 5,
     is_anonymous: false,
@@ -85,7 +85,7 @@ const resub = {
     user_name: "testFromUser",
     broadcaster_user_id: "85407385",
     broadcaster_user_login: "testBroadcaster",
-    broadcaster_user_name: "testBroadcaster",
+
     tier: "1000",
     message: {
       text: "Hello from the Twitch CLI! twitchdevLeek",
@@ -114,7 +114,7 @@ const cheer = {
     user_name: "testFromUser",
     broadcaster_user_id: "60846924",
     broadcaster_user_login: "testBroadcaster",
-    broadcaster_user_name: "testBroadcaster",
+
     is_anonymous: false,
     message: "This is a test event.",
     bits: 100,
@@ -135,7 +135,6 @@ const raid = {
   event: {
     to_broadcaster_user_id: "12171220",
     to_broadcaster_user_login: "testBroadcaster",
-    to_broadcaster_user_name: "testBroadcaster",
     from_broadcaster_user_id: "85078581",
     from_broadcaster_user_login: "testFromUser",
     from_broadcaster_user_name: "testFromUser",
@@ -158,7 +157,7 @@ const redemption = {
     id: "7d8435dc-fede-5c29-bab2-6bc2c0aaaeb5",
     broadcaster_user_id: "70329379",
     broadcaster_user_login: "testBroadcaster",
-    broadcaster_user_name: "testBroadcaster",
+
     user_id: "59282994",
     user_login: "testFromUser",
     user_name: "testFromUser",

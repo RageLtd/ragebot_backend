@@ -28,17 +28,23 @@ function generateSendTestNotification(groupName: string, username: string) {
     if (groupName === "timeout") {
       return;
     }
+    const notification = (notifications as { [key: string]: any })[
+      groupName === "new" ? "subscribe" : groupName
+    ];
     return fetch("/eventsub", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Twitch-Eventsub-Message-Type": "notification",
       },
-      body: JSON.stringify(
-        (notifications as { [key: string]: any })[
-          groupName === "new" ? "subscribe" : groupName
-        ]
-      ),
+      body: JSON.stringify({
+        ...notification,
+        event: {
+          ...notification.event,
+          broadcaster_user_name: username,
+          to_broadcaster_user_name: username,
+        },
+      }),
     });
   };
 }
