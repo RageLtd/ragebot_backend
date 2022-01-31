@@ -14,8 +14,6 @@ cd ./src/frontend
 npm ci
 npm run build
 
-cp -r ./dist/* ../../public
-
 # Build backend
 echo "Building Backend..."
 cd ../../
