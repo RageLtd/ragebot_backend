@@ -15,6 +15,7 @@ import userSetupApiRouter from "./routes/userSetupApi";
 import backlogApiRouter from "./routes/backlogApi";
 import ragebotRouter from "./routes/ragebotApi";
 import triggersApiRouter from "./routes/triggersApi";
+import paymentsApiRouter from "./routes/paymentApi";
 
 export const TWITCH_HELIX_API = "https://api.twitch.tv/helix";
 
@@ -70,6 +71,7 @@ export function initializeRagebotServer() {
   ragebot.use("/api/ragebot", ragebotRouter);
   ragebot.use("/api/triggers", triggersApiRouter);
   ragebot.use("/api/user-setup", userSetupApiRouter);
+  ragebot.use("/api/payments", paymentsApiRouter);
 
   ragebot.post("/eventsub", handleEventSubPost);
 

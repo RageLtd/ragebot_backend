@@ -8,7 +8,7 @@ interface ButtonProps {
   prefix?: ReactElement;
   postfix?: ReactElement;
   className?: string;
-  weight?: "primary" | "secondary" | "danger";
+  weight?: "attention" | "primary" | "secondary" | "danger";
 }
 
 export default function Button({

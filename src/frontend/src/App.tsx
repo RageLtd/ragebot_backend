@@ -13,6 +13,11 @@ import BacklogView from "./views/BacklogView/BacklogView";
 import NotificationsView from "./views/NotificationsView/NotificationsView";
 import ChatView from "./views/ChatView/ChatView";
 import TriggersView from "./views/TriggersView/TriggersView";
+import SubscribeView from "./views/SubscribeView/SubscribeView";
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 function App() {
   const { isAuthenticated, user, isLoading, error, getAccessTokenSilently } =
@@ -128,6 +133,12 @@ function App() {
         <Route
           path="/triggers"
           element={loader(TriggersView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
+        />
+        <Route
+          path="/subscribe"
+          element={loader(SubscribeView)(isApplicationLoading(), {
             twitchUserInfo,
           })}
         />

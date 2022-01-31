@@ -65,7 +65,10 @@ export default function NotificationLog({
       <ul className={styles.notificationList}>
         {log.map((notification) => (
           <NotificationLogEntry
-            key={notification.subscription.created_at}
+            key={
+              notification.subscription.type +
+              notification.subscription.created_at
+            }
             {...notification}
           />
         ))}

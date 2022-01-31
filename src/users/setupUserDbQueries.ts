@@ -8,7 +8,10 @@ import {
 } from "faunadb";
 
 export const createUserChildDBQuery = (name: string, user_id: string) =>
-  CreateDatabase({ name, data: { user_id, botEnabledState: false } });
+  CreateDatabase({
+    name,
+    data: { user_id, botEnabledState: false, isPremium: false },
+  });
 
 export const createBaseCollectionsQuery = (collections: string[]) =>
   Do(...collections.map((name) => CreateCollection({ name })));

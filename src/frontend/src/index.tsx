@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 import "./normalize.css";
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 import Auth0Provider from "./auth/Auth0ProviderWithHistory";
 import { BrowserRouter } from "react-router-dom";
-
-export const audience = process.env.REACT_APP_AUTH0_MANAGEMENT_AUDIENCE;
 
 ReactDOM.render(
   <BrowserRouter>

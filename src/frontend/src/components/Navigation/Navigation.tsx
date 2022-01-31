@@ -6,6 +6,7 @@ import Spinner from "../Spinner/Spinner";
 import Toggle from "../Toggle/Toggle";
 
 import styles from "./Navigation.module.css";
+import buttonStyles from "../Button/Button.module.css";
 
 async function getRagebotEnabled(username: string) {
   return fetch(`/api/ragebot/state/${username.toLowerCase()}`)
@@ -82,6 +83,13 @@ export default function Navigation({ twitchUserInfo }: NavigationProps) {
         </li>
       </ul>
       <div>
+        <Link
+          className={`${buttonStyles.button} ${buttonStyles.attention}`}
+          style={{ padding: ".25em", textDecoration: "none" }}
+          to="/subscribe"
+        >
+          Upgrade to Premium
+        </Link>
         <Toggle
           disabled={isLoadingRagebot}
           state={isRagebotEnabled}
