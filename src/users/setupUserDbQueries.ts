@@ -13,6 +13,11 @@ export const createUserChildDBQuery = (name: string, user_id: string) =>
     data: { user_id, botEnabledState: false, isPremium: false },
   });
 
+export const addNewChannelQuery = (username: string) =>
+  Create(Collection("channels"), {
+    data: { name: username, target: `#${username}` },
+  });
+
 export const createBaseCollectionsQuery = (collections: string[]) =>
   Do(...collections.map((name) => CreateCollection({ name })));
 
