@@ -1,11 +1,13 @@
 import {
   Collection,
   Create,
+  Database,
   Delete,
   Do,
   Documents,
   Get,
   Select,
+  Update,
 } from "faunadb";
 
 export interface ChatStylesResponse {
@@ -24,3 +26,11 @@ export const saveChatStylesQuery = (styles: { [key: string]: string }) =>
     Delete(Select("ref", Get(Documents(Collection("chat_styles"))))),
     Create(Collection("chat_styles"), { data: styles })
   );
+
+export const getIsModerationEnabledQuery = (username: string) =>
+  Get(Database(username));
+
+export const setIsModerationEnabledQuery = (
+  username: string,
+  isModerationEnabled: boolean
+) => Update(Database(username), { data: { isModerationEnabled } });

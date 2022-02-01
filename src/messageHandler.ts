@@ -1,6 +1,8 @@
 import { Userstate } from "tmi.js";
-import { filterRegistry, tmiClient } from ".";
+import { faunaClient, filterRegistry, tmiClient } from ".";
+import { Database } from "./channelEvents";
 import { postToChat } from "./chat/chat";
+import { getIsModerationEnabledQuery } from "./chat/chatQueries";
 import { enableBot, isBotEnabled } from "./commands/utils";
 import { parseKeywords } from "./messages/parseKeywords";
 import { parseMessage } from "./messages/parseMessage";
@@ -9,6 +11,15 @@ import { isModerator } from "./utils/permissioning";
 async function checkProfanity(target: string, message: string) {
   const filter = await filterRegistry.getFilter(target);
   return filter.isProfane(message);
+}
+
+async function isModerationEnabled(target: string) {
+  const {
+    data: { isModerationEnabled },
+  } = (await faunaClient
+    .query(getIsModerationEnabledQuery(target.substring(1)))
+    .catch(console.error)) as Database;
+  return isModerationEnabled;
 }
 
 export const messageHandler = async (
@@ -34,7 +45,10 @@ export const messageHandler = async (
     return;
   }
 
-  if (await checkProfanity(channel, message)) {
+  if (
+    (await isModerationEnabled(channel)) &&
+    (await checkProfanity(channel, message))
+  ) {
     tmiClient
       .timeout(
         channel,

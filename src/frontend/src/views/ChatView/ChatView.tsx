@@ -1,13 +1,8 @@
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  MouseEvent,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import Button from "../../components/Button/Button";
 import EditableProperty from "../../components/EditableProperty/EditableProperty";
 import Input from "../../components/Input/Input";
+import Toggle from "../../components/Toggle/Toggle";
 import styles from "./ChatView.module.css";
 
 interface ChatViewProps {
@@ -43,10 +38,16 @@ async function getBlockList(username: string) {
   return await res.json().then((res) => res.data);
 }
 
+async function getModerationState(username: string) {
+  const res = await fetch(`/api/chat/${username}/moderation`);
+  return await res.json().then((res) => res.data.isModerationEnabled);
+}
+
 export default function ChatView({ twitchUserInfo }: ChatViewProps) {
   const [chatStyles, setChatStyles] = useState("");
   const [blockList, setBlockList] = useState<string[]>([]);
   const [allowList, setAllowList] = useState<string[]>([]);
+  const [isModerationEnabled, setIsModerationEnabled] = useState(true);
   const [newAllowlistEntry, setNewAllowlistEntry] = useState("");
   const [newBlocklistEntry, setNewBlocklistEntry] = useState("");
 
@@ -57,6 +58,9 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
       });
       getAllowList(twitchUserInfo.username).then((res) => setAllowList(res));
       getBlockList(twitchUserInfo.username).then((res) => setBlockList(res));
+      getModerationState(twitchUserInfo.username).then((res) =>
+        setIsModerationEnabled(res)
+      );
     }
   }, [twitchUserInfo?.username]);
 
@@ -171,6 +175,25 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
     getAllowList(twitchUserInfo!.username).then((res) => setAllowList(res));
   };
 
+  const handleModerationEnabledChange = async (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    await fetch(
+      `/api/chat/${twitchUserInfo?.username.toLowerCase()}/moderation`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isModerationEnabled: e.target.checked }),
+      }
+    );
+
+    getModerationState(twitchUserInfo!.username).then((res) =>
+      setIsModerationEnabled(res)
+    );
+  };
+
   return (
     <>
       <h1>Chat</h1>
@@ -200,6 +223,12 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
       </ul>
       <p>You can also set your custom styles on this page.</p>
       <h2>Configuration</h2>
+      <Toggle
+        state={isModerationEnabled}
+        onChange={handleModerationEnabledChange}
+      >
+        Chat Moderation {isModerationEnabled ? "On" : "Off"}
+      </Toggle>
       <EditableProperty
         name="styles"
         type="textarea"

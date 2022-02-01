@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { clientRegistry, filterRegistry } from "..";
-import { getChatStylesQuery, saveChatStylesQuery } from "../chat/chatQueries";
+import { clientRegistry, faunaClient, filterRegistry } from "..";
+import {
+  getChatStylesQuery,
+  getIsModerationEnabledQuery,
+  saveChatStylesQuery,
+  setIsModerationEnabledQuery,
+} from "../chat/chatQueries";
 import {
   getBlacklistQuery,
   getWhitelistQuery,
@@ -118,6 +123,34 @@ chatApiRouter.delete("/:userName/blocklist", async (req, res) => {
     .catch(console.error);
 
   res.send(removeRes);
+});
+
+chatApiRouter.get("/:userName/moderation", async (req, res) => {
+  const { userName } = req.params;
+
+  const moderationRes = await faunaClient
+    .query(getIsModerationEnabledQuery(userName.toLowerCase()))
+    .catch(console.error);
+
+  /// @ts-expect-error
+  const { isModerationEnabled } = moderationRes.data;
+
+  res.send({ data: { isModerationEnabled } });
+});
+
+chatApiRouter.patch("/:userName/moderation", async (req, res) => {
+  const { userName } = req.params;
+
+  const moderationRes = await faunaClient
+    .query(
+      setIsModerationEnabledQuery(
+        userName.toLowerCase(),
+        req.body.isModerationEnabled
+      )
+    )
+    .catch(console.error);
+
+  res.send(moderationRes);
 });
 
 export default chatApiRouter;
