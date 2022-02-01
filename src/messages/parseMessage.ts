@@ -61,7 +61,7 @@ export function parseMessage(
   const command = messageArr.shift()!;
   const params = messageArr;
 
-  switch (command.toLowerCase()) {
+  switch (command) {
     case "!off":
     case "!disable": {
       disableBot(target);
@@ -179,7 +179,12 @@ export async function handleCustomCommands(
   }
 
   const { behavior, response, modOnly, subOnly, isEnabled } =
-    customCommands.filter((c) => c.name === command)[0];
+    customCommands.filter((c) => {
+      if (c.isCaseSensitive) {
+        return c.name === command;
+      }
+      return c.name.toLowerCase() === command.toLowerCase();
+    })[0];
 
   if (!userHasPermission(userState, { modOnly, subOnly })) {
     return;

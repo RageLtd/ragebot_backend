@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
 import RadioInput from "../../../components/RadioInput/RadioInput";
+import Toggle from "../../../components/Toggle/Toggle";
 
 import styles from "./AddNewCommandForm.module.css";
 
@@ -58,6 +59,7 @@ export default function AddNewCommandForm({
   const [name, setName] = useState("");
   const [behavior, setBehavior] = useState("respond");
   const [response, setResponse] = useState("");
+  const [isCaseSensitive, setIsCaseSensitive] = useState(true);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,6 +71,7 @@ export default function AddNewCommandForm({
       modOnly,
       subOnly,
       timeoutInMillis,
+      isCaseSensitive,
     });
   };
 
@@ -100,6 +103,9 @@ export default function AddNewCommandForm({
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) =>
     setName(e.target.value);
+
+  const handleCaseSensitiveChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setIsCaseSensitive(e.target.checked);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -179,6 +185,12 @@ export default function AddNewCommandForm({
           <div className={styles.helper}>
             Who should be able to trigger the command?
           </div>
+        </div>
+        <div>
+          Case Sensitivity
+          <Toggle onChange={handleCaseSensitiveChange} state={isCaseSensitive}>
+            {isCaseSensitive ? "Case Sensitive" : "Not Case Sensitive"}
+          </Toggle>
         </div>
         <div>
           <label>

@@ -72,15 +72,17 @@ export async function setCommand(
   const client = await clientRegistry.getClient(target);
 
   return client?.query(
-    addCustomCommandQuery(
-      uuidv4(),
+    addCustomCommandQuery({
+      id: uuidv4(),
       name,
       behavior,
       modOnly,
       subOnly,
       timeoutInMillis,
-      response
-    )
+      response,
+      isCaseSensitive: true,
+      isEnabled: true,
+    })
   );
 }
 

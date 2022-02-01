@@ -3,7 +3,7 @@ import Button from "../Button/Button";
 
 import styles from "./Trigger.module.css";
 import Toggle from "../Toggle/Toggle";
-import { ChangeEvent } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 export interface iTrigger {
   keyword: string;
@@ -13,6 +13,7 @@ export interface iTrigger {
     response?: string;
     src?: string;
   }[];
+  isCaseSensitive: boolean;
 }
 
 interface TriggerProps extends iTrigger {
@@ -30,7 +31,39 @@ export default function Trigger({
   remove,
   isEnabled,
   onChange,
+  isCaseSensitive,
 }: TriggerProps) {
+  const [editedIsCaseSensitive, setEditedIsCaseSensitive] =
+    useState(isCaseSensitive);
+  const [isEditingCaseSensitive, setIsEditingCaseSensitive] = useState(false);
+  const saveProperty = async (property: { name: string; value: any }) => {
+    await fetch(
+      `/api/triggers/${twitchUserInfo.username?.toLowerCase()}/${keyword}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          [property.name]: property.value,
+        }),
+      }
+    );
+    onChange();
+  };
+  const handleCaseSensitiveChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setEditedIsCaseSensitive(e.target.checked);
+  const handleCaseSensitiveCancelClick = () => {
+    setEditedIsCaseSensitive(isCaseSensitive);
+    setIsEditingCaseSensitive(false);
+  };
+  const handleCaseSensitiveSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    saveProperty({ name: "isCaseSensitive", value: editedIsCaseSensitive });
+    setIsEditingCaseSensitive(false);
+  };
   const handleRemove = () => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm("Are you sure you want to remove this Trigger?")) {
@@ -60,6 +93,27 @@ export default function Trigger({
           {isEnabled ? "On" : "Off"}
         </Toggle>
       </div>
+      <form onSubmit={handleCaseSensitiveSubmit}>
+        Case Sensitivity{" "}
+        {!isEditingCaseSensitive && (
+          <Button onClick={() => setIsEditingCaseSensitive(true)}>Edit</Button>
+        )}
+        {isEditingCaseSensitive && (
+          <Button weight="secondary" type="submit">
+            Save
+          </Button>
+        )}
+        {isEditingCaseSensitive && (
+          <Button onClick={handleCaseSensitiveCancelClick}>Cancel</Button>
+        )}
+        <Toggle
+          disabled={!isEditingCaseSensitive}
+          onChange={handleCaseSensitiveChange}
+          state={editedIsCaseSensitive}
+        >
+          {editedIsCaseSensitive ? "Case Sensitive" : "Not Case Sensitive"}
+        </Toggle>
+      </form>
       <CustomBehaviorControls
         category="triggers"
         name={keyword}

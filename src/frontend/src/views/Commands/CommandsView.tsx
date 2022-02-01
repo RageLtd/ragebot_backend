@@ -20,6 +20,7 @@ export interface Command {
   subOnly: boolean;
   modOnly: boolean;
   response: string;
+  isCaseSensitive: boolean;
   timeoutInMillis?: number;
 }
 

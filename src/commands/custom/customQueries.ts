@@ -41,6 +41,7 @@ export interface Command {
   subOnly: boolean;
   timeoutInMillis: number;
   isEnabled: boolean;
+  isCaseSensitive: boolean;
 }
 
 export interface CommandResponse {
@@ -56,15 +57,16 @@ export interface CountResponse {
   data: Count;
 }
 
-export const addCustomCommandQuery = (
-  id: string,
-  name: string,
-  behavior: string,
-  modOnly: boolean,
-  subOnly: boolean,
-  timeoutInMillis: number,
-  response: string
-) =>
+export const addCustomCommandQuery = ({
+  id,
+  name,
+  behavior,
+  modOnly,
+  subOnly,
+  timeoutInMillis,
+  response,
+  isCaseSensitive,
+}: Command) =>
   Create(Collection("commands"), {
     data: {
       id,
@@ -75,6 +77,7 @@ export const addCustomCommandQuery = (
       subOnly,
       timeoutInMillis,
       isEnabled: true,
+      isCaseSensitive,
     },
   });
 

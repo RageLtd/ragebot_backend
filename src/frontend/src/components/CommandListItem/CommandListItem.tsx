@@ -47,6 +47,10 @@ export default function CommandListItem({
 }: CommandListItemProps) {
   const [modOnly, setModOnly] = useState(command.modOnly);
   const [subOnly, setSubOnly] = useState(command.subOnly);
+  const [isCaseSensitive, setIsCaseSensitive] = useState(
+    command.isCaseSensitive
+  );
+  const [isEditingCaseSensitive, setIsEditingCaseSensitive] = useState(false);
   const [isEditingPermissions, setIsEditingPermissions] = useState(false);
 
   const saveProperty = (property: { name: string; value: any }) => {
@@ -111,6 +115,20 @@ export default function CommandListItem({
     setCommandEnabled(e.target.checked);
   };
 
+  const handleCaseSensitiveChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setIsCaseSensitive(e.target.checked);
+  const handleCaseSensitiveCancelClick = () => {
+    setIsCaseSensitive(command.isCaseSensitive);
+    setIsEditingCaseSensitive(false);
+  };
+  const handleCaseSensitiveSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    saveProperty({ name: "isCaseSensitive", value: isCaseSensitive });
+    setIsEditingCaseSensitive(false);
+  };
+
   return (
     <li>
       <div className={styles.wrapper}>
@@ -122,7 +140,11 @@ export default function CommandListItem({
         </div>
         {Object.keys(command)
           .filter(
-            (key) => key !== "id" && key !== "modOnly" && key !== "subOnly"
+            (key) =>
+              key !== "id" &&
+              key !== "modOnly" &&
+              key !== "subOnly" &&
+              key !== "caseSensitive"
           )
           .map((property) => {
             return (
@@ -193,6 +215,29 @@ export default function CommandListItem({
           <div className={styles.helper}>
             Who should be able to trigger the command?
           </div>
+          <form onSubmit={handleCaseSensitiveSubmit}>
+            Case Sensitivity{" "}
+            {!isEditingCaseSensitive && (
+              <Button onClick={() => setIsEditingCaseSensitive(true)}>
+                Edit
+              </Button>
+            )}
+            {isEditingCaseSensitive && (
+              <Button weight="secondary" type="submit">
+                Save
+              </Button>
+            )}
+            {isEditingCaseSensitive && (
+              <Button onClick={handleCaseSensitiveCancelClick}>Cancel</Button>
+            )}
+            <Toggle
+              disabled={!isEditingCaseSensitive}
+              onChange={handleCaseSensitiveChange}
+              state={isCaseSensitive}
+            >
+              {isCaseSensitive ? "Case Sensitive" : "Not Case Sensitive"}
+            </Toggle>
+          </form>
         </div>
         <CustomBehaviorControls
           category="commands"

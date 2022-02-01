@@ -16,6 +16,7 @@ export async function parseKeywords(
   const keywords: {
     [key: string]: {
       isEnabled: boolean;
+      isCaseSensitive: boolean;
       behaviors: { name: string; modOnly: boolean; subOnly: boolean }[];
     };
   } = {};
@@ -26,14 +27,20 @@ export async function parseKeywords(
     data: any[];
   };
 
-  triggers.reduce((acc, { keyword, behaviors, isEnabled }) => {
-    acc[keyword] = { behaviors, isEnabled };
+  triggers.reduce((acc, { keyword, behaviors, isEnabled, isCaseSensitive }) => {
+    acc[keyword] = { behaviors, isEnabled, isCaseSensitive };
     return acc;
   }, keywords);
 
   Object.keys(keywords).forEach((keyword) => {
+    const includesKeyword = keywords[keyword].isCaseSensitive
+      ? message.split(" ").includes(keyword)
+      : message
+          .split(" ")
+          .map((m) => m.toLowerCase())
+          .includes(keyword.toLowerCase());
     if (
-      message.split(" ").includes(keyword) &&
+      includesKeyword &&
       keywords[keyword].isEnabled &&
       keywords[keyword].behaviors &&
       keywords[keyword].behaviors.length > 0

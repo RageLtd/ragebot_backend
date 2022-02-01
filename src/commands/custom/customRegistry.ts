@@ -58,6 +58,7 @@ export class CustomCommandRegistry {
           subOnly: false,
           timeoutInMillis: 0,
           isEnabled: command.isEnabled,
+          isCaseSensitive: command.isCaseSensitive,
         });
       }
       return acc;
@@ -66,7 +67,7 @@ export class CustomCommandRegistry {
 
   async addCommand(
     target: string,
-    { name, behavior, modOnly, subOnly, timeoutInMillis, response }: Command
+    command: Command
   ) {
     const client = await clientRegistry.getClient(target);
 
@@ -75,19 +76,16 @@ export class CustomCommandRegistry {
     const res = await client
       ?.query(
         addCustomCommandQuery(
-          id,
-          name,
-          behavior,
-          modOnly,
-          subOnly,
-          timeoutInMillis,
-          response
+          {
+            ...command,
+            id
+          }
         )
       )
       .catch(console.error);
 
-    if (behavior === "random") {
-      await client?.query(createRandomCollection(name)).catch(console.error);
+    if (command.behavior === "random") {
+      await client?.query(createRandomCollection(command.name)).catch(console.error);
     }
     return res;
   }
