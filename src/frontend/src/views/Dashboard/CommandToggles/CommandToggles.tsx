@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Toggle from "../../../components/Toggle/Toggle";
 import { Command } from "../../Commands/CommandsView";
 
@@ -30,7 +30,7 @@ export default function CommandToggles({
   }, [twitchUserInfo.username]);
 
   const generateHandleToggleCommand =
-    (command: Command) => async (isEnabled: boolean) => {
+    (command: Command) => async (e: ChangeEvent<HTMLInputElement>) => {
       await fetch(`/api/commands/${twitchUserInfo.username?.toLowerCase()}`, {
         method: "PATCH",
         headers: {
@@ -38,7 +38,7 @@ export default function CommandToggles({
         },
         body: JSON.stringify({
           ...command,
-          isEnabled,
+          isEnabled: e.target.checked,
         }),
       });
       loadCommands();
