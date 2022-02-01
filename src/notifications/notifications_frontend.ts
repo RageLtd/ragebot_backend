@@ -32,6 +32,8 @@ function createNotification(parsed: any) {
 
 let queueCheckInterval: NodeJS.Timer;
 
+let isNotificationShowing: boolean;
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeNotifications(document.querySelector("body")!);
 
@@ -59,19 +61,32 @@ document.addEventListener("DOMContentLoaded", () => {
       if (newNotification) {
         const audioNode = newNotification.querySelector("audio");
         notificationContainer?.append(newNotification);
+        isNotificationShowing = true;
         if (audioNode !== null) {
           audioNode.play();
         }
         setTimeout(() => {
           newNotification.remove();
+          isNotificationShowing = false;
+          setTimeout(readFromQueue, timeoutInMillis * 0.1);
         }, timeoutInMillis);
       }
     };
 
-    notificationQueue.push(notification);
-
-    if (queueCheckInterval === undefined) {
-      queueCheckInterval = setInterval(readFromQueue, timeoutInMillis * 1.1);
+    if (isNotificationShowing) {
+      notificationQueue.push(notification);
+    } else {
+      const audioNode = notification.querySelector("audio");
+      notificationContainer?.append(notification);
+      isNotificationShowing = true;
+      if (audioNode !== null) {
+        audioNode.play();
+      }
+      setTimeout(() => {
+        notification.remove();
+        isNotificationShowing = false;
+        setTimeout(readFromQueue, timeoutInMillis * 0.1);
+      }, timeoutInMillis);
     }
   };
 });
