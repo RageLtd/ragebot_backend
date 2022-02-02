@@ -17,8 +17,18 @@
 - [x] Custom behavior permissions
 - [x] Actually save custom behavior props not just log kek
 - [x] customize white/black list in ui
-- [ ] Dashboard: command switches, trigger switches, notification history, chat?
+- [x] Dashboard: command switches, trigger switches, notification history
+- [x] fix nav in light mode
+- [x] hook up toggles on dashboard
+- [x] When a new user signs up, refetch channels ragebot needs to listen to
+- [x] not put timeout on first entry into notification queue
+- [x] add ignore casing toggle for commands/keywords
+- [x] Ability to turn off chat moderation
 - [ ] Customize webhooks to run on various events
+- [ ] TTS for notifications
+- [ ] Bot icon for on stream chat
+- [ ] Add chat display to dashboard (must have)
+- [ ] High water mark for dashboard chat
 
 ## Post launch
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch
@@ -26,3 +36,4 @@
 - [ ] Now playing for various services
 - [ ] Notification animations
 - [ ] Custom behavior templates
+- [ ] Mark chat as viewed in dashboard

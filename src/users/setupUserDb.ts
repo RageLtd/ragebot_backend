@@ -1,7 +1,8 @@
-import { clientRegistry, faunaClient } from "..";
+import { clientRegistry, faunaClient, tmiClient } from "..";
 import { childDbExists } from "../clientRegistry";
 import indexDefinitions from "./indexDefinitions";
 import {
+  addNewChannelQuery,
   createBaseCollectionsQuery,
   createBaseIndexesQuery,
   createDefaultChatStylesQuery,
@@ -30,6 +31,9 @@ export async function setupUserDb(username: string, twitchId: string) {
     .query(createUserChildDBQuery(username, twitchId))
     .then(() => console.log("DB created"))
     .catch(console.error);
+
+  await faunaClient.query(addNewChannelQuery(username)).catch(console.error);
+
   const client = await clientRegistry
     .getClient(`#${username}`)
     .then((res) => {
@@ -73,4 +77,6 @@ export async function setupUserDb(username: string, twitchId: string) {
     .catch(console.error);
 
   await client?.query(createDefaultChatStylesQuery()).catch(console.error);
+
+  await tmiClient.join(`#${username}`);
 }
