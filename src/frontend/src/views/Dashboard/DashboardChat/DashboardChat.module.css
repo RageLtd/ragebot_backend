@@ -2,3 +2,16 @@
   max-height: 20em;
   overflow-y: auto;
 }
+
+.highWater {
+  border-top: orange 1px solid;
+  position: relative;
+  margin-top: 1em;
+}
+
+.highWater::before {
+  content: "New";
+  position: absolute;
+  color: orange;
+  top: -1.25em;
+}

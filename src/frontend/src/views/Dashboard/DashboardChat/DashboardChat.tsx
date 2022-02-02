@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { v4 } from "uuid";
+import { SingleEntryPlugin } from "webpack";
 
 import styles from "./DashboardChat.module.css";
 
@@ -79,12 +80,13 @@ const parser = new DOMParser();
 
 export default class DashboardChat extends Component<
   DashboardChatProps,
-  { chatEntries: JSX.Element[] }
+  { chatEntries: JSX.Element[]; highWater: string | undefined }
 > {
   chatFeed: EventSource | undefined;
   chatWindow = createRef<HTMLDivElement>();
   state = {
-    chatEntries: [],
+    chatEntries: [] as JSX.Element[],
+    highWater: undefined,
   };
 
   constructor(props: DashboardChatProps) {
@@ -111,21 +113,47 @@ export default class DashboardChat extends Component<
     });
   }
 
+  generateSetHighWater(id: string) {
+    return () => {
+      this.setState({ highWater: id });
+    };
+  }
+
   appendChatMessage(entryDom: JSX.Element[]) {
+    const trimmedChatEntries = this.state.chatEntries.slice(0, 98);
+    const id = v4();
+    if (this.state.chatEntries.length === 0) {
+      this.setState({
+        highWater: id,
+      });
+    }
     this.setState({
-      chatEntries: [...this.state.chatEntries, <div>{entryDom}</div>],
+      chatEntries: [
+        ...trimmedChatEntries,
+        <div id={id} onClick={this.generateSetHighWater(id)}>
+          {entryDom}
+        </div>,
+      ],
     });
     this.chatWindow.current?.scrollTo({
       top: this.chatWindow.current.scrollHeight,
     });
   }
+
   render() {
     const { chatEntries } = this.state;
     return (
       <>
         <h4>Chattychat</h4>
         <div ref={this.chatWindow} className={styles.chatContainer}>
-          {chatEntries}
+          {chatEntries.map((Entry) => {
+            if (Entry.props.id === this.state.highWater) {
+              return (
+                <Entry.type className={styles.highWater} {...Entry.props} />
+              );
+            }
+            return Entry;
+          })}
         </div>
       </>
     );
