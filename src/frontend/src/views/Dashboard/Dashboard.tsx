@@ -1,4 +1,5 @@
 import CommandToggles from "./CommandToggles/CommandToggles";
+import DashboardChat from "./DashboardChat/DashboardChat";
 import NotificationLog from "./NotificationLog/NotificationLog";
 import TriggerToggles from "./TriggerToggles/TriggerToggles";
 
@@ -12,6 +13,7 @@ interface DashboardViewProps {
 function DashboardView({ twitchUserInfo }: DashboardViewProps) {
   return (
     <div>
+      <DashboardChat twitchUserInfo={twitchUserInfo} />
       <NotificationLog twitchUserInfo={twitchUserInfo} />
       <CommandToggles twitchUserInfo={twitchUserInfo} />
       <TriggerToggles twitchUserInfo={twitchUserInfo} />
