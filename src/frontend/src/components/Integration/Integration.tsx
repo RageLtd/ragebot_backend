@@ -33,7 +33,7 @@ export default function Integration({
   if (!isEditing) {
     return (
       <li>
-        <p>Name: {editedName[0].toUpperCase() + editedName.slice(1)}</p>
+        <p>Service {editedName[0].toUpperCase() + editedName.slice(1)}</p>
         <div>{editedUrls.join(", ")}</div>
         <Button onClick={toggleEdit}>Edit</Button>
         <Button weight="danger" onClick={handleRemove}>
@@ -74,13 +74,14 @@ export default function Integration({
     setEditedUrls([...editedUrls, draftUrl]);
   };
 
-  const generateRemoveUrl = (url: string) => () => {
-    const urlIndex = editedUrls.indexOf(url);
-    setEditedUrls([
-      ...editedUrls.slice(0, urlIndex),
-      ...editedUrls.slice(urlIndex + 1),
-    ]);
-  };
+  const generateRemoveUrl = (url: string) =>
+    () => {
+      const urlIndex = editedUrls.indexOf(url);
+      setEditedUrls([
+        ...editedUrls.slice(0, urlIndex),
+        ...editedUrls.slice(urlIndex + 1),
+      ]);
+    };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -93,13 +94,16 @@ export default function Integration({
     <li>
       <p>
         <label>
-          Name:
-          <select name="name" onChange={updateName} value={name}>
-            <option value="discord">Discord</option>
-          </select>
+          Service
+          <Input>
+            <select name="name" onChange={updateName} value={name}>
+              <option value="discord">Discord</option>
+            </select>
+          </Input>
         </label>
       </p>
       <div>
+        URLs
         <ul>
           {editedUrls.map((url) => (
             <EditableUrl

@@ -1,7 +1,7 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../components/Button/Button";
-import Input from "../../components/Input/Input";
 import Integration from "../../components/Integration/Integration";
+import AddNewIntegrationForm, { getHumanTypeName } from "./AddNewIntegrationForm/AddNewIntegrationForm";
 
 interface IntegrationsViewProps {
   twitchUserInfo: {
@@ -10,66 +10,29 @@ interface IntegrationsViewProps {
   };
 }
 
-interface NewIntegration {
+export interface IntegrationShape {
   name: string;
   webhookUrls: string[];
-  draftUrl: string;
 }
 
-interface IntegrationShape {
-  name: string;
-  webhookUrls: string[];
+async function getIntegrations(username: string) {
+  return fetch(`/api/integrations/${username?.toLowerCase()}`)
+    .then((res) => res.json());
 }
 
 export default function IntegrationsView({
   twitchUserInfo,
 }: IntegrationsViewProps) {
-  const [integrations, setIntegrations] = useState<IntegrationShape[]>([]);
-  const [newIntegration, setNewIntegration] = useState<NewIntegration>({
-    name: "discord",
-    webhookUrls: [],
-    draftUrl: "",
-  });
+  const [integrations, setIntegrations] = useState<
+    { [key: string]: IntegrationShape[] }
+  >({});
+  const [isAddingNewIntegration, setIsAddingNewIntegration] = useState(false);
   useEffect(() => {
     if (twitchUserInfo.username) {
-      fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`)
-        .then((res) => res.json())
+      getIntegrations(twitchUserInfo.username)
         .then((json) => setIntegrations(json));
     }
   }, [twitchUserInfo]);
-
-  const updateNewIntegration = (
-    e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
-  ) => {
-    if (e.target.getAttribute("name") === "name") {
-      setNewIntegration({ ...newIntegration, name: e.target.value });
-      return;
-    }
-    setNewIntegration({ ...newIntegration, draftUrl: e.target.value });
-  };
-
-  const addDraftUrl = (e: FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (newIntegration.draftUrl !== "") {
-      setNewIntegration({
-        ...newIntegration,
-        webhookUrls: [...newIntegration.webhookUrls, newIntegration.draftUrl],
-        draftUrl: "",
-      });
-    }
-  };
-
-  const generateRemoveUrl = (url: string) => () => {
-    const urlIndex = newIntegration.webhookUrls.indexOf(url);
-    setNewIntegration({
-      ...newIntegration,
-      webhookUrls: [
-        ...newIntegration.webhookUrls.slice(0, urlIndex),
-        ...newIntegration.webhookUrls.slice(urlIndex + 1),
-      ],
-    });
-  };
 
   const saveEditedIntegration = (integration: IntegrationShape) => {
     fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`, {
@@ -81,14 +44,16 @@ export default function IntegrationsView({
     })
       .then((res) => res.json())
       .then((webhook) => {
-        const hookIndex = integrations.findIndex(
-          (integration) => integration.name === webhook.name
+        const hookIndex = integrations[webhook.type].findIndex(
+          (integration) => integration.name === webhook.name,
         );
-        setIntegrations([
-          ...integrations.slice(0, hookIndex),
-          webhook,
-          ...integrations.slice(hookIndex + 1),
-        ]);
+        setIntegrations({
+          [webhook.type]: [
+            ...integrations[webhook.type].slice(0, hookIndex),
+            webhook,
+            ...integrations[webhook.type].slice(hookIndex + 1),
+          ],
+        });
       });
   };
 
@@ -105,70 +70,56 @@ export default function IntegrationsView({
     }
   };
 
-  const selectedIntegrationExists = !!integrations.find(
-    (integration) => integration.name === newIntegration.name
-  );
+  const handleAddNewClick = () => setIsAddingNewIntegration(true);
+  const handleAddNewCancelClick = () => setIsAddingNewIntegration(false);
+  const handleAddNew = async (newIntegration: IntegrationShape) => {
+    await fetch(`/api/integrations/${twitchUserInfo.username?.toLowerCase()}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newIntegration),
+    });
+
+    getIntegrations(twitchUserInfo.username!)
+      .then((json) => setIntegrations(json));
+  };
 
   return (
     <>
-      <h1>This is the integrations view</h1>
+      <h1>Integrations</h1>
       <p>
         Here you can add and manage various integrations with Ragebot. Currently
         only Discord is supported, but any Webhook will be supported in the
         future!
       </p>
+      {!isAddingNewIntegration && (
+        <Button onClick={handleAddNewClick}>
+          Add New Integration
+        </Button>
+      )}
+      {isAddingNewIntegration && (
+        <AddNewIntegrationForm
+          onSubmit={handleAddNew}
+          onCancel={handleAddNewCancelClick}
+          integrations={integrations}
+        />
+      )}
       <ul>
-        {integrations.map(({ name, webhookUrls }) => (
-          <Integration
-            key={name}
-            name={name}
-            webhookUrls={webhookUrls}
-            save={saveEditedIntegration}
-            remove={removeIntegration}
-          />
+        {Object.keys(integrations).map(type => (
+          <div>
+            <h3>{getHumanTypeName(type)}</h3>
+            {integrations[type].map(({ name, webhookUrls }) => (
+              <Integration
+                key={name + webhookUrls.toString()}
+                name={name}
+                webhookUrls={webhookUrls}
+                save={saveEditedIntegration}
+                remove={removeIntegration}
+              />
+            ))}
+          </div>
         ))}
-        <li>
-          <div>
-            <label>
-              name:{" "}
-              <select
-                name="name"
-                onChange={updateNewIntegration}
-                value={newIntegration.name}
-              >
-                <option value="discord">Discord</option>
-              </select>
-            </label>
-          </div>
-          <div>
-            urls:{" "}
-            <ul>
-              {newIntegration.webhookUrls.map((url) => (
-                <li key={url}>
-                  {url} <Button onClick={generateRemoveUrl(url)}>-</Button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <form onSubmit={addDraftUrl}>
-              <label>
-                add new url:{" "}
-                <Input postfix={<Button type="submit">+</Button>}>
-                  <input
-                    type="text"
-                    name="url"
-                    onChange={updateNewIntegration}
-                    value={newIntegration.draftUrl}
-                  />
-                </Input>
-              </label>
-            </form>
-          </div>
-          <Button disabled={selectedIntegrationExists}>
-            Add New Integration
-          </Button>
-        </li>
       </ul>
     </>
   );

@@ -1,7 +1,9 @@
 import { clientRegistry } from "../index";
 import {
+  addNewWebhookQuery,
   getWebhookUrlsQuery,
   updateWebhookQuery,
+  Webhook,
   WebhooksResponse,
 } from "./webhookQueries";
 
@@ -13,17 +15,26 @@ export class WebhookRegistry {
       getWebhookUrlsQuery()
     )) as WebhooksResponse;
 
-    return webhooks;
+    return webhooks.reduce((acc: { [key: string]: Webhook[] }, w: Webhook) => {
+      if (acc[w.type]) {
+        acc[w.type].push(w);
+      } else {
+        acc[w.type] = [w];
+      }
+      return acc;
+    }, {});
   }
 
-  async addWebhook() {
-    throw new Error("Implement adding a webhook, dumbass");
+  async addWebhook(username: string, webhook: Webhook) {
+    const client = await clientRegistry.getClient(`#${username.toLowerCase()}`);
+    const saveRes = await client
+      ?.query(addNewWebhookQuery(webhook))
+      .catch(console.error);
+
+    return saveRes;
   }
 
-  async updateWebhook(
-    username: string,
-    webhook: { name: string; webhookUrls: string[] }
-  ) {
+  async updateWebhook(username: string, webhook: Webhook) {
     const client = await clientRegistry.getClient(`#${username}`);
 
     return client?.query(updateWebhookQuery(webhook));

@@ -4,6 +4,7 @@ import { parseEmotes } from "../chat/chat";
 import discord from "../discord/discord";
 import { notification_sse_clients } from "../ragebotServer";
 import { customBehaviorTypes } from "../users/setupUserDb";
+import { Webhook } from "../webhooks/webhookQueries";
 import {
   addNotificationLogEntryQuery,
   getCustomBehaviorsQuery,
@@ -65,6 +66,10 @@ interface FormattedEmotes {
   [key: string]: string[];
 }
 
+const services: { [key: string]: any } = {
+  discord,
+};
+
 export async function sendNotification(notification: TwitchNotification) {
   const broadcasterUsername = getUserName(notification).toLowerCase();
 
@@ -118,20 +123,32 @@ export async function sendNotification(notification: TwitchNotification) {
 }
 
 async function postStatusUpdate(
-  broadcasterUsername: string,
-  eventData: TwitchNotificationEvent
+  webhooks: { [key: string]: Webhook[] },
+  eventData: TwitchNotificationEvent,
+  eventType: string
 ) {
-  const webhookUrls = await webhookRegistry.getWebhookUrls(
-    `#${broadcasterUsername.toLowerCase()}`
-  );
-
-  webhookUrls.map((service) => {
+  webhooks[eventType].map((service) => {
     switch (service.name) {
       case "discord": {
-        discord.sendMessage(service.webhookUrls || [], eventData);
+        services[service.name].sendMessage(
+          service.webhookUrls || [],
+          eventData
+        );
         break;
       }
     }
+  });
+}
+
+async function sendWebhookMessage(
+  webhooks: { [key: string]: Webhook[] },
+  notificationType: string,
+  eventData: TwitchNotificationEvent
+) {
+  webhooks[notificationType].forEach((webhook) => {
+    webhook.webhookUrls.forEach((url) => {
+      services[webhook.name].sendMessage(url, eventData);
+    });
   });
 }
 
@@ -151,6 +168,10 @@ async function generateNotificationHTML(
     `#${broadcasterUsername.toLowerCase()}`
   );
 
+  const webhooks = await webhookRegistry.getWebhookUrls(
+    `#${broadcasterUsername.toLowerCase()}`
+  );
+
   const customBehaviors: { [key: string]: any[] } = {};
 
   await Promise.all(
@@ -162,121 +183,162 @@ async function generateNotificationHTML(
     })
   );
 
-  switch (parsedNotification.subscription.type) {
+  const notificationType = parsedNotification.subscription.type;
+
+  switch (notificationType) {
     case "channel.follow": {
       let message = parseFollowNotification(eventData);
       if (customBehaviors.follow) {
-        await Promise.all(customBehaviors.follow.map(async (behavior) => {
-          message = await executeCustomBehavior(
-            client!,
-            broadcasterUsername,
-            behavior,
-            parsedNotification.subscription.type,
-            eventData,
-            message
-          );
-        }));
+        await Promise.all(
+          customBehaviors.follow.map(async (behavior) => {
+            message = await executeCustomBehavior(
+              client!,
+              broadcasterUsername,
+              behavior,
+              notificationType,
+              eventData,
+              message
+            );
+          })
+        );
+      }
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, notificationType, eventData);
       }
       return message;
     }
     case "channel.subscribe": {
       let message = parseNewSubscription(eventData);
       if (customBehaviors.new) {
-        await Promise.all(customBehaviors.new.map(async (behavior) => {
-          message = await executeCustomBehavior(
-            client!,
-            broadcasterUsername,
-            behavior,
-            parsedNotification.subscription.type,
-            eventData,
-            message
-          );
-        }));
+        await Promise.all(
+          customBehaviors.new.map(async (behavior) => {
+            message = await executeCustomBehavior(
+              client!,
+              broadcasterUsername,
+              behavior,
+              parsedNotification.subscription.type,
+              eventData,
+              message
+            );
+          })
+        );
+      }
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, notificationType, eventData);
       }
       return message;
     }
     case "channel.subscription.message": {
       let message = parseResubMessage(eventData);
       if (customBehaviors.resub) {
-        await Promise.all(customBehaviors.resub.map(async (behavior) => {
-          message = await executeCustomBehavior(
-            client!,
-            broadcasterUsername,
-            behavior,
-            parsedNotification.subscription.type,
-            eventData,
-            message
-          );
-        }));
+        await Promise.all(
+          customBehaviors.resub.map(async (behavior) => {
+            message = await executeCustomBehavior(
+              client!,
+              broadcasterUsername,
+              behavior,
+              parsedNotification.subscription.type,
+              eventData,
+              message
+            );
+          })
+        );
+      }
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, notificationType, eventData);
       }
       return message;
     }
     case "channel.subscription.gift": {
       let message = parseGiftSubMessage(eventData);
       if (customBehaviors.gift) {
-        await Promise.all(customBehaviors.gift.map(async (behavior) => {
-          message = await executeCustomBehavior(
-            client!,
-            broadcasterUsername,
-            behavior,
-            parsedNotification.subscription.type,
-            eventData,
-            message
-          );
-        }));
+        await Promise.all(
+          customBehaviors.gift.map(async (behavior) => {
+            message = await executeCustomBehavior(
+              client!,
+              broadcasterUsername,
+              behavior,
+              parsedNotification.subscription.type,
+              eventData,
+              message
+            );
+          })
+        );
+      }
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, notificationType, eventData);
       }
       return message;
     }
     case "channel.cheer": {
       let message = parseCheerMessage(eventData);
       if (customBehaviors.cheer) {
-        await Promise.all(customBehaviors.cheer.map(async (behavior) => {
-          message = await executeCustomBehavior(
-            client!,
-            broadcasterUsername,
-            behavior,
-            parsedNotification.subscription.type,
-            eventData,
-            message
-          );
-        }));
+        await Promise.all(
+          customBehaviors.cheer.map(async (behavior) => {
+            message = await executeCustomBehavior(
+              client!,
+              broadcasterUsername,
+              behavior,
+              parsedNotification.subscription.type,
+              eventData,
+              message
+            );
+          })
+        );
+      }
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, notificationType, eventData);
       }
       return message;
     }
     case "channel.raid": {
       let message = parseRaidMessage(eventData);
       if (customBehaviors.raid) {
-        await Promise.all(customBehaviors.raid.map(async (behavior) => {
-          message = await executeCustomBehavior(
-            client!,
-            broadcasterUsername,
-            behavior,
-            parsedNotification.subscription.type,
-            eventData,
-            message
-          );
-        }));
+        await Promise.all(
+          customBehaviors.raid.map(async (behavior) => {
+            message = await executeCustomBehavior(
+              client!,
+              broadcasterUsername,
+              behavior,
+              parsedNotification.subscription.type,
+              eventData,
+              message
+            );
+          })
+        );
+      }
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, notificationType, eventData);
       }
       return message;
     }
     case "channel.channel_points_custom_reward_redemption.add": {
       let message = parseChannelPointRedemptionMessage(eventData);
       if (customBehaviors.redemption) {
-        await Promise.all(customBehaviors.redemption.map(async (behavior) => {
-          message = await executeCustomBehavior(
-            client!,
-            broadcasterUsername,
-            behavior,
-            parsedNotification.subscription.type,
-            eventData,
-            message
-          );
-        }));
+        await Promise.all(
+          customBehaviors.redemption.map(async (behavior) => {
+            message = await executeCustomBehavior(
+              client!,
+              broadcasterUsername,
+              behavior,
+              parsedNotification.subscription.type,
+              eventData,
+              message
+            );
+          })
+        );
+      }
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, notificationType, eventData);
       }
       return message;
     }
     case "channel.update": {
-      return postStatusUpdate(broadcasterUsername, eventData);
+      return postStatusUpdate(
+        webhooks,
+        eventData,
+        parsedNotification.subscription.type
+      );
     }
   }
 }

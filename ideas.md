@@ -1,4 +1,5 @@
 ## MVP
+
 - [x] Quote command thinger
 - [x] dark theme
 - [x] filter notifications via a query parameter
@@ -24,16 +25,16 @@
 - [x] not put timeout on first entry into notification queue
 - [x] add ignore casing toggle for commands/keywords
 - [x] Ability to turn off chat moderation
-- [ ] Customize webhooks to run on various events
+- [x] Add chat display to dashboard (must have)
+- [x] High water mark for dashboard chat
+- [x] Customize webhooks to run on various events
 - [ ] TTS for notifications
 - [ ] Bot icon for on stream chat
-- [ ] Add chat display to dashboard (must have)
-- [ ] High water mark for dashboard chat
 
 ## Post launch
+
 - [ ] Ragebot take WebRTC, do layouts etc, forward to twitch
 - [ ] Chat custom emotes (ffz etc)
 - [ ] Now playing for various services
 - [ ] Notification animations
 - [ ] Custom behavior templates
-- [ ] Mark chat as viewed in dashboard

@@ -1,5 +1,6 @@
 import {
   Collection,
+  Create,
   Documents,
   Get,
   Index,
@@ -12,11 +13,14 @@ import {
   Var,
 } from "faunadb";
 
+export interface Webhook {
+  name: string;
+  webhookUrls: string[];
+  type: string;
+}
+
 export interface WebhooksResponse {
-  data: {
-    name: string;
-    webhookUrls: string[];
-  }[];
+  data: Webhook[];
 }
 
 export const getWebhookUrlsQuery = () =>
@@ -25,10 +29,10 @@ export const getWebhookUrlsQuery = () =>
     Lambda("webhook", Select(["data"], Get(Var("webhook"))))
   );
 
-export const updateWebhookQuery = (webhook: {
-  name: string;
-  webhookUrls: string[];
-}) =>
+export const updateWebhookQuery = (webhook: Webhook) =>
   Update(Select("ref", Get(Match(Index("webhook_by_name"), webhook.name))), {
     data: webhook,
   });
+
+export const addNewWebhookQuery = (data: Webhook) =>
+  Create(Collection("webhooks"), { data });

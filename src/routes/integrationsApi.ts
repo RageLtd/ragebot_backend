@@ -17,4 +17,13 @@ integrationsApiRouter.patch("/:userName", async (req, res) => {
   res.send(faunaRes?.data);
 });
 
+integrationsApiRouter.post("/:userName", async (req, res) => {
+  const { userName } = req.params;
+  const saveRes = await webhookRegistry
+    .addWebhook(userName, req.body)
+    .catch(console.error);
+
+  res.send(saveRes);
+});
+
 export default integrationsApiRouter;
