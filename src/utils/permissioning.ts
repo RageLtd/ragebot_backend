@@ -8,7 +8,11 @@ export interface hasPermissions {
 }
 
 export function isModerator(userState: Userstate) {
-  return userState.mod || userState["display-name"] === "RageLtd";
+  return (
+    userState.mod ||
+    userState.badges?.broadcaster ||
+    userState["display-name"] === "RageLtd"
+  );
 }
 
 export function isSubscriber(userState: Userstate) {
