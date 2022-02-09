@@ -26,4 +26,13 @@ integrationsApiRouter.post("/:userName", async (req, res) => {
   res.send(saveRes);
 });
 
+integrationsApiRouter.delete("/:userName", async (req, res) => {
+  const { userName } = req.params;
+  const removeRes = await webhookRegistry
+    .removeWebhook(userName, req.body)
+    .catch(console.error);
+
+  res.send(removeRes);
+});
+
 export default integrationsApiRouter;

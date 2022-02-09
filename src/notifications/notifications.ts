@@ -1,8 +1,10 @@
 import { merge } from "lodash";
+import fetch from "cross-fetch";
 import { clientRegistry, webhookRegistry } from "..";
 import { parseEmotes } from "../chat/chat";
-import discord from "../discord/discord";
-import { notification_sse_clients } from "../ragebotServer";
+import discord from "../socialServices/discord";
+import twitter from "../socialServices/twitter";
+import { notification_sse_clients, TWITCH_HELIX_API } from "../ragebotServer";
 import { customBehaviorTypes } from "../users/setupUserDb";
 import { Webhook } from "../webhooks/webhookQueries";
 import {
@@ -24,6 +26,7 @@ import {
   parseResubMessage,
   timeoutInMillis,
 } from "./notificationUtils";
+import { getAuthToken } from "../authToken";
 
 export interface TwitchNotification {
   subscription: {
@@ -32,7 +35,9 @@ export interface TwitchNotification {
   event: {
     user_id: string;
     user_name: string;
+    broadcaster_user_id?: string;
     broadcaster_user_name?: string;
+    broadcaster_user_login?: string;
     to_broadcaster_user_name?: string;
     message?: {
       emotes?: { begin: number; end: number; id: string }[];
@@ -66,8 +71,17 @@ interface FormattedEmotes {
   [key: string]: string[];
 }
 
-const services: { [key: string]: any } = {
+const services: {
+  [key: string]: {
+    sendMessage(
+      url: string,
+      notification: TwitchNotification,
+      notificationString: string
+    ): void;
+  };
+} = {
   discord,
+  twitter,
 };
 
 export async function sendNotification(notification: TwitchNotification) {
@@ -118,33 +132,67 @@ export async function sendNotification(notification: TwitchNotification) {
   });
 }
 
-async function postStatusUpdate(
-  webhooks: { [key: string]: Webhook[] },
-  eventData: TwitchNotificationEvent,
-  eventType: string
+async function evaluateWebhookConditions(
+  conditions: Webhook["conditions"],
+  notification: TwitchNotification
 ) {
-  webhooks[eventType].map((service) => {
-    switch (service.name) {
-      case "discord": {
-        services[service.name].sendMessage(
-          service.webhookUrls || [],
-          eventData
-        );
-        break;
+  /// @ts-expect-error
+  return conditions.reduce(async (acc, condition) => {
+    switch (condition) {
+      case "streamOnline": {
+        const { type } = await fetch(
+          `${TWITCH_HELIX_API}/streams?user_id=${notification.event.broadcaster_user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${await getAuthToken()}`,
+              "Client-Id": process.env.TWITCH_CLIENT_ID!,
+            },
+          }
+        )
+          .then((res) => res.json())
+          .catch(console.error)
+          .then((res) => {
+            return res.data[0] ?? { type: false };
+          });
+        return acc && type === "live";
       }
+      case "streamOffline": {
+        const { type } = await fetch(
+          `${TWITCH_HELIX_API}/streams?user_id=${notification.event.broadcaster_user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${await getAuthToken()}`,
+              "Client-Id": process.env.TWITCH_CLIENT_ID!,
+            },
+          }
+        )
+          .then((res) => res.json())
+          .catch(console.error)
+          .then((res) => {
+            return res.data[0] ?? { type: false };
+          });
+        return acc && type !== "live";
+      }
+      default:
+        return acc;
     }
-  });
+  }, true);
 }
 
 async function sendWebhookMessage(
   webhooks: { [key: string]: Webhook[] },
-  notificationType: string,
-  eventData: TwitchNotificationEvent
+  notification: TwitchNotification
 ) {
-  webhooks[notificationType].forEach((webhook) => {
-    webhook.webhookUrls.forEach((url) => {
-      services[webhook.name].sendMessage(url, eventData);
-    });
+  webhooks[notification.subscription.type].forEach(async (webhook) => {
+    if (await evaluateWebhookConditions(webhook.conditions, notification)) {
+      webhook.webhookUrls.forEach((url) => {
+        services[webhook.name].sendMessage(
+          url,
+          notification,
+          webhook.notificationString
+        );
+      });
+    }
   });
 }
 
@@ -199,7 +247,7 @@ async function generateNotificationHTML(
         );
       }
       if (webhooks[notificationType]) {
-        sendWebhookMessage(webhooks, notificationType, eventData);
+        sendWebhookMessage(webhooks, parsedNotification);
       }
       return message;
     }
@@ -220,7 +268,7 @@ async function generateNotificationHTML(
         );
       }
       if (webhooks[notificationType]) {
-        sendWebhookMessage(webhooks, notificationType, eventData);
+        sendWebhookMessage(webhooks, parsedNotification);
       }
       return message;
     }
@@ -241,7 +289,7 @@ async function generateNotificationHTML(
         );
       }
       if (webhooks[notificationType]) {
-        sendWebhookMessage(webhooks, notificationType, eventData);
+        sendWebhookMessage(webhooks, parsedNotification);
       }
       return message;
     }
@@ -262,7 +310,7 @@ async function generateNotificationHTML(
         );
       }
       if (webhooks[notificationType]) {
-        sendWebhookMessage(webhooks, notificationType, eventData);
+        sendWebhookMessage(webhooks, parsedNotification);
       }
       return message;
     }
@@ -283,7 +331,7 @@ async function generateNotificationHTML(
         );
       }
       if (webhooks[notificationType]) {
-        sendWebhookMessage(webhooks, notificationType, eventData);
+        sendWebhookMessage(webhooks, parsedNotification);
       }
       return message;
     }
@@ -304,7 +352,7 @@ async function generateNotificationHTML(
         );
       }
       if (webhooks[notificationType]) {
-        sendWebhookMessage(webhooks, notificationType, eventData);
+        sendWebhookMessage(webhooks, parsedNotification);
       }
       return message;
     }
@@ -325,16 +373,16 @@ async function generateNotificationHTML(
         );
       }
       if (webhooks[notificationType]) {
-        sendWebhookMessage(webhooks, notificationType, eventData);
+        sendWebhookMessage(webhooks, parsedNotification);
       }
       return message;
     }
-    case "channel.update": {
-      return postStatusUpdate(
-        webhooks,
-        eventData,
-        parsedNotification.subscription.type
-      );
+    case "channel.update":
+    case "stream.offline":
+    case "stream.online": {
+      if (webhooks[notificationType]) {
+        sendWebhookMessage(webhooks, parsedNotification);
+      }
     }
   }
 }

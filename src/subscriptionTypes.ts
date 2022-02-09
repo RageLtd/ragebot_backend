@@ -7,4 +7,6 @@ export const subscriptionTypes = [
   "channel.raid",
   "channel.channel_points_custom_reward_redemption.add",
   "channel.update",
+  "stream.online",
+  "stream.offline",
 ];

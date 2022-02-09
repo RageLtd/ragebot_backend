@@ -22,6 +22,8 @@ export const tokens: TokenMap = {
     "%reward.prompt%",
     "%reward.cost%",
   ],
+  onlineTokens: ["%game_name%", "%language%", "%is_mature%", "%title%"],
+  offlineTokens: [],
 };
 
 export function getOtherTokens(type: string) {
@@ -36,6 +38,10 @@ export function getOtherTokens(type: string) {
 
 export function getHumanGroupName(name: string) {
   switch (name) {
+    case "up":
+      return "Stream start";
+    case "down":
+      return "Stream end";
     case "channel":
       return "Sub Gifts";
     case "resub":
@@ -55,6 +61,20 @@ export function getHumanGroupName(name: string) {
 
 export function getHumanGroupHeader(name: string) {
   switch (name) {
+    case "up":
+      return (
+        <>
+          <h3>{getHumanGroupName(name)}</h3>
+          <p>This is the event that fires when your channel goes live.</p>
+        </>
+      );
+    case "down":
+      return (
+        <>
+          <h3>{getHumanGroupName(name)}</h3>
+          <p>This is the event that fires when your channel goes offline.</p>
+        </>
+      );
     case "channel":
       return (
         <>

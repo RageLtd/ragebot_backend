@@ -21,6 +21,7 @@ interface EditableValueProps {
   save: Function;
   type?: "input" | "textarea" | "select" | "radio";
   options?: ReactElement | ReactElement[];
+  multiple?: boolean;
 }
 
 function camelToHuman(string: string) {
@@ -51,11 +52,13 @@ const getInputElement = (
     updateProperty,
     textAreaRef,
     options,
+    multiple,
   }: {
     isEditing: boolean;
     updateProperty: ChangeEventHandler;
     textAreaRef?: Ref<HTMLTextAreaElement>;
     options?: ReactElement | ReactElement[];
+    multiple?: boolean;
   }
 ) => {
   switch (type) {
@@ -77,6 +80,8 @@ const getInputElement = (
           disabled={!isEditing}
           value={editedValue}
           onChange={updateProperty}
+          multiple={multiple}
+          className={styles.select}
         >
           {options}
         </select>
@@ -100,6 +105,7 @@ export default function EditableProperty({
   save,
   type = "input",
   options,
+  multiple,
   ...rest
 }: EditableValueProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -122,8 +128,20 @@ export default function EditableProperty({
     e.preventDefault();
     setIsEditing(!isEditing);
   };
-  const updateProperty = (e: ChangeEvent<HTMLInputElement>) => {
-    setEditedValue(e.target.value);
+  const updateProperty = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    switch (e.target.tagName) {
+      case "SELECT":
+        setEditedValue(
+          Array.from(
+            (e as ChangeEvent<HTMLSelectElement>).target.selectedOptions
+          ).map((o) => o.value)
+        );
+        break;
+      default:
+        setEditedValue(e.target.value);
+    }
   };
 
   const handleRadioChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -179,6 +197,7 @@ export default function EditableProperty({
               isEditing,
               updateProperty,
               options,
+              multiple,
             })}
           </Input>
         )}

@@ -13,24 +13,29 @@ interface IntegrationsViewProps {
 export interface IntegrationShape {
   name: string;
   webhookUrls: string[];
+  notificationString: string;
+  type: string;
+  conditions: string[];
 }
 
 async function getIntegrations(username: string) {
-  return fetch(`/api/integrations/${username?.toLowerCase()}`)
-    .then((res) => res.json());
+  return fetch(`/api/integrations/${username?.toLowerCase()}`).then((res) =>
+    res.json()
+  );
 }
 
 export default function IntegrationsView({
   twitchUserInfo,
 }: IntegrationsViewProps) {
-  const [integrations, setIntegrations] = useState<
-    { [key: string]: IntegrationShape[] }
-  >({});
+  const [integrations, setIntegrations] = useState<{
+    [key: string]: IntegrationShape[];
+  }>({});
   const [isAddingNewIntegration, setIsAddingNewIntegration] = useState(false);
   useEffect(() => {
     if (twitchUserInfo.username) {
-      getIntegrations(twitchUserInfo.username)
-        .then((json) => setIntegrations(json));
+      getIntegrations(twitchUserInfo.username).then((json) =>
+        setIntegrations(json)
+      );
     }
   }, [twitchUserInfo]);
 
@@ -45,7 +50,7 @@ export default function IntegrationsView({
       .then((res) => res.json())
       .then((webhook) => {
         const hookIndex = integrations[webhook.type].findIndex(
-          (integration) => integration.name === webhook.name,
+          (integration) => integration.name === webhook.name
         );
         setIntegrations({
           [webhook.type]: [
@@ -57,16 +62,23 @@ export default function IntegrationsView({
       });
   };
 
-  const removeIntegration = (integration: IntegrationShape) => {
+  const removeIntegration = async (integration: IntegrationShape) => {
     // eslint-disable-next-line
     if (confirm(`Are you sure you want to remove ${integration.name}?`)) {
-      fetch(`/api/integrations/${twitchUserInfo.username}`, {
-        method: "DELETE",
-        body: JSON.stringify(integration),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await fetch(
+        `/api/integrations/${twitchUserInfo.username?.toLowerCase()}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify(integration),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      getIntegrations(twitchUserInfo.username!).then((json) =>
+        setIntegrations(json)
+      );
     }
   };
 
@@ -81,8 +93,9 @@ export default function IntegrationsView({
       body: JSON.stringify(newIntegration),
     });
 
-    getIntegrations(twitchUserInfo.username!)
-      .then((json) => setIntegrations(json));
+    getIntegrations(twitchUserInfo.username!).then((json) =>
+      setIntegrations(json)
+    );
   };
 
   return (
@@ -94,9 +107,7 @@ export default function IntegrationsView({
         future!
       </p>
       {!isAddingNewIntegration && (
-        <Button onClick={handleAddNewClick}>
-          Add New Integration
-        </Button>
+        <Button onClick={handleAddNewClick}>Add New Integration</Button>
       )}
       {isAddingNewIntegration && (
         <AddNewIntegrationForm
@@ -106,18 +117,23 @@ export default function IntegrationsView({
         />
       )}
       <ul>
-        {Object.keys(integrations).map(type => (
+        {Object.keys(integrations).map((type) => (
           <div>
             <h3>{getHumanTypeName(type)}</h3>
-            {integrations[type].map(({ name, webhookUrls }) => (
-              <Integration
-                key={name + webhookUrls.toString()}
-                name={name}
-                webhookUrls={webhookUrls}
-                save={saveEditedIntegration}
-                remove={removeIntegration}
-              />
-            ))}
+            {integrations[type].map(
+              ({ name, webhookUrls, notificationString, type, conditions }) => (
+                <Integration
+                  key={name + webhookUrls.toString()}
+                  name={name}
+                  webhookUrls={webhookUrls}
+                  notificationString={notificationString}
+                  type={type}
+                  conditions={conditions}
+                  save={saveEditedIntegration}
+                  remove={removeIntegration}
+                />
+              )
+            )}
           </div>
         ))}
       </ul>

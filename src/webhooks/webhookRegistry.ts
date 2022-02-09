@@ -2,6 +2,7 @@ import { clientRegistry } from "../index";
 import {
   addNewWebhookQuery,
   getWebhookUrlsQuery,
+  removeWebhookQuery,
   updateWebhookQuery,
   Webhook,
   WebhooksResponse,
@@ -38,5 +39,11 @@ export class WebhookRegistry {
     const client = await clientRegistry.getClient(`#${username}`);
 
     return client?.query(updateWebhookQuery(webhook));
+  }
+
+  async removeWebhook(username: string, webhook: Webhook) {
+    const client = await clientRegistry.getClient(`#${username}`);
+
+    return client?.query(removeWebhookQuery(webhook));
   }
 }

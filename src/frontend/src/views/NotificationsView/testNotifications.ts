@@ -173,4 +173,42 @@ const redemption = {
   },
 };
 
+const streamUp = {
+  subscription: {
+    id: "d21ed252-81ae-cddd-0982-93ae80cb7ddb",
+    status: "enabled",
+    type: "stream.online",
+    version: "1",
+    condition: { broadcaster_user_id: "93019870" },
+    transport: { method: "webhook", callback: "null" },
+    created_at: "2022-02-08T19:02:15.462618691Z",
+    cost: 0,
+  },
+  event: {
+    id: "53414625",
+    broadcaster_user_id: "93019870",
+    broadcaster_user_login: "testBroadcaster",
+    type: "live",
+    started_at: "2022-02-08T19:02:15.462621571Z",
+  },
+};
+
+const streamDown = {
+  subscription: {
+    id: "2527a4d5-8eeb-10ce-fadd-d1cac66161e1",
+    status: "enabled",
+    type: "stream.offline",
+    version: "1",
+    condition: { broadcaster_user_id: "73109245" },
+    transport: { method: "webhook", callback: "null" },
+    created_at: "2022-02-08T19:03:04.50099269Z",
+    cost: 0,
+  },
+  event: {
+    broadcaster_user_id: "73109245",
+    broadcaster_user_login: "testBroadcaster",
+    broadcaster_user_name: "testBroadcaster",
+  },
+};
+
 export default { follow, subscribe, channel, resub, cheer, raid, redemption };

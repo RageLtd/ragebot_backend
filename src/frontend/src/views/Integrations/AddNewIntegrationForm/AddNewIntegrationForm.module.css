@@ -1,0 +1,16 @@
+.tokenContainer {
+  display: flex;
+  flex-flow: row wrap;
+  padding: .5em;
+  list-style: none;
+}
+
+.token, .code {
+  border: 1px solid purple;
+  background-color: #880088;
+  border-radius: .25em;
+  padding: .1em .25em;
+  color: white;
+  font-style: normal;
+  font-family: 'hack', 'Courier New', Courier, monospace;
+}

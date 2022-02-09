@@ -1,6 +1,7 @@
 import {
   Collection,
   Create,
+  Delete,
   Documents,
   Get,
   Index,
@@ -17,6 +18,8 @@ export interface Webhook {
   name: string;
   webhookUrls: string[];
   type: string;
+  notificationString: string;
+  conditions: string[];
 }
 
 export interface WebhooksResponse {
@@ -30,9 +33,27 @@ export const getWebhookUrlsQuery = () =>
   );
 
 export const updateWebhookQuery = (webhook: Webhook) =>
-  Update(Select("ref", Get(Match(Index("webhook_by_name"), webhook.name))), {
-    data: webhook,
-  });
+  Update(
+    Select(
+      "ref",
+      Get(
+        Match(Index("webhook_by_name_and_type"), [webhook.name, webhook.type])
+      )
+    ),
+    {
+      data: webhook,
+    }
+  );
 
 export const addNewWebhookQuery = (data: Webhook) =>
   Create(Collection("webhooks"), { data });
+
+export const removeWebhookQuery = (webhook: Webhook) =>
+  Delete(
+    Select(
+      "ref",
+      Get(
+        Match(Index("webhook_by_name_and_type"), [webhook.name, webhook.type])
+      )
+    )
+  );
