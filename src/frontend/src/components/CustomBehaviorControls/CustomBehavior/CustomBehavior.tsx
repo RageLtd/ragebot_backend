@@ -71,6 +71,20 @@ export default function CustomBehavior({
                   />
                 );
               }
+              if (prop === "voice") {
+                return (
+                  <EditableProperty
+                    key={prop + "select"}
+                    name={prop}
+                    type="select"
+                    options={window.speechSynthesis.getVoices().map((v) => (
+                      <option value={v.name}>{v.name}</option>
+                    ))}
+                    value={behavior[prop]}
+                    save={handlePropertySave}
+                  />
+                );
+              }
               return (
                 <EditableProperty
                   key={prop + behavior[prop]}

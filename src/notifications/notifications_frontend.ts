@@ -62,6 +62,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const audioNode = newNotification.querySelector("audio");
         notificationContainer?.append(newNotification);
         isNotificationShowing = true;
+        if (parsed.speech.speak) {
+          const utterance = new SpeechSynthesisUtterance(parsed.speech.message);
+          utterance.voice = parsed.speech.voice
+            ? window.speechSynthesis
+                .getVoices()
+                .find((v) => v.name === parsed.speech.voice)!
+            : null;
+          window.speechSynthesis.speak(utterance);
+        }
         if (audioNode !== null) {
           audioNode.play();
         }
@@ -78,6 +87,15 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       const audioNode = notification.querySelector("audio");
       notificationContainer?.append(notification);
+      if (parsed.speech.speak) {
+        const utterance = new SpeechSynthesisUtterance(parsed.speech.message);
+        utterance.voice = parsed.speech.voice
+          ? window.speechSynthesis
+              .getVoices()
+              .find((v) => v.name === parsed.speech.voice)!
+          : null;
+        window.speechSynthesis.speak(utterance);
+      }
       isNotificationShowing = true;
       if (audioNode !== null) {
         audioNode.play();

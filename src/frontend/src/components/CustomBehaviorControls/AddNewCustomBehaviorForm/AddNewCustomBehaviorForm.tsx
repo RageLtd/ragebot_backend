@@ -17,7 +17,7 @@ interface AddNewCustomBehaviorFormProps {
 export function getAdditionalBehaviorOptions(type: string) {
   const options: { [key: string]: ReactElement[] } = {
     channel: [],
-    cheer: [],
+    cheer: [<option value="tts">Text to Speech</option>],
     follow: [],
     new: [],
     raid: [],
@@ -25,8 +25,9 @@ export function getAdditionalBehaviorOptions(type: string) {
       <option key={type + "backlog"} value="addToBacklog">
         Add To Backlog
       </option>,
+      <option value="tts">Text to Speech</option>,
     ],
-    resub: [],
+    resub: [<option value="tts">Text to Speech</option>],
   };
   return options[type];
 }
@@ -79,6 +80,9 @@ export default function AddNewCustomBehaviorForm({
   const [condition, setCondition] = useState<string>("");
   const [response, setResponse] = useState("");
   const [sound, setSound] = useState("");
+  const [voice, setVoice] = useState(
+    window.speechSynthesis.getVoices()[0].name
+  );
   // const [redemptionConditions, setRedemptionConditions] = useState<
   //   ReactElement[]
   // >([]);
@@ -95,7 +99,7 @@ export default function AddNewCustomBehaviorForm({
     e.preventDefault();
     e.stopPropagation();
 
-    save({ name, behavior, condition, response, sound });
+    save({ name, behavior, condition, response, sound, voice });
     cancel();
   };
   const handleCancel = () => {
@@ -117,6 +121,9 @@ export default function AddNewCustomBehaviorForm({
   const handleSoundChange = (e: ChangeEvent<HTMLInputElement>) =>
     setSound(e.target.value);
 
+  const handleVoiceChange = (e: ChangeEvent<HTMLSelectElement>) =>
+    setVoice(e.target.value);
+
   const addConditionalFields = (
     type: string,
     fields: ReactElement[],
@@ -124,7 +131,7 @@ export default function AddNewCustomBehaviorForm({
   ) => {
     switch (type) {
       case "redemption":
-        return [
+        const newFields = [
           fields[0],
           <label>
             Event:
@@ -138,6 +145,25 @@ export default function AddNewCustomBehaviorForm({
           </label>,
           ...fields.slice(1),
         ];
+
+        if (behavior === "tts") {
+          newFields.push(
+            <label>
+              Voice
+              <Input>
+                <select onChange={handleVoiceChange}>
+                  {window.speechSynthesis.getVoices().map((v) => (
+                    <option selected={voice === v.name} value={v.name}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+              </Input>
+            </label>
+          );
+        }
+
+        return newFields;
       case "raid":
         if (behavior !== "say") {
           return fields;
@@ -182,6 +208,20 @@ export default function AddNewCustomBehaviorForm({
               </Input>
             </label>,
           ];
+        } else if (behavior === "tts") {
+          fields.push(
+            <label>
+              Voice
+              <Input>
+                <select onChange={handleVoiceChange}>
+                  {window.speechSynthesis.getVoices().map((v) => (
+                    <option value={v.name}>{v.name}</option>
+                  ))}
+                </select>
+              </Input>
+            </label>
+          );
+          return fields;
         } else if (behavior === "say") {
           fields.push(
             <label>

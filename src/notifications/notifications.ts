@@ -46,6 +46,7 @@ export interface TwitchNotification {
     reward?: {
       title: string;
     };
+    user_input?: string;
   };
 }
 
@@ -84,6 +85,32 @@ const services: {
   twitter,
 };
 
+function getCustomBehaviorCategoryShortcut(notificationType: string) {
+  switch (notificationType) {
+    case "channel.follow":
+      return "follow";
+    case "channel.subscribe":
+      return "new";
+    case "channel.subscription.gift":
+      return "gift";
+    case "channel.subscription.message":
+      return "resub";
+    case "channel.cheer":
+    case "channel.raid":
+      return notificationType.split(".")[1];
+    case "channel.channel_points_custom_reward_redemption.add":
+      return "redemption";
+    case "channel.update":
+      return "channel";
+    case "stream.online":
+      return "streamOnline";
+    case "stream.offline":
+      return "streamOffline";
+    default:
+      return "";
+  }
+}
+
 export async function sendNotification(notification: TwitchNotification) {
   const broadcasterUsername = getUserName(notification).toLowerCase();
 
@@ -118,7 +145,30 @@ export async function sendNotification(notification: TwitchNotification) {
     event: merge(notification.event, eventWithParsedMessage),
   };
 
-  const notificationHTML = await generateNotificationHTML(parsedNotification);
+  const customBehaviors: { [key: string]: any[] } = {};
+
+  await Promise.all(
+    customBehaviorTypes.map(async (type) => {
+      const { data: behaviors } = (await client?.query(
+        getCustomBehaviorsQuery(type)
+      )) as { data: any[] };
+      customBehaviors[type] = behaviors;
+    })
+  );
+
+  const notificationHTML = await generateNotificationHTML(
+    parsedNotification,
+    customBehaviors
+  );
+
+  const hasTts = customBehaviors[
+    getCustomBehaviorCategoryShortcut(notification.subscription.type)
+  ].find((b) => {
+    if (b.condition === "") {
+      return b.behavior === "tts";
+    }
+    return b.condition === notification.event.reward?.title;
+  });
 
   notification_sse_clients[broadcasterUsername]?.forEach((sse_client) => {
     sse_client.res.write(
@@ -127,6 +177,16 @@ export async function sendNotification(notification: TwitchNotification) {
         timeoutInMillis,
         type: notification.subscription.type,
         alertName: notification.event.reward?.title,
+        speech: {
+          speak: !!hasTts,
+          voice: hasTts ? hasTts.voice : undefined,
+          message: !!hasTts
+            ? (typeof notification.event.message === "string"
+                ? notification.event.message
+                : notification.event.message?.text) ||
+              notification.event.user_input
+            : undefined,
+        },
       })}\n\n`
     );
   });
@@ -197,7 +257,8 @@ async function sendWebhookMessage(
 }
 
 async function generateNotificationHTML(
-  parsedNotification: TwitchNotification
+  parsedNotification: TwitchNotification,
+  customBehaviors: { [key: string]: any[] }
 ) {
   const broadcasterUsername = getUserName(parsedNotification);
   const eventData =
@@ -214,17 +275,6 @@ async function generateNotificationHTML(
 
   const webhooks = await webhookRegistry.getWebhookUrls(
     `#${broadcasterUsername.toLowerCase()}`
-  );
-
-  const customBehaviors: { [key: string]: any[] } = {};
-
-  await Promise.all(
-    customBehaviorTypes.map(async (type) => {
-      const { data: behaviors } = (await client?.query(
-        getCustomBehaviorsQuery(type)
-      )) as { data: any[] };
-      customBehaviors[type] = behaviors;
-    })
   );
 
   const notificationType = parsedNotification.subscription.type;

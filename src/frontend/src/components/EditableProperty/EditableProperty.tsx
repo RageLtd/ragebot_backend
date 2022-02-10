@@ -133,11 +133,15 @@ export default function EditableProperty({
   ) => {
     switch (e.target.tagName) {
       case "SELECT":
-        setEditedValue(
-          Array.from(
-            (e as ChangeEvent<HTMLSelectElement>).target.selectedOptions
-          ).map((o) => o.value)
-        );
+        if (multiple) {
+          setEditedValue(
+            Array.from(
+              (e as ChangeEvent<HTMLSelectElement>).target.selectedOptions
+            ).map((o) => o.value)
+          );
+        } else {
+          setEditedValue(e.target.value);
+        }
         break;
       default:
         setEditedValue(e.target.value);

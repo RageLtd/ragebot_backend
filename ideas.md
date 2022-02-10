@@ -28,7 +28,8 @@
 - [x] Add chat display to dashboard (must have)
 - [x] High water mark for dashboard chat
 - [x] Customize webhooks to run on various events
-- [ ] TTS for notifications
+- [x] TTS for notifications
+- [ ] Twitter posts
 - [ ] Bot icon for on stream chat
 
 ## Post launch
@@ -38,3 +39,4 @@
 - [ ] Now playing for various services
 - [ ] Notification animations
 - [ ] Custom behavior templates
+- [ ] Cusomizable layouts/themes
