@@ -1,6 +1,6 @@
 .notificationList {
   list-style: none;
-  max-height: 30em;
+  max-height: 20em;
   overflow-y: auto;
   margin-bottom: 2em;
   background-color: var(--action-background-color);
