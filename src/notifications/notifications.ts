@@ -47,6 +47,7 @@ export interface TwitchNotification {
       title: string;
     };
     user_input?: string;
+    bits?: number;
   };
 }
 
@@ -165,7 +166,12 @@ export async function sendNotification(notification: TwitchNotification) {
     getCustomBehaviorCategoryShortcut(notification.subscription.type)
   ].find((b) => {
     if (b.condition === "") {
-      return b.behavior === "tts";
+      return (
+        b.behavior === "tts" &&
+        (notification.event.bits
+          ? Number(b.minimum) <= notification.event.bits
+          : true)
+      );
     }
     return b.condition === notification.event.reward?.title;
   });

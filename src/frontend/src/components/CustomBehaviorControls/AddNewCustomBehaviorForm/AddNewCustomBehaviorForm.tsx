@@ -83,6 +83,7 @@ export default function AddNewCustomBehaviorForm({
   const [voice, setVoice] = useState(
     window.speechSynthesis.getVoices()[0].name
   );
+  const [minimum, setMinimum] = useState(0);
   // const [redemptionConditions, setRedemptionConditions] = useState<
   //   ReactElement[]
   // >([]);
@@ -99,7 +100,7 @@ export default function AddNewCustomBehaviorForm({
     e.preventDefault();
     e.stopPropagation();
 
-    save({ name, behavior, condition, response, sound, voice });
+    save({ name, behavior, condition, response, sound, voice, minimum });
     cancel();
   };
   const handleCancel = () => {
@@ -123,6 +124,9 @@ export default function AddNewCustomBehaviorForm({
 
   const handleVoiceChange = (e: ChangeEvent<HTMLSelectElement>) =>
     setVoice(e.target.value);
+
+  const handleMinimumChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setMinimum(Number(e.target.value));
 
   const addConditionalFields = (
     type: string,
@@ -197,6 +201,34 @@ export default function AddNewCustomBehaviorForm({
             </Input>
           </label>,
         ];
+      case "cheer": {
+        if (behavior === "tts") {
+          fields.push(
+            <label>
+              Voice
+              <Input>
+                <select onChange={handleVoiceChange}>
+                  {window.speechSynthesis.getVoices().map((v) => (
+                    <option value={v.name}>{v.name}</option>
+                  ))}
+                </select>
+              </Input>
+            </label>,
+            <label>
+              Minimum
+              <Input>
+                <input
+                  type="number"
+                  name="minimum"
+                  onChange={handleMinimumChange}
+                  value={minimum}
+                />
+              </Input>
+            </label>
+          );
+        }
+        return fields;
+      }
       default:
         if (behavior === "sound") {
           return [
