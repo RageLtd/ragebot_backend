@@ -33,7 +33,7 @@ export async function getBlacklist(
   after?: any
 ): Promise<string[]> {
   return await client
-    ?.query<BlacklistResponse>(getBlacklistQuery())
+    ?.query<BlacklistResponse>(getBlacklistQuery(after))
     .then(async (res) => {
       if (res.after) {
         return [...res.data, ...(await getBlacklist(client, res.after))];
