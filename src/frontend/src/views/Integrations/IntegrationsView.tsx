@@ -116,10 +116,12 @@ export default function IntegrationsView({
           integrations={integrations}
         />
       )}
+      <h2>Configuration</h2>
+      <h3>Outbound</h3>
       <ul>
         {Object.keys(integrations).map((type) => (
           <div>
-            <h3>{getHumanTypeName(type)}</h3>
+            <h4>{getHumanTypeName(type)}</h4>
             {integrations[type].map(
               ({ name, webhookUrls, notificationString, type, conditions }) => (
                 <Integration
