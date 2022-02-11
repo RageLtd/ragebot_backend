@@ -30,8 +30,10 @@
 - [x] Customize webhooks to run on various events
 - [x] TTS for notifications
 - [x] Notification high water mark
+- [x] Turn off default blacklist
 - [ ] Twitter posts
 - [ ] Bot icon for on stream chat
+- [ ] Raffles
 
 ## Post launch
 
@@ -42,3 +44,4 @@
 - [ ] Custom behavior templates
 - [ ] Cusomizable layouts/themes
 - [ ] Integrations for Tiltify, ExtraLife, etc
+- [ ] Scroll to top arrow

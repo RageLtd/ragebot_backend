@@ -36,12 +36,19 @@ async function getAllowList(username: string) {
 
 async function getBlockList(username: string) {
   const res = await fetch(`/api/chat/${username.toLowerCase()}/blocklist`);
-  return await res.json().then((res) => res.data);
+  return await res.json();
 }
 
 async function getModerationState(username: string) {
-  const res = await fetch(`/api/chat/${username}/moderation`);
+  const res = await fetch(`/api/chat/${username.toLowerCase()}/moderation`);
   return await res.json().then((res) => res.data.isModerationEnabled);
+}
+
+async function getUseDefaultBlocklist(username: string) {
+  const res = await fetch(
+    `/api/chat/${username.toLowerCase()}/blocklist/useDefaults`
+  );
+  return await res.json().then((res) => res.useDefaultBlocklist);
 }
 
 export default function ChatView({ twitchUserInfo }: ChatViewProps) {
@@ -53,6 +60,7 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
   const [newBlocklistEntry, setNewBlocklistEntry] = useState("");
   const [sort, setSort] = useState("asc");
   const [blockSort, setBlockSort] = useState("asc");
+  const [isUseDefaultBlocklist, setIsUseDefaultBlocklist] = useState(true);
 
   const setSortAsc = () => setSort("asc");
   const setSortDesc = () => setSort("desc");
@@ -69,6 +77,9 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
       getModerationState(twitchUserInfo.username).then((res) =>
         setIsModerationEnabled(res)
       );
+      getUseDefaultBlocklist(twitchUserInfo.username).then((res) => {
+        setIsUseDefaultBlocklist(res);
+      });
     }
   }, [twitchUserInfo?.username]);
 
@@ -202,6 +213,25 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
     );
   };
 
+  const handleUseDefaultBlocklistChange = async (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    await fetch(
+      `/api/chat/${twitchUserInfo?.username.toLowerCase()}/blocklist/useDefaults`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ useDefaultBlocklist: e.target.checked }),
+      }
+    );
+
+    getUseDefaultBlocklist(twitchUserInfo!.username).then((res) =>
+      setIsUseDefaultBlocklist(res)
+    );
+  };
+
   return (
     <>
       <h1>Chat</h1>
@@ -292,6 +322,12 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
           ))}
       </ul>
       <h3>Blocklist</h3>
+      <Toggle
+        state={isUseDefaultBlocklist}
+        onChange={handleUseDefaultBlocklistChange}
+      >
+        Use Default Blocklist {isUseDefaultBlocklist ? "On" : "Off"}
+      </Toggle>
       <label>
         New entry
         <Input

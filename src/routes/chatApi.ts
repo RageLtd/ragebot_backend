@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { clientRegistry, faunaClient, filterRegistry } from "..";
+import { Database } from "../channelEvents";
 import {
   getChatStylesQuery,
   getIsModerationEnabledQuery,
@@ -8,8 +9,10 @@ import {
 } from "../chat/chatQueries";
 import {
   getBlacklistQuery,
-  getWhitelistQuery,
+  getUsingDefaultBlocklistQuery,
+  setUsingDefaultBlocklistQuery,
 } from "../messages/filterQueries";
+import { getBlacklist, getWhitelist } from "../messages/filterRegistry";
 import { chat_sse_clients } from "../ragebotServer";
 
 const chatApiRouter = Router();
@@ -75,7 +78,7 @@ chatApiRouter.get("/:userName/allowlist", async (req, res) => {
   const { userName } = req.params;
   const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
 
-  const getRes = await client?.query(getWhitelistQuery());
+  const getRes = await getWhitelist(client!);
 
   res.send(getRes);
 });
@@ -102,7 +105,7 @@ chatApiRouter.get("/:userName/blocklist", async (req, res) => {
   const { userName } = req.params;
   const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
 
-  const getRes = await client?.query(getBlacklistQuery());
+  const getRes = await getBlacklist(client!);
 
   res.send(getRes);
 });
@@ -114,6 +117,31 @@ chatApiRouter.post("/:userName/blocklist", async (req, res) => {
     .catch(console.error);
 
   res.send(addRes);
+});
+
+chatApiRouter.get("/:userName/blocklist/useDefaults", async (req, res) => {
+  const { userName } = req.params;
+  const {
+    data: { useDefaultBlocklist },
+  } = await faunaClient.query<Database>(
+    getUsingDefaultBlocklistQuery(userName)
+  );
+
+  res.send(JSON.stringify({ useDefaultBlocklist }));
+});
+
+chatApiRouter.patch("/:userName/blocklist/useDefaults", async (req, res) => {
+  const { userName } = req.params;
+  const defaultsRes = await faunaClient.query(
+    setUsingDefaultBlocklistQuery(
+      userName.toLowerCase(),
+      req.body.useDefaultBlocklist
+    )
+  );
+
+  filterRegistry.initializeFilter(`#${userName.toLowerCase()}`);
+
+  res.send(defaultsRes);
 });
 
 chatApiRouter.delete("/:userName/blocklist", async (req, res) => {

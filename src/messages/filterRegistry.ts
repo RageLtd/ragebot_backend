@@ -1,15 +1,46 @@
 import Filter from "bad-words";
-import { clientRegistry } from "..";
+import { Client } from "faunadb";
+import { clientRegistry, faunaClient } from "..";
+import { Database } from "../channelEvents";
 import {
   addToBlacklistQuery,
   addToWhitelistQuery,
   BlacklistResponse,
   getBlacklistQuery,
+  getUsingDefaultBlocklistQuery,
   getWhitelistQuery,
   removeFromBlacklistQuery,
   removeFromWhitelistQuery,
   WhitelistResponse,
 } from "./filterQueries";
+
+export async function getWhitelist(
+  client: Client,
+  after?: any
+): Promise<string[]> {
+  return await client
+    ?.query<WhitelistResponse>(getWhitelistQuery(after))
+    .then(async (res) => {
+      if (res.after) {
+        return [...res.data, ...(await getWhitelist(client, res.after))];
+      }
+      return res.data;
+    });
+}
+
+export async function getBlacklist(
+  client: Client,
+  after?: any
+): Promise<string[]> {
+  return await client
+    ?.query<BlacklistResponse>(getBlacklistQuery())
+    .then(async (res) => {
+      if (res.after) {
+        return [...res.data, ...(await getBlacklist(client, res.after))];
+      }
+      return res.data;
+    });
+}
 
 interface FilterMap {
   [key: string]: Filter;
@@ -29,21 +60,26 @@ export class ChatFilterRegistry {
   }
 
   async initializeFilter(target: string) {
-    this.filters[target] = new Filter();
+    const {
+      data: { useDefaultBlocklist },
+    } = await faunaClient.query<Database>(
+      getUsingDefaultBlocklistQuery(target.substring(1))
+    );
+
+    this.filters[target] = new Filter({
+      emptyList: !useDefaultBlocklist,
+    });
 
     // Go get whitelist
     const client = await clientRegistry.getClient(target);
 
-    const { data: whitelist } = (await client?.query(
-      getWhitelistQuery()
-    )) as WhitelistResponse;
+    const whitelist = await getWhitelist(client!).catch(console.error);
+
     // Apply whitelist
     this.filters[target].removeWords(...whitelist!);
 
     // Go get blacklist
-    const { data: blacklist } = (await client?.query(
-      getBlacklistQuery()
-    )) as BlacklistResponse;
+    const blacklist = await getBlacklist(client!).catch(console.error);
     this.filters[target].addWords(...blacklist!);
   }
 
