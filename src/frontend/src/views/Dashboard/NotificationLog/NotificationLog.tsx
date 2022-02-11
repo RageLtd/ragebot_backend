@@ -32,6 +32,7 @@ export interface TwitchNotification {
     };
   };
   subscription: {
+    id: string;
     type: string;
     created_at: string;
   };
@@ -41,6 +42,7 @@ export default function NotificationLog({
   twitchUserInfo,
 }: NotificationLogProps) {
   const [log, setLog] = useState<TwitchNotification[]>([]);
+  const [highWater, setHighWater] = useState<string>();
 
   const getNotificationLog = () =>
     fetch(`/api/alerts/${twitchUserInfo.username?.toLowerCase()}/log`)
@@ -59,16 +61,21 @@ export default function NotificationLog({
     }
   }, [twitchUserInfo.username]);
 
+  const handleHighWaterClick = (id: string) => setHighWater(id);
+
   return (
     <div>
       <h4>Notifications</h4>
       <ul className={styles.notificationList}>
         {log.map((notification) => (
           <NotificationLogEntry
-            key={
-              notification.subscription.type +
-              notification.subscription.created_at
+            onClick={handleHighWaterClick}
+            className={
+              highWater === notification.subscription.id
+                ? styles.highWater
+                : undefined
             }
+            key={notification.subscription.id}
             {...notification}
           />
         ))}

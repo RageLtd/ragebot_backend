@@ -29,6 +29,7 @@
 - [x] High water mark for dashboard chat
 - [x] Customize webhooks to run on various events
 - [x] TTS for notifications
+- [x] Notification high water mark
 - [ ] Twitter posts
 - [ ] Bot icon for on stream chat
 
@@ -40,3 +41,4 @@
 - [ ] Notification animations
 - [ ] Custom behavior templates
 - [ ] Cusomizable layouts/themes
+- [ ] Integrations for Tiltify, ExtraLife, etc

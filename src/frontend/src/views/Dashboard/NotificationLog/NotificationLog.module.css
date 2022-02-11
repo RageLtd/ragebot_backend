@@ -8,3 +8,16 @@
   padding: .5em;
   border-radius: .25em;
 }
+
+.highWater {
+  border-top: orange 1px solid;
+  position: relative;
+  padding-top: 1em;
+}
+
+.highWater::before {
+  content: "New";
+  position: absolute;
+  color: orange;
+  top: 0;
+}

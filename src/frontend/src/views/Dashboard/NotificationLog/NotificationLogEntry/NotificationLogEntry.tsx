@@ -4,7 +4,10 @@ import { TwitchNotification } from "../NotificationLog";
 
 import styles from "./NotificationLogEntry.module.css";
 
-interface NotificationLogEntryProps extends TwitchNotification {}
+interface NotificationLogEntryProps extends TwitchNotification {
+  className?: string;
+  onClick: Function;
+}
 
 enum SubscriptionTypes {
   FOLLOW = "channel.follow",
@@ -127,7 +130,10 @@ function getNotificationDetails(
             <span className={styles.action}>
               redeemed {event.reward?.title}
             </span>
-            .{event.user_input && <p className={styles.userMessage}>{event.user_input}</p>}
+            .
+            {event.user_input && (
+              <p className={styles.userMessage}>{event.user_input}</p>
+            )}
           </>
         </NotificationDetailsChrome>
       );
@@ -139,9 +145,15 @@ function getNotificationDetails(
 export default function NotificationLogEntry({
   event,
   subscription,
+  className,
+  onClick,
 }: NotificationLogEntryProps) {
+  const handleClick = () => onClick(subscription.id);
   return (
-    <li className={styles.entry}>
+    <li
+      onClick={handleClick}
+      className={styles.entry + (className ? ` ${className}` : "")}
+    >
       {getNotificationDetails(subscription, event)}
     </li>
   );
