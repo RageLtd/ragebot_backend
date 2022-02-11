@@ -1,3 +1,4 @@
+import { sortBy } from "lodash";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import Button from "../../components/Button/Button";
 import EditableProperty from "../../components/EditableProperty/EditableProperty";
@@ -30,7 +31,7 @@ async function getChatStyles(username: string) {
 
 async function getAllowList(username: string) {
   const res = await fetch(`/api/chat/${username.toLowerCase()}/allowlist`);
-  return await res.json().then((res) => res.data);
+  return await res.json();
 }
 
 async function getBlockList(username: string) {
@@ -50,6 +51,13 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
   const [isModerationEnabled, setIsModerationEnabled] = useState(true);
   const [newAllowlistEntry, setNewAllowlistEntry] = useState("");
   const [newBlocklistEntry, setNewBlocklistEntry] = useState("");
+  const [sort, setSort] = useState("asc");
+  const [blockSort, setBlockSort] = useState("asc");
+
+  const setSortAsc = () => setSort("asc");
+  const setSortDesc = () => setSort("desc");
+  const setBlockSortAsc = () => setBlockSort("asc");
+  const setBlockSortDesc = () => setBlockSort("desc");
 
   useEffect(() => {
     if (twitchUserInfo?.username) {
@@ -261,18 +269,27 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
           />
         </Input>
       </label>
+      {sort === "asc" && <Button onClick={setSortDesc}>A-z</Button>}
+      {sort === "desc" && <Button onClick={setSortAsc}>z-A</Button>}
       <ul className={styles.list}>
-        {allowList.map((word) => (
-          <li key={`allowlist_${word}`} className={styles.listItem}>
-            {word}
-            <Button
-              weight="danger"
-              onClick={generateRemoveAllowlistEntry(word)}
-            >
-              Remove
-            </Button>
-          </li>
-        ))}
+        {allowList
+          .sort((a: string, b: string) => {
+            if (sort === "desc") {
+              return a > b ? -1 : 1;
+            }
+            return a < b ? -1 : 1;
+          })
+          .map((word) => (
+            <li key={`allowlist_${word}`} className={styles.listItem}>
+              {word}
+              <Button
+                weight="danger"
+                onClick={generateRemoveAllowlistEntry(word)}
+              >
+                Remove
+              </Button>
+            </li>
+          ))}
       </ul>
       <h3>Blocklist</h3>
       <label>
@@ -293,18 +310,27 @@ export default function ChatView({ twitchUserInfo }: ChatViewProps) {
           />
         </Input>
       </label>
+      {blockSort === "asc" && <Button onClick={setBlockSortDesc}>A-z</Button>}
+      {blockSort === "desc" && <Button onClick={setBlockSortAsc}>z-A</Button>}
       <ul className={styles.list}>
-        {blockList.map((word) => (
-          <li key={`blocklist_${word}`} className={styles.listItem}>
-            {word}
-            <Button
-              weight="danger"
-              onClick={generateRemoveBlocklistEntry(word)}
-            >
-              Remove
-            </Button>
-          </li>
-        ))}
+        {blockList
+          .sort((a: string, b: string) => {
+            if (blockSort === "desc") {
+              return a > b ? -1 : 1;
+            }
+            return a < b ? -1 : 1;
+          })
+          .map((word) => (
+            <li key={`blocklist_${word}`} className={styles.listItem}>
+              {word}
+              <Button
+                weight="danger"
+                onClick={generateRemoveBlocklistEntry(word)}
+              >
+                Remove
+              </Button>
+            </li>
+          ))}
       </ul>
     </>
   );
