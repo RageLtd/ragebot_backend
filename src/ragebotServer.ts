@@ -16,6 +16,7 @@ import backlogApiRouter from "./routes/backlogApi";
 import ragebotRouter from "./routes/ragebotApi";
 import triggersApiRouter from "./routes/triggersApi";
 import paymentsApiRouter from "./routes/paymentApi";
+import raffleRouter from "./routes/raffle";
 
 export const TWITCH_HELIX_API = "https://api.twitch.tv/helix";
 
@@ -26,6 +27,7 @@ interface SSEClient {
 
 export let chat_sse_clients: { [key: string]: SSEClient[] } = {};
 export const notification_sse_clients: { [key: string]: SSEClient[] } = {};
+export const raffle_sse_clients: { [key: string]: SSEClient[] } = {};
 
 export function initializeRagebotServer() {
   const ragebot = express();
@@ -68,10 +70,11 @@ export function initializeRagebotServer() {
   ragebot.use("/api/commands", commandsApiRouter);
   ragebot.use("/api/follows", followRouter);
   ragebot.use("/api/integrations", integrationsApiRouter);
+  ragebot.use("/api/payments", paymentsApiRouter);
+  ragebot.use("/api/raffle", raffleRouter);
   ragebot.use("/api/ragebot", ragebotRouter);
   ragebot.use("/api/triggers", triggersApiRouter);
   ragebot.use("/api/user-setup", userSetupApiRouter);
-  ragebot.use("/api/payments", paymentsApiRouter);
 
   ragebot.post("/eventsub", handleEventSubPost);
 

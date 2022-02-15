@@ -14,6 +14,7 @@ import NotificationsView from "./views/NotificationsView/NotificationsView";
 import ChatView from "./views/ChatView/ChatView";
 import TriggersView from "./views/TriggersView/TriggersView";
 import SubscribeView from "./views/SubscribeView/SubscribeView";
+import RaffleView from "./views/RaffleView/RaffleView";
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -139,6 +140,12 @@ function App() {
         <Route
           path="/subscribe"
           element={loader(SubscribeView)(isApplicationLoading(), {
+            twitchUserInfo,
+          })}
+        />
+        <Route
+          path="/raffle"
+          element={loader(RaffleView)(isApplicationLoading(), {
             twitchUserInfo,
           })}
         />

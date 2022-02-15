@@ -33,7 +33,7 @@
 - [x] Turn off default blacklist
 - [ ] Twitter posts
 - [ ] Bot icon for on stream chat
-- [ ] Raffles
+- [x] Raffles
 
 ## Post launch
 

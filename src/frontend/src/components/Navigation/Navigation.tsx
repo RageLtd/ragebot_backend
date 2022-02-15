@@ -79,6 +79,9 @@ export default function Navigation({ twitchUserInfo }: NavigationProps) {
           <Link to="/integrations">Integrations</Link>
         </li>
         <li className={styles.navItem}>
+          <Link to="/raffle">Raffle</Link>
+        </li>
+        <li className={styles.navItem}>
           <Link to="/followers">Followers</Link>
         </li>
       </ul>

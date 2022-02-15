@@ -24,6 +24,7 @@ import {
   setLobby,
   setRun,
 } from "../commands/game/game";
+import { parseRaffle } from "../commands/raffle/raffle";
 import { shoutout } from "../commands/shoutout";
 import { disableBot } from "../commands/utils";
 import {
@@ -141,6 +142,10 @@ export function parseMessage(
     }
     case "!unblacklist": {
       removeTermFromBlacklist(target, userState, params);
+      return;
+    }
+    case "!raffle": {
+      parseRaffle(target, userState, params);
       return;
     }
     default: {
@@ -272,11 +277,11 @@ async function parseCustomCommand(
   }
 }
 
-async function getAllData(
+export async function getAllData(
   target: string,
   command: string,
   client: Client,
-  { after }: { after?: string }
+  { after }: { after?: string } = {}
 ): Promise<any[]> {
   const firstRes = (await client?.query(
     getDataByPageQuery(command, { after })
@@ -302,7 +307,7 @@ async function parseRandomCommand(
 ): Promise<RandomResult> {
   const client = await clientRegistry.getClient(target);
 
-  const allResult = await getAllData(target, command, client!, {});
+  const allResult = await getAllData(target, command, client!);
 
   const randomIndex = Math.floor(Math.random() * allResult.length);
 
