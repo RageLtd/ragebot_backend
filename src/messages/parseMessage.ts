@@ -128,18 +128,26 @@ export function parseMessage(
       removeCustomCommand(target, userState, params);
       return;
     }
+    case "!addwhitelist":
+    case "!addallowlist":
+    case "!allowlist":
     case "!whitelist": {
       addTermToWhitelist(target, userState, params);
       return;
     }
+    case "!unallowlist":
     case "!unwhitelist": {
       removeTermFromWhitelist(target, userState, params);
       return;
     }
+    case "!addblacklist":
+    case "!addblocklist":
+    case "!blocklist":
     case "!blacklist": {
       addTermToBlacklist(target, userState, params);
       return;
     }
+    case "!unblocklist":
     case "!unblacklist": {
       removeTermFromBlacklist(target, userState, params);
       return;
