@@ -69,9 +69,9 @@ alertsApiRouter.get("/:userName", async (req, res) => {
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
 
-  const notificationsResponse = await client?.query(
-    getNotificationVariablesQuery()
-  );
+  const notificationsResponse = await client
+    ?.query(getNotificationVariablesQuery())
+    .catch(console.error);
 
   res.send(notificationsResponse);
 });
@@ -83,9 +83,9 @@ alertsApiRouter.patch("/:userName", async (req, res) => {
 
   const { name, value } = req.body;
 
-  const notificationSaveResponse = await client?.query(
-    updateNotificationStringQuery(name, value)
-  );
+  const notificationSaveResponse = await client
+    ?.query(updateNotificationStringQuery(name, value))
+    .catch(console.error);
 
   res.send(notificationSaveResponse);
 });
@@ -95,9 +95,9 @@ alertsApiRouter.post("/:userName/behaviors/:type", async (req, res) => {
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
 
-  const behaviorSaveResponse = await client?.query(
-    saveCustomBehaviorQuery(type, req.body)
-  );
+  const behaviorSaveResponse = await client
+    ?.query(saveCustomBehaviorQuery(type, req.body))
+    .catch(console.error);
 
   res.send(behaviorSaveResponse);
 });
@@ -119,9 +119,9 @@ alertsApiRouter.get("/:userName/behaviors/:type", async (req, res) => {
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
 
-  const getBehaviorsResponse = await client?.query(
-    getCustomBehaviorsQuery(type)
-  );
+  const getBehaviorsResponse = await client
+    ?.query(getCustomBehaviorsQuery(type))
+    .catch(console.error);
 
   res.send(getBehaviorsResponse);
 });

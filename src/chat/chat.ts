@@ -173,9 +173,9 @@ async function parseUser(channel: string, userState: Userstate) {
 
 export async function getChatStyles(username: string) {
   const client = await clientRegistry.getClient(`#${username}`);
-  const { data: elements = {} } = (await client?.query(
-    getChatStylesQuery()
-  )) as ChatStylesResponse;
+  const { data: elements = {} } = (await client
+    ?.query(getChatStylesQuery())
+    .catch(console.error)) as ChatStylesResponse;
   return Object.keys(elements)
     .map((element) => `${element} ${elements[element]}`)
     .join(" ");

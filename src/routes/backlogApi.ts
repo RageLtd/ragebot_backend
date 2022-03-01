@@ -14,7 +14,9 @@ backlogApiRouter.get(`/:userName`, async (req, res) => {
   const target = `#${userName.toLowerCase()}`;
   const client = await clientRegistry.getClient(target);
 
-  const backlogRes = await client?.query(getBacklogQuery());
+  const backlogRes = await client
+    ?.query(getBacklogQuery())
+    .catch(console.error);
 
   res.send(backlogRes);
 });
@@ -26,7 +28,9 @@ backlogApiRouter.post("/:userName", async (req, res) => {
 
   const { name, notes } = req.body;
 
-  const backlogSaveRes = await client?.query(addBacklogQuery(name, notes));
+  const backlogSaveRes = await client
+    ?.query(addBacklogQuery(name, notes))
+    .catch(console.error);
 
   res.send(backlogSaveRes);
 });
@@ -52,7 +56,9 @@ backlogApiRouter.delete("/:userName", async (req, res) => {
 
   const { name } = req.body;
 
-  const backlogRemoveRes = await client?.query(removeBacklogQuery(name));
+  const backlogRemoveRes = await client
+    ?.query(removeBacklogQuery(name))
+    .catch(console.error);
 
   res.send(backlogRemoveRes);
 });

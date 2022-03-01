@@ -17,7 +17,9 @@ userSetupApiRouter.get("/", async (req, res) => {
 });
 
 userSetupApiRouter.post("/", async (req, res) => {
-  await setupUserDb(req.body.username.toLowerCase(), req.body.user_id);
+  await setupUserDb(req.body.username.toLowerCase(), req.body.user_id).catch(
+    console.error
+  );
   res.sendStatus(200);
 });
 

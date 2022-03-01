@@ -2,6 +2,7 @@ import { Router } from "express";
 import { clientRegistry, faunaClient, filterRegistry } from "..";
 import { Database } from "../channelEvents";
 import {
+  ChatStylesResponse,
   getChatStylesQuery,
   getIsModerationEnabledQuery,
   saveChatStylesQuery,
@@ -66,12 +67,11 @@ chatApiRouter.get("/:userName/styles", async (req, res) => {
   const { userName } = req.params;
   const client = await clientRegistry.getClient(`#${userName.toLowerCase()}`);
 
-  const stylesRes = await client
+  const { data } = (await client
     ?.query(getChatStylesQuery())
-    .catch(console.error);
+    .catch(console.error)) as ChatStylesResponse;
 
-  /// @ts-expect-error
-  res.send(stylesRes.data);
+  res.send(data);
 });
 
 chatApiRouter.get("/:userName/allowlist", async (req, res) => {

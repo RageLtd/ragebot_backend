@@ -11,7 +11,9 @@ const commandsApiRouter = Router();
 commandsApiRouter.get("/:userName", async (req, res) => {
   const { userName } = req.params;
 
-  const commandRes = await customCommandRegistry.getCommands(`#${userName}`);
+  const commandRes = await customCommandRegistry
+    .getCommands(`#${userName}`)
+    .catch(console.error);
 
   res.status(200).send(commandRes);
 });
@@ -19,10 +21,9 @@ commandsApiRouter.get("/:userName", async (req, res) => {
 commandsApiRouter.patch("/:userName", async (req, res) => {
   const { userName } = req.params;
 
-  const commandRes = await customCommandRegistry.updateCommand(
-    `#${userName.toLowerCase()}`,
-    req.body
-  );
+  const commandRes = await customCommandRegistry
+    .updateCommand(`#${userName.toLowerCase()}`, req.body)
+    .catch(console.error);
 
   /// @ts-expect-error
   res.send(commandRes.data);

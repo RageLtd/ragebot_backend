@@ -16,9 +16,9 @@ const ragebotRouter = Router();
 ragebotRouter.get("/state/:userName", async (req, res) => {
   const { userName } = req.params;
 
-  const botState = await faunaClient.query(
-    getIsUserBotEnabledStateQuery(`#${userName.toLowerCase()}`)
-  );
+  const botState = await faunaClient
+    .query(getIsUserBotEnabledStateQuery(`#${userName.toLowerCase()}`))
+    .catch(console.error);
 
   res.send(botState);
 });
@@ -28,12 +28,14 @@ ragebotRouter.post("/state/:userName", async (req, res) => {
 
   const {
     data: { botEnabledState },
-  } = (await faunaClient.query(
-    setUserBotEnabledStateQuery(
-      `#${userName.toLowerCase()}`,
-      req.body.botEnabledState
+  } = (await faunaClient
+    .query(
+      setUserBotEnabledStateQuery(
+        `#${userName.toLowerCase()}`,
+        req.body.botEnabledState
+      )
     )
-  )) as BotStateResponse;
+    .catch(console.error)) as BotStateResponse;
 
   res.send(botEnabledState);
 });

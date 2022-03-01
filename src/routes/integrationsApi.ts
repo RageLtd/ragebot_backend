@@ -6,12 +6,18 @@ const integrationsApiRouter = Router();
 integrationsApiRouter.get("/:userName", async (req, res) => {
   const { userName } = req.params;
 
-  res.status(200).send(await webhookRegistry.getWebhookUrls(`#${userName}`));
+  res
+    .status(200)
+    .send(
+      await webhookRegistry.getWebhookUrls(`#${userName}`).catch(console.error)
+    );
 });
 
 integrationsApiRouter.patch("/:userName", async (req, res) => {
   const { userName } = req.params;
-  const faunaRes = await webhookRegistry.updateWebhook(userName, req.body);
+  const faunaRes = await webhookRegistry
+    .updateWebhook(userName, req.body)
+    .catch(console.error);
 
   /// @ts-expect-error
   res.send(faunaRes?.data);

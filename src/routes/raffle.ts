@@ -15,7 +15,7 @@ raffleRouter.get("/:userName/state", async (req, res) => {
 raffleRouter.post("/:userName/open", async (req, res) => {
   const { userName } = req.params;
 
-  openRaffle(`#${userName.toLowerCase()}`);
+  openRaffle(`#${userName.toLowerCase()}`).catch(console.error);
 
   res.sendStatus(200);
 });
